@@ -28,7 +28,7 @@ import {
   SocialAuthServiceConfig,
   SocialLoginModule,
 } from 'angularx-social-login';
-import { CookieService } from 'ngx-cookie-service';
+// import { CookieService } from 'ngx-cookie-service';
 import { environment } from 'src/environments/environment';
 import { ArticulosManufacturadosFormComponent } from './components/articulos-manufacturados/articulos-manufacturados-form/articulos-manufacturados-form.component';
 import { RubrosGeneralesComponent } from './components/rubros-generales/rubros-generales.component';
@@ -73,7 +73,7 @@ const CLIENT_ID = environment.client_id;
     SocialLoginModule,
   ],
   providers: [
-    CookieService,
+    // CookieService,
     {
       provide: 'SocialAuthServiceConfig',
       useValue: {

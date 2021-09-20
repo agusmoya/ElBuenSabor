@@ -43,7 +43,15 @@ export class BebidaDetalleComponent implements OnInit {
         text: '¡Lo sentimos, el stock es insuficiente!',
       });
       this.verificado = false;
-      // this.cantidadAVerificar = this.artInsumoBebida.stockActual;
+      this.cantidadAVerificar = 1;
+    } else if (cantidadAverificar <= 0) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Ups...',
+        text: 'Debe ingresar una cantidad superior a cero.',
+      });
+      this.verificado = false;
+      this.cantidadAVerificar = 1;
     } else {
       this.verificado = true;
     }
