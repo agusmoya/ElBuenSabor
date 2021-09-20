@@ -1,0 +1,9 @@
+.material-icons.close{
+    color: red;
+    font-size: 30px;
+    cursor: pointer;
+}
+.material-icons.close:hover{
+    font-size: 33px;
+    color: rgb(163, 51, 51);
+}

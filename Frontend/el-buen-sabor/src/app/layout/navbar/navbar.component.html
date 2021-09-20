@@ -1,0 +1,140 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/home"> El Buen Sabor </a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/home" routerLinkActive="active"
+            >Home
+          </a>
+        </li>
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="navbarDarkDropdownMenuLink"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Administrar
+          </a>
+          <ul
+            class="dropdown-menu dropdown-menu-dark"
+            aria-labelledby="navbarDarkDropdownMenuLink"
+          >
+            <li>
+              <a
+                class="dropdown-item"
+                routerLink="/usuarios"
+                routerLinkActive="active"
+                >Usuarios
+              </a>
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <a
+                class="dropdown-item"
+                routerLink="/roles"
+                routerLinkActive="active"
+                >Roles
+              </a>
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <a
+                class="dropdown-item"
+                routerLink="/rubros-articulo-insumo"
+                routerLinkActive="active"
+                >Rubro Articulos Insumo
+              </a>
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <a
+                class="dropdown-item"
+                routerLink="/articulos-insumo"
+                routerLinkActive="active"
+                >Articulos Insumo
+              </a>
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <a
+                class="dropdown-item"
+                routerLink="/rubros-articulos-manufacturados"
+                routerLinkActive="active"
+                >Rubro General
+              </a>
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <a
+                class="dropdown-item"
+                routerLink="/articulos-manufacturados"
+                routerLinkActive="active"
+                >Articulos Manufacturados
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+
+      <div *ngIf="!isLogged">
+        <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/login" routerLinkActive="active"
+              >Login
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              routerLink="/usuarios/form"
+              routerLinkActive="active"
+              >Registración
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div *ngIf="userLoggedInfo$ | async as userLogged">
+        <ul class="navbar-nav ml-auto mb-2 mb-lg-0 align-items-center" *ngIf="userLogged.id">
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              [routerLink]="['/usuarios/form', userLogged.id]"
+              routerLinkActive="active"
+            >
+              Hola, {{ userLogged.email }}!
+            </a>
+          </li>
+          <li class="nav-item">
+            <button class="btn btn-sm btn-outline-warning" (click)="logOut()">
+              Logout
+            </button>
+          </li>
+          <li class="nav-item m-2">
+            <a
+              class="nav-link"
+              routerLink="/carro-compra"
+              routerLinkActive="active"
+            >
+              <i class="fas fa-cart-plus fs-4"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>

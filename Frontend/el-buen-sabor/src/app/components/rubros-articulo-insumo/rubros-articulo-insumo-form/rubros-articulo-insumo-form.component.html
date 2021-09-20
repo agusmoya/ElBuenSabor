@@ -1,0 +1,119 @@
+<div class="card text-dark bg-light">
+  <div class="card-header">
+    <h2>{{ titulo }}</h2>
+  </div>
+
+  <div class="card-body">
+    <form #rubroArtInsumoForm="ngForm">
+      <div class="row g-3 align-items-center my-1">
+        <div class="col-3">
+          <label for="denominacion" class="col-form-label">
+            Denominación:
+          </label>
+        </div>
+        <div class="col-9">
+          <input
+            type="text"
+            id="denominacion"
+            name="denominacion"
+            class="form-control"
+            [(ngModel)]="model.denominacion"
+            #denominacion="ngModel"
+            [ngClass]="{
+              'is-invalid': denominacion.invalid && rubroArtInsumoForm.submitted
+            }"
+            required
+          />
+          <small
+            *ngIf="error && error.denominacion"
+            id="errorMessageEmpty"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.denominacion }}</i></small
+          >
+          <small
+            *ngIf="error && error.denominacionUnique"
+            id="errorMessageUnique"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.denominacionUnique }}</i></small
+          >
+        </div>
+      </div>
+
+      <div
+        class="row g-3 align-items-center mt-1"
+        *ngIf="rubrosArtInsPadres.length > 0"
+      >
+        <div class="col-3">
+          <label for="rubroPadre" class="col-form-label"> Rubro Padre: </label>
+        </div>
+        <div class="col-9">
+          <select
+            class="form-select"
+            id="rubroPadre"
+            name="rubroPadre"
+            [(ngModel)]="model.rubroPadre"
+            [compareWith]="compararRubro"
+          >
+            <option [ngValue]="undefined" disabled>
+              --- Elija el rubro al que pertenece ---
+            </option>
+            <option [ngValue]="null" [selected]="model.rubroPadre === null">
+              No posee
+            </option>
+            <option
+              *ngFor="let rubro of rubrosArtInsPadres"
+              [ngValue]="rubro"
+              [selected]="rubro.denominacion == model.rubroPadre?.denominacion"
+              [disabled]="rubro.denominacion == model.denominacion"
+            >
+              {{ rubro.denominacion }}
+            </option>
+          </select>
+          <small
+            *ngIf="error && error.rubro"
+            id="errorMessageEmpty"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.rubro }}</i></small
+          >
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-center mt-1" *ngIf="model.id">
+        <div class="col-3">
+          <label for="estado" class="col-form-label"> Estado: </label>
+        </div>
+
+        <div class="col-9">
+          <select
+            class="form-select"
+            id="estado"
+            name="estado"
+            [(ngModel)]="model.estado"
+          >
+            <option value="0" ng-selected="model.estado === 0">
+              Deshabilitar
+            </option>
+            <option value="1" ng-selected="model.estado === 1">
+              Habilitar
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="my-3 text-center mt-5">
+        <a routerLink="/rubros-articulo-insumo" class="btn btn-secondary"
+          >Volver</a
+        >
+        <button
+          class="btn btn-danger mx-5"
+          (click)="model.id ? editar() : crear()"
+        >
+          {{ model.id ? "Editar" : "Crear" }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

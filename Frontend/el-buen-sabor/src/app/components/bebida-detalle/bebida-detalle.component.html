@@ -1,0 +1,83 @@
+<div class="card mt-5 mx-auto" style="max-width: 50%">
+  <div class="row g-0">
+    <div class="col-12 col-lg-8 text-center">
+      <img
+        *ngIf="artInsumoBebida?.imagenHashCode"
+        [src]="
+          baseEndpoint +
+          '/cargar/img/' +
+          artInsumoBebida?.id +
+          '?imagenHashCode=' +
+          artInsumoBebida?.imagenHashCode
+        "
+        class="img-fluid rounded-start"
+        alt="img-artManuf"
+        style="max-width: 100%"
+      />
+      <img
+        *ngIf="!artInsumoBebida?.imagenHashCode"
+        class="img-fluid rounded-start mt-5"
+        src="/assets/images/no-bebida-img.png"
+        alt="img-artManuf"
+        style="max-width: 100%"
+      />
+    </div>
+    <div class="col-12 col-lg-4">
+      <div class="card-body">
+        <h2 class="card-title">
+          {{ artInsumoBebida?.denominacion }}
+        </h2>
+        <p class="card-text">
+          <b>Precio: </b>
+          ${{ artInsumoBebida?.precioVenta }}
+        </p>
+        <p class="card-text">
+          <b> Rubro: </b>
+          {{ artInsumoBebida?.rubroPadre.denominacion }}
+          -->
+          {{ artInsumoBebida?.rubroHijo.denominacion }}
+        </p>
+        <p class="card-text">
+          <b> Stock: </b>
+          {{ artInsumoBebida?.stockActual }}
+          unidades.
+        </p>
+        <p class="card-text">
+          <b> Unidad de medida: </b>
+          {{ artInsumoBebida?.unidadMedida }}.
+        </p>
+        <p class="card-text my-3">
+          <b>
+            <label for="cantidad">Cantidad: </label>
+          </b>
+          <input
+            (change)="verificarCantidad($event)"
+            (keyup)="verificarCantidad($event)"
+            class="form-control"
+            type="number"
+            name="cantidad"
+            value="1"
+            min="1"
+            [(ngModel)]="cantidadAVerificar"
+          />
+        </p>
+        <div class="d-grid mx-auto mt-5">
+          <button
+            [disabled]="
+              !verificado && cantidadAVerificar > artInsumoBebida?.stockActual
+            "
+            (click)="agregarAlCarroDeCompra(artInsumoBebida)"
+            class="btn btn-outline-dark"
+            type="button"
+          >
+            {{
+              !verificado && cantidadAVerificar > artInsumoBebida?.stockActual
+                ? "Sin stock"
+                : "Agregar a mi pedido"
+            }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,339 @@
+<div class="card text-dark bg-light">
+  <div class="card-header">
+    <h2>{{ titulo }}</h2>
+  </div>
+
+  <div class="card-body">
+    {{ artManufactForm.value | json }}
+    {{ artManufactForm.submitted }}
+    <form #artManufactForm="ngForm">
+      <div class="row g-3 align-items-center">
+        <div class="col-3">
+          <label for="denominacion" class="col-form-label">
+            Denominación:
+          </label>
+        </div>
+        <div class="col-9">
+          <input
+            type="text"
+            id="denominacion"
+            name="denominacion"
+            class="form-control"
+            [(ngModel)]="model.denominacion"
+            #denominacion="ngModel"
+            [ngClass]="{
+              'is-invalid':
+                denominacion.invalid &&
+                (artManufactForm.submitted || denominacion.touched)
+            }"
+            required
+          />
+          <small
+            *ngIf="error && error.denominacion"
+            id="errorMessageEmpty"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.denominacion }}</i></small
+          >
+          <small
+            *ngIf="error && error.denominacionUnique"
+            id="errorMessageUnique"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.denominacionUnique }}</i></small
+          >
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-center mt-1">
+        <div class="col-3">
+          <label for="tiempoCocina" class="col-form-label">
+            Tiempo Estimado Cocina:
+          </label>
+        </div>
+
+        <div class="col-9">
+          <input
+            type="number"
+            id="tiempoEstimadoCocina"
+            name="tiempoEstimadoCocina"
+            class="form-control"
+            [(ngModel)]="model.tiempoEstimadoCocina"
+            #tiempoEstimadoCocina="ngModel"
+            [ngClass]="{
+              'is-invalid':
+                tiempoEstimadoCocina.invalid &&
+                (artManufactForm.submitted || tiempoEstimadoCocina.touched)
+            }"
+            required
+          />
+          <small
+            *ngIf="error && error.tiempoEstimadoCocina"
+            id="errorMessage"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.tiempoEstimadoCocina }}</i></small
+          >
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-center mt-1">
+        <div class="col-3">
+          <label for="precioVenta" class="col-form-label">
+            Precio de Venta:
+          </label>
+        </div>
+
+        <div class="col-9">
+          <input
+            type="number"
+            id="precioVenta"
+            name="precioVenta"
+            class="form-control"
+            [(ngModel)]="model.precioVenta"
+            #precioVenta="ngModel"
+            [ngClass]="{
+              'is-invalid':
+                precioVenta.invalid &&
+                (artManufactForm.submitted || precioVenta.touched)
+            }"
+            required
+          />
+          <small
+            *ngIf="error && error.precioVenta"
+            id="errorMessage"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.precioVenta }}</i></small
+          >
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-center mt-1">
+        <div class="col-3">
+          <label for="rubroGeneral" class="col-form-label">
+            Rubro General:
+          </label>
+        </div>
+
+        <div class="col-9">
+          <select
+            class="form-select"
+            id="rubroGeneral"
+            name="rubroGeneral"
+            (change)="asignarRubroGeneral($event)"
+            name="estado"
+            required
+          >
+            <option [ngValue]="undefined" disabled selected>
+              --- Elija el rubro al que pertenece ---
+            </option>
+            <option
+              *ngFor="let rubro of arrayRubrosGenerales"
+              [ngValue]="rubro"
+              [selected]="
+                rubro.denominacion === model.rubroGeneral?.denominacion
+              "
+            >
+              {{ rubro.denominacion }}
+            </option>
+          </select>
+          <small
+            *ngIf="error && error.rubroGeneral"
+            id="errorMessage"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.rubroGeneral }}</i></small
+          >
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-center mt-1" *ngIf="model.id">
+        <div class="col-3">
+          <label for="estado" class="col-form-label"> Estado: </label>
+        </div>
+
+        <div class="col-9">
+          <select
+            class="form-select"
+            id="estado"
+            name="estado"
+            [(ngModel)]="model.estado"
+            #estado="ngModel"
+            [ngClass]="{
+              'is-invalid': estado.invalid && artManufactForm.submitted
+            }"
+            required
+          >
+            <option value="0" ng-selected="model.estado === 0">
+              Deshabilitar
+            </option>
+            <option value="1" ng-selected="model.estado === 1">
+              Habilitar
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-center mt-1">
+        <div class="col-3">
+          <label for="img-art-manuf" class="col-form-label"> Imagen: </label>
+        </div>
+        <div class="col-9">
+          <input
+            (change)="seleccinarFoto($event)"
+            class="form-control"
+            type="file"
+            id="img-art-manuf"
+            name="img-art-manuf"
+          />
+        </div>
+      </div>
+      <div>
+        <h1 class="mt-5">Detalles Articulo</h1>
+        <h2>
+          <small style="font-size: 13px; color: red"
+            ><i>
+              *Todos los detalles que se generen deben tener todos sus datos
+              completados, de lo contrario no se podrá crear ni editar el
+              artículo manufacturado.
+            </i></small
+          >
+        </h2>
+      </div>
+
+      <div
+        class="row g-3 align-items-center mt-1"
+        *ngFor="
+          let detalle of model.detallesArticuloManufacturado;
+          let indiceDetalle = index
+        "
+      >
+        <div class="col-2">
+          <label for="arts-insumo" class="col-form-label">
+            Seleccione un artículo Insumo:
+          </label>
+        </div>
+        <div class="col-3">
+          <select
+            class="form-select"
+            name="arts-insumo"
+            id="arts-insumo"
+            (change)="seleccionarArticuloInsumo($event, indiceDetalle)"
+            required
+          >
+            <option value="undefined" disabled selected>
+              --- Seleccione un artículo ---
+            </option>
+            <option
+              name="artInsumo"
+              [selected]="
+                artInsumo.denominacion === detalle.articuloInsumo?.denominacion
+              "
+              *ngFor="
+                let artInsumo of arrayArticulosInsumo;
+                let indiceArtInsumo = index
+              "
+              [value]="indiceArtInsumo"
+            >
+              {{ artInsumo.denominacion }}
+            </option>
+          </select>
+          <small
+            *ngIf="
+              (error && error.detallesArticuloManufacturado) ||
+              model.detallesArticuloManufacturado[indiceDetalle].unidadMedida
+                .length === 0
+            "
+            id="errorMessageEmpty"
+            class="form-text"
+            style="color: red"
+            ><i>Selecciones un articulo insumo</i></small
+          >
+        </div>
+        <div class="col-1">
+          <label for="art-insumo-cantidad" class="col-form-label">
+            Cantidad:
+          </label>
+        </div>
+        <div class="col-2">
+          <input
+            class="form-control"
+            type="number"
+            id="art-insumo-cantidad"
+            name="art-insumo-cantidad"
+            [value]="
+              this.model.detallesArticuloManufacturado[indiceDetalle]?.cantidad
+            "
+            (keyup)="asignarCantidad(detalle, $event)"
+            required
+            #cantidadInput
+          />
+          <small
+            *ngIf="
+              model.detallesArticuloManufacturado[indiceDetalle].cantidad === 0
+            "
+            id="errorMessageEmpty"
+            class="form-text"
+            style="color: red"
+            ><i>Debe ingresar una cantidad</i></small
+          >
+        </div>
+        <div class="col-1">
+          <label for="detalle-art-manuf-unidad-medida" class="col-form-label">
+            Unidad de Medida:
+          </label>
+        </div>
+        <div class="col-2">
+          <input
+            class="form-control"
+            type="text"
+            id="art-insumo-unidadMedida"
+            name="art-insumo-unidadMedida"
+            [value]="
+              this.model.detallesArticuloManufacturado[indiceDetalle]
+                ?.unidadMedida
+            "
+            required
+            readonly
+          />
+        </div>
+
+        <div class="col-1">
+          <span
+            class="material-icons close"
+            (click)="quitarArticuloDetalle(indiceDetalle)"
+          >
+            highlight_off
+          </span>
+        </div>
+      </div>
+
+      <div class="row g-3 mx-1 mt-3 align-items-center">
+        <button class="btn btn-outline-dark" (click)="agregarDetalle()">
+          Agregar Detalle de Artículo
+        </button>
+        <small
+          *ngIf="error && error.detallesArticuloManufacturado"
+          id="errorMessageEmpty"
+          class="form-text"
+          style="color: red"
+          ><i>Debe agregar un detalle</i></small
+        >
+      </div>
+
+      <div class="my-3 text-center mt-5">
+        <a routerLink="/articulos-manufacturados" class="btn btn-secondary"
+          >Volver</a
+        >
+        <button
+          [disabled]="artManufactForm.invalid || !formularioValido"
+          class="btn btn-danger mx-5"
+          (click)="model.id ? editar() : crear()"
+        >
+          {{ model.id ? "Editar" : "Crear" }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

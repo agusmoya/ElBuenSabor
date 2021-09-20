@@ -1,0 +1,26 @@
+/* You can add global styles to this file, and also import other style files */
+html,
+body {
+  height: 100%;
+  box-sizing: inherit;
+
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+  /* enable the "border-box effect" everywhere */
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.body-for-sticky {
+  position: relative;
+  /* for the footer to move with the page size */
+  min-height: 75.4%;
+  /* for the footer to be at the bottom */
+}

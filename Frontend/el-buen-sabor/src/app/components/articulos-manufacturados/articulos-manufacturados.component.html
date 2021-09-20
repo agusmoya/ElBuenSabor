@@ -1,0 +1,119 @@
+<div class="card text-dark bg-light">
+  <div class="card-header">
+    <h3>{{ titulo }}</h3>
+  </div>
+  <div class="card-body">
+    <a
+      routerLink="/articulos-manufacturados/form"
+      class="btn btn-lg btn-outline-primary"
+      >Crear</a
+    >
+    <div class="alert alert-info my-3 text-center" *ngIf="lista?.length == 0">
+      ¡No hay Artículos Manufacturados cargados en el Sistema!
+    </div>
+    <table
+      class="table table-hover table-striped text-center"
+      *ngIf="lista?.length > 0"
+    >
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Imagen</th>
+          <th scope="col">Denominación</th>
+          <th scope="col">Creado en</th>
+          <th scope="col">Actualizado en</th>
+          <th scope="col">Estado</th>
+          <th scope="col">Tiempo estimado cocina</th>
+          <th scope="col">Precio de Venta</th>
+          <th scope="col">Rubro</th>
+          <th scope="col">Detalle</th>
+          <th scope="col">Editar</th>
+          <th scope="col">Eliminar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let artManuf of lista">
+          <td>{{ artManuf.id }}</td>
+          <td>
+            <img
+              *ngIf="artManuf.imagenHashCode"
+              [src]="
+                baseEndpoint +
+                '/cargar/img/' +
+                artManuf.id +
+                '?imagenHashCode=' +
+                artManuf.imagenHashCode
+              "
+              alt="img-artManuf"
+              class="img-thumbnail rounded"
+              style="width: 100px; cursor: pointer"
+            />
+            <img
+              *ngIf="!artManuf.imagenHashCode"
+              src="/assets/images/art-manuf-no-img.png"
+              alt="img-artManuf"
+              class="img-thumbnail rounded"
+              style="width: 100px; cursor: pointer"
+            />
+          </td>
+          <td>{{ artManuf.denominacion }}</td>
+          <td>
+            {{ artManuf.createdAt | date: "yyyy/MM/dd" }}
+          </td>
+          <td>
+            {{ artManuf.updatedAt | date: "yyyy/MM/dd" }}
+          </td>
+          <td>
+            {{
+              (artManuf.estado === 1 ? "Habilitado" : "Deshabilitado")
+                | uppercase
+            }}
+          </td>
+          <td>
+            {{ artManuf.tiempoEstimadoCocina }}
+          </td>
+          <td>
+            {{ artManuf.precioVenta }}
+          </td>
+          <td>
+            {{ artManuf.rubroGeneral.denominacion }}
+          </td>
+          <td>
+            <a
+              class="btn btn-sm btn-link"
+              [routerLink]="['/articulos-manufacturados/form', artManuf.id]"
+              >Ver detalles</a
+            >
+          </td>
+          <td>
+            <a
+              class="btn btn-sm btn-outline-dark"
+              [routerLink]="['/articulos-manufacturados/form', artManuf.id]"
+              >Editar</a
+            >
+          </td>
+          <td>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-danger"
+              (click)="eliminar(artManuf)"
+              [disabled]="!artManuf.estado"
+            >
+              {{ !artManuf.estado ? "Eliminado" : "Eliminar" }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <mat-paginator
+      *ngIf="lista?.length > 0"
+      [length]="totalRegistros"
+      [pageSize]="totalPorPagina"
+      [pageIndex]="paginaActual"
+      [pageSizeOptions]="pageSizeOptions"
+      showFirstLastButtons
+      (page)="paginar($event)"
+    >
+    </mat-paginator>
+  </div>
+</div>

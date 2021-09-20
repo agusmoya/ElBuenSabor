@@ -1,0 +1,81 @@
+<div class="card text-dark bg-light">
+  <div class="card-header">
+    <h3>{{ titulo }}</h3>
+  </div>
+  <div class="card-body">
+    <a routerLink="/usuarios/form" class="btn btn-outline-primary">Crear</a>
+    <div class="alert alert-info my-3 text-center" *ngIf="lista?.length == 0">
+      ¡No hay usuarios cargados en el Sistema!
+    </div>
+    <table class="table table-hover table-striped text-center" *ngIf="lista?.length > 0">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Imagen</th>
+          <th scope="col">Email Usuario</th>
+          <th scope="col">Creado en</th>
+          <th scope="col">Actualizado en</th>
+          <th scope="col">Clave</th>
+          <th scope="col">Estado</th>
+          <th scope="col">Rol</th>
+          <th scope="col">Editar</th>
+          <th scope="col">Eliminar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let usuario of lista">
+          <td>{{ usuario.id }}</td>
+          <td>
+            <img *ngIf="usuario.imagenHashCode" [src]="
+                baseEndpoint +
+                '/cargar/img/' +
+                usuario.id +
+                '?imagenHashCode=' +
+                usuario.imagenHashCode" alt="img-usuario" class="img-thumbnail rounded"
+              style="width: 100px; cursor: pointer" />
+            <img *ngIf="!usuario.imagenHashCode" src="/assets/images/no-user.png" alt="img-usuario"
+              class="img-thumbnail rounded" style="width: 100px; cursor: pointer" />
+          </td>
+          <td>{{ usuario.nombre }}</td>
+          <td>
+            {{ usuario.createdAt | date: "yyyy/MM/dd" }}
+          </td>
+          <td>
+            {{ usuario.updatedAt | date: "yyyy/MM/dd" }}
+          </td>
+          <td>
+            {{ usuario.clave }}
+          </td>
+          <td>
+            {{
+              (usuario.estado === 1 ? "Habilitado" : "Deshabilitado")
+                | uppercase
+            }}
+          </td>
+
+          <td>
+            {{ usuario.rol.denominacion }}
+          </td>
+          <td>
+            <a class="btn btn-sm btn-outline-dark" [routerLink]="['/usuarios/form', usuario.id]">Editar</a>
+          </td>
+          <td>
+            <button type="button" class="btn btn-sm btn-outline-danger" (click)="eliminar(usuario)"
+              [disabled]="!usuario.estado">
+              {{ !usuario.estado ? "Eliminado" : "Eliminar" }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <mat-paginator
+    *ngIf="lista?.length > 0"
+    [length]="totalRegistros"
+    [pageSize]="totalPorPagina"
+    [pageIndex]="paginaActual"
+    [pageSizeOptions]="pageSizeOptions"
+    showFirstLastButtons
+    (page)="paginar($event)">
+    </mat-paginator>
+  </div>
+</div>

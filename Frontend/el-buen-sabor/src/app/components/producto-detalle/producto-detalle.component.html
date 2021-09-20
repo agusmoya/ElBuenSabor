@@ -1,0 +1,73 @@
+<div class="card mt-5 mx-auto" style="max-width: 100%">
+  <div class="row g-0">
+    <div class="col-12 col-lg-8">
+      <img
+        *ngIf="artManufSeleccionado?.imagenHashCode"
+        [src]="
+          baseEndpoint +
+          '/cargar/img/' +
+          artManufSeleccionado?.id +
+          '?imagenHashCode=' +
+          artManufSeleccionado?.imagenHashCode
+        "
+        class="img-fluid rounded-start"
+        style="max-width: 100%"
+        alt="img-artManuf"
+      />
+      <img
+        *ngIf="!artManufSeleccionado?.imagenHashCode"
+        class="img-fluid rounded-start p-4"
+        src="/assets/images/art-manuf-no-img.png"
+        alt="img-artManuf"
+        style="max-width: 100%"
+      />
+    </div>
+    <div class="col-12 col-lg-4">
+      <div class="card-body">
+        <h2 class="card-title">
+          {{ artManufSeleccionado?.denominacion }}
+        </h2>
+        <p class="card-text">
+          <b>Tiempo estimado cocina: </b>
+          <i>{{ artManufSeleccionado?.tiempoEstimadoCocina }} minutos</i>
+        </p>
+        <p class="card-text">
+          <b>Precio: </b> ${{ artManufSeleccionado?.precioVenta }}
+        </p>
+        <p class="card-text">
+          <b> Rubro: </b> {{ artManufSeleccionado?.rubroGeneral.denominacion }}
+        </p>
+        <p class="card-text">
+          <b>Ingredientes: </b>
+        </p>
+        <ul class="list-group">
+          <li
+            class="
+              list-group-item list-group-item-action list-group-item-light
+              d-flex
+              justify-content-between
+              align-items-center
+            "
+            *ngFor="
+              let detalle of artManufSeleccionado?.detallesArticuloManufacturado
+            "
+          >
+            {{ detalle.articuloInsumo.denominacion }}
+            <span class="badge bg-primary rounded-pill">
+              {{ detalle.cantidad }} {{ detalle.unidadMedida }}
+            </span>
+          </li>
+        </ul>
+        <p class="card-text my-3">
+          <b><label for="cantidad">Cantidad: </label> </b>
+          <input class="form-control" type="number" name="cantidad" value="1" min="1" max="20"/>
+        </p>
+        <div class="d-grid mx-auto mt-3">
+          <button class="btn btn-outline-dark" type="button">
+            Agregar a mi pedido
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

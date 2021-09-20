@@ -1,0 +1,102 @@
+<div class="card text-dark bg-light">
+  <div class="card-header">
+    <h3>{{ titulo }}</h3>
+  </div>
+  <div class="card-body">
+    <a
+      routerLink="/rubro-articulos-manufacturados/form"
+      class="btn btn-lg btn-outline-primary"
+      >Crear</a
+    >
+    <div class="alert alert-info my-3 text-center" *ngIf="lista?.length == 0">
+      ¡No hay Rubros cargados en el Sistema!
+    </div>
+    <table
+      class="table table-hover table-striped text-center"
+      *ngIf="lista?.length > 0"
+    >
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Imagen</th>
+          <th scope="col">Denominación</th>
+          <th scope="col">Creado en</th>
+          <th scope="col">Actualizado en</th>
+          <th scope="col">Estado</th>
+          <th scope="col">Editar</th>
+          <th scope="col">Eliminar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let rubroGeneral of lista">
+          <td>{{ rubroGeneral.id }}</td>
+          <td>
+            <img
+              *ngIf="rubroGeneral.imagenHashCode"
+              [src]="
+                baseEndpoint +
+                '/cargar/img/' +
+                rubroGeneral.id +
+                '?imagenHashCode=' +
+                rubroGeneral.imagenHashCode
+              "
+              alt="img-rubroGeneral"
+              class="img-thumbnail rounded"
+              style="width: 100px; cursor: pointer"
+            />
+            <img
+              *ngIf="!rubroGeneral.imagenHashCode"
+              src="/assets/images/rubro-general-no-img.jpg"
+              alt="img-rubroGeneral"
+              class="img-thumbnail rounded"
+              style="width: 100px; cursor: pointer"
+            />
+          </td>
+          <td>{{ rubroGeneral.denominacion }}</td>
+          <td>
+            {{ rubroGeneral.createdAt | date: "yyyy/MM/dd" }}
+          </td>
+          <td>
+            {{ rubroGeneral.updatedAt | date: "yyyy/MM/dd" }}
+          </td>
+          <td>
+            {{
+              (rubroGeneral.estado === 1 ? "Habilitado" : "Deshabilitado")
+                | uppercase
+            }}
+          </td>
+          <td>
+            <a
+              class="btn btn-sm btn-outline-dark"
+              [routerLink]="[
+                '/rubro-articulos-manufacturados/form',
+                rubroGeneral.id
+              ]"
+              >Editar</a
+            >
+          </td>
+          <td>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-danger"
+              (click)="eliminar(rubroGeneral)"
+              [disabled]="!rubroGeneral.estado"
+            >
+              {{ !rubroGeneral.estado ? "Eliminado" : "Eliminar" }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <mat-paginator
+      *ngIf="lista?.length > 0"
+      [length]="totalRegistros"
+      [pageSize]="totalPorPagina"
+      [pageIndex]="paginaActual"
+      [pageSizeOptions]="pageSizeOptions"
+      showFirstLastButtons
+      (page)="paginar($event)"
+    >
+    </mat-paginator>
+  </div>
+</div>

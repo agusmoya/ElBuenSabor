@@ -1,0 +1,363 @@
+<div class="card text-dark bg-light">
+  <div class="card-header">
+    <h2>{{ titulo }}</h2>
+  </div>
+
+  <div class="card-body">
+    <!-- {{ artInsumoForm.value | json }}
+    {{ artInsumoForm.submitted }} -->
+    <form #artInsumoForm="ngForm">
+      <div class="row g-3 align-items-center mt-1">
+        <div class="col-2">
+          <label for="denominacion" class="col-form-label">
+            Denominación:
+          </label>
+        </div>
+        <div class="col-10">
+          <input
+            type="text"
+            id="denominacion"
+            name="denominacion"
+            class="form-control"
+            [(ngModel)]="model.denominacion"
+            #denominacion="ngModel"
+            [ngClass]="{
+              'is-invalid': denominacion.invalid && artInsumoForm.submitted
+            }"
+            required
+          />
+          <small
+            *ngIf="error && error.denominacion"
+            id="errorMessageEmpty"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.denominacion }}</i></small
+          >
+          <small
+            *ngIf="error && error.denominacionUnique"
+            id="errorMessageUnique"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.denominacionUnique }}</i></small
+          >
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-center mt-1" *ngIf="model.id">
+        <div class="col-2">
+          <label for="estado" class="col-form-label"> Estado: </label>
+        </div>
+
+        <div class="col-10">
+          <select
+            class="form-select"
+            id="estado"
+            name="estado"
+            [(ngModel)]="model.estado"
+            #estado="ngModel"
+            [ngClass]="{
+              'is-invalid': estado.invalid && artInsumoForm.submitted
+            }"
+            required
+          >
+            <option value="0" ng-selected="model.estado === 0">
+              Deshabilitar
+            </option>
+            <option value="1" ng-selected="model.estado === 1">
+              Habilitar
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-center mt-1">
+        <div class="col-2">
+          <label for="precioCompra" class="col-form-label">
+            Precio Compra:
+          </label>
+        </div>
+        <div class="col-10">
+          <input
+            type="number"
+            id="precioCompra"
+            name="precioCompra"
+            class="form-control"
+            [(ngModel)]="model.precioCompra"
+            #precioCompra="ngModel"
+            [ngClass]="{
+              'is-invalid': precioCompra.invalid && artInsumoForm.submitted
+            }"
+            required
+          />
+          <small
+            *ngIf="error && error.precioCompra"
+            id="errorMessageEmpty"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.precioCompra }}</i></small
+          >
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-center mt-1">
+        <div class="col-2">
+          <label for="precioVenta" class="col-form-label">
+            Precio Venta:
+          </label>
+        </div>
+        <div class="col-10">
+          <input
+            type="number"
+            id="precioVenta"
+            name="precioVenta"
+            class="form-control"
+            [(ngModel)]="model.precioVenta"
+            #precioVenta="ngModel"
+            [ngClass]="{
+              'is-invalid': precioVenta.invalid && artInsumoForm.submitted
+            }"
+            required
+          />
+          <small
+            *ngIf="error && error.precioVenta"
+            id="errorMessageEmpty"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.precioVenta }}</i></small
+          >
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-center mt-1">
+        <div class="col-2">
+          <label for="stockActual" class="col-form-label">
+            Stock actual:
+          </label>
+        </div>
+        <div class="col-10">
+          <input
+            type="number"
+            id="stockActual"
+            name="stockActual"
+            class="form-control"
+            [(ngModel)]="model.stockActual"
+            #stockActual="ngModel"
+            [ngClass]="{
+              'is-invalid': stockActual.invalid && artInsumoForm.submitted
+            }"
+            required
+          />
+          <small
+            *ngIf="error && error.stockActual"
+            id="errorMessageEmpty"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.stockActual }}</i></small
+          >
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-center mt-1">
+        <div class="col-2">
+          <label for="stockMinimo" class="col-form-label">
+            Stock mínimo:
+          </label>
+        </div>
+        <div class="col-10">
+          <input
+            type="number"
+            id="stockMinimo"
+            name="stockMinimo"
+            class="form-control"
+            [(ngModel)]="model.stockMinimo"
+            #stockMinimo="ngModel"
+            [ngClass]="{
+              'is-invalid': stockMinimo.invalid && artInsumoForm.submitted
+            }"
+            required
+          />
+          <small
+            *ngIf="error && error.stockMinimo"
+            id="errorMessageEmpty"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.stockMinimo }}</i></small
+          >
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-center mt-1">
+        <div class="col-2">
+          <label for="unidadMedida" class="col-form-label">
+            Unidad de medida:
+          </label>
+        </div>
+        <div class="col-10">
+          <input
+            type="text"
+            id="unidadMedida"
+            name="unidadMedida"
+            class="form-control"
+            [(ngModel)]="model.unidadMedida"
+            #unidadMedida="ngModel"
+            [ngClass]="{
+              'is-invalid': unidadMedida.invalid && artInsumoForm.submitted
+            }"
+            required
+          />
+          <small
+            *ngIf="error && error.unidadMedida"
+            id="errorMessageEmpty"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.unidadMedida }}</i></small
+          >
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-center mt-1">
+        <div class="col-2">
+          <label for="esInsumo" class="col-form-label"> Es insumo: </label>
+        </div>
+        <div class="col-10">
+          <select
+            class="form-select"
+            id="esInsumo"
+            name="esInsumo"
+            [(ngModel)]="model.esInsumo"
+            #esInsumo="ngModel"
+            [ngClass]="{
+              'is-invalid': esInsumo.invalid && artInsumoForm.submitted
+            }"
+            required
+          >
+            <option [ngValue]="undefined" disabled>Elija una opción...</option>
+            <option [ngValue]="false">No</option>
+            <option [ngValue]="true">Si</option>
+          </select>
+          <small
+            *ngIf="error && error.esInsumo"
+            id="errorMessageEmpty"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.esInsumo }}</i></small
+          >
+        </div>
+      </div>
+
+      <div *ngIf="!model.esInsumo" class="row g-3 align-items-center mt-1">
+        <div class="col-2">
+          <label for="rubrosPadre" class="col-form-label">
+            Rubros Padres:
+          </label>
+        </div>
+        <div class="col-10">
+          <select
+            class="form-select"
+            id="rubrosPadre"
+            name="rubrosPadre"
+            (change)="cargarHijos()"
+            [compareWith]="compararRubro"
+            [(ngModel)]="model.rubroPadre"
+            #rubroPadre="ngModel"
+            [ngClass]="{
+              'is-invalid': rubroPadre.invalid && artInsumoForm.submitted
+            }"
+            [required]="!model.esInsumo"
+          >
+            <option value="undefined" disabled selected>
+              --- Elija el rubro al que pertenece ---
+            </option>
+            <option
+              *ngFor="let rubro of rubrosPadres"
+              [ngValue]="rubro"
+              [selected]="rubro.denominacion == model.rubroPadre?.denominacion"
+              [disabled]="rubro.denominacion == model.denominacion"
+            >
+              {{ rubro.denominacion }}
+            </option>
+          </select>
+          <small
+            *ngIf="artInsumoForm.submitted && rubroPadre.invalid"
+            id="errorMessageEmpty"
+            class="form-text"
+            style="color: red"
+            ><i>Debe elegir un rubro</i></small
+          >
+        </div>
+      </div>
+
+      <div *ngIf="!model.esInsumo" class="row g-3 align-items-center mt-1">
+        <div class="col-2">
+          <label for="rubrosHijos" class="col-form-label">
+            Rubros Hijos:
+          </label>
+        </div>
+        <div class="col-10">
+          <select
+            class="form-select"
+            id="rubroHijo"
+            name="rubroHijo"
+            [compareWith]="compararRubro"
+            [(ngModel)]="model.rubroHijo"
+            #rubroHijo="ngModel"
+            [required]="!model.esInsumo && rubrosHijos.length > 0"
+            [ngClass]="{
+              'is-invalid':
+                artInsumoForm.submitted &&
+                rubroHijo.invalid &&
+                rubrosHijos.length > 0
+            }"
+          >
+            <option value="undefined" disabled selected>
+              --- Elija el rubro al que pertenece ---
+            </option>
+            <option
+              *ngFor="let rubro of rubrosHijos"
+              [ngValue]="rubro"
+              [selected]="rubro.denominacion == model.rubroHijo?.denominacion"
+              [disabled]="rubro.denominacion == model.denominacion"
+            >
+              {{ rubro.denominacion }}
+            </option>
+          </select>
+          <small
+            *ngIf="
+              artInsumoForm.submitted &&
+              rubroHijo.invalid &&
+              rubrosHijos.length > 0
+            "
+            id="errorMessageEmpty"
+            class="form-text"
+            style="color: red"
+            ><i>Debe elegir un rubro</i></small
+          >
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-center mt-1">
+        <div class="col-2">
+          <label for="imgArtInsumo" class="col-form-label"> Imagen: </label>
+        </div>
+        <div class="col-10">
+          <input
+            (change)="seleccinarFoto($event)"
+            class="form-control"
+            type="file"
+            id="imgArtInsumo"
+          />
+        </div>
+      </div>
+
+      <div class="my-3 text-center mt-5">
+        <a routerLink="/articulos-insumo" class="btn btn-secondary">Volver</a>
+        <button
+          class="btn btn-danger mx-5"
+          (click)="model.id ? editar() : crear()"
+        >
+          {{ model.id ? "Editar" : "Crear" }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

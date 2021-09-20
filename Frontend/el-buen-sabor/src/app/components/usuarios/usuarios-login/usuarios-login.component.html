@@ -1,0 +1,86 @@
+<div class="container my-3">
+  <button (click)="signInWithGoogle()" class="btn btn-outline-dark">
+    Sign In With Google
+  </button>
+</div>
+
+<div class="card text-dark bg-light">
+  <div class="card-header">
+    <h2>{{ titulo }}</h2>
+  </div>
+  <div class="card-body">
+    <form>
+      <div class="row g-3 align-items-center">
+        <div class="col-3">
+          <label for="nombre" class="col-form-label"> Email Usuario: </label>
+        </div>
+        <div class="col-9">
+          <input
+            type="email"
+            id="nombre"
+            name="nombre"
+            class="form-control"
+            [(ngModel)]="model.nombre"
+          />
+          <small
+            *ngIf="!error"
+            id="errorMessage"
+            class="form-text"
+            style="color: grey"
+          >
+            <i> Su nombre de usuario, es el email con el que se registró *</i>
+          </small>
+          <small
+            *ngIf="error && error.nombre"
+            id="errorMessage"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.nombre }}</i>
+          </small>
+          <small
+            *ngIf="error && error.errorUsuario"
+            id="errorMessage"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.errorUsuario }}</i>
+          </small>
+        </div>
+      </div>
+      <div class="row g-3 align-items-center mt-1">
+        <div class="col-3">
+          <label for="clave" class="col-form-label"> Clave: </label>
+        </div>
+        <div class="col-9">
+          <input
+            type="password"
+            id="clave"
+            name="clave"
+            class="form-control"
+            [(ngModel)]="model.clave"
+          />
+          <small
+            *ngIf="error && error.clave"
+            id="errorMessage"
+            class="form-text"
+            style="color: red"
+          >
+            <i>{{ error.clave }}</i>
+          </small>
+          <small
+            *ngIf="error && error.errorClave"
+            id="errorMessage"
+            class="form-text"
+            style="color: red"
+          >
+            <i>{{ error.errorClave }}</i>
+          </small>
+        </div>
+      </div>
+
+      <div class="my-3 text-center mt-5">
+        <a routerLink="/home" class="btn btn-secondary">Volver</a>
+        <button class="btn btn-danger mx-5" (click)="login()">Log In</button>
+      </div>
+    </form>
+  </div>
+</div>

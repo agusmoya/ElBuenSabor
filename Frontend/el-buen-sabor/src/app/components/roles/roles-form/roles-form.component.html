@@ -1,0 +1,98 @@
+<div class="card text-dark bg-light">
+  <div class="card-header">
+    <h2>{{ titulo }}</h2>
+  </div>
+
+  <div class="card-body">
+    <form #rolForm="ngForm">
+      <div class="row g-3 align-items-center">
+        <div class="col-3">
+          <label for="denominacion" class="col-form-label">
+            Denominación:
+          </label>
+        </div>
+        <div class="col-9">
+          <input
+            type="text"
+            id="denominacion"
+            name="denominacion"
+            class="form-control"
+            [(ngModel)]="model.denominacion"
+            #denominacion="ngModel"
+            [ngClass]="{
+              'is-invalid': denominacion.invalid && rolForm.touched,
+              'is-valid': denominacion.valid && rolForm.touched
+            }"
+            required
+          />
+          <small
+            *ngIf="error && error.denominacion"
+            id="errorMessageEmpty"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.denominacion }}</i></small
+          >
+          <small
+            *ngIf="error && error.denominacionUnique"
+            id="errorMessageUnique"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.denominacionUnique }}</i></small
+          >
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-center mt-1" *ngIf="model.id">
+        <div class="col-3">
+          <label for="estado" class="col-form-label"> Estado: </label>
+        </div>
+        <div class="col-9">
+          <select
+            class="form-select"
+            id="estado"
+            name="estado"
+            [(ngModel)]="model.estado"
+            #estado="ngModel"
+            [ngClass]="{
+              'is-invalid': estado.invalid && rolForm.touched,
+              'is-valid': estado.valid && rolForm.touched
+            }"
+            
+          >
+            <option value="0" ng-selected="model.estado === 0">
+              Deshabilitar
+            </option>
+            <option value="1" ng-selected="model.estado === 1">
+              Habilitar
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-center mt-1">
+        <div class="col-3">
+          <label for="imgRol" class="col-form-label"> Imagen: </label>
+        </div>
+        <div class="col-9">
+          <input
+            (change)="seleccinarFoto($event)"
+            class="form-control"
+            type="file"
+            id="imgRol"
+          />
+        </div>
+      </div>
+
+      <div class="my-3 text-center mt-5">
+        <a routerLink="/roles" class="btn btn-secondary">Volver</a>
+        <button
+          [disabled]="!rolForm.valid"
+          class="btn btn-danger mx-5"
+          (click)="model.id ? editar() : crear()"
+        >
+          {{ model.id ? "Editar" : "Crear" }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
