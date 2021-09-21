@@ -64,5 +64,6 @@ export class BebidaDetalleComponent implements OnInit {
       item: artInsumoBebida,
       cantidad: this.cantidadAVerificar,
     });
+    this.cantidadAVerificar = 1;
   }
 }

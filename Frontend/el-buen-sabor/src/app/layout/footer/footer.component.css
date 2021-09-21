@@ -2,9 +2,8 @@
   background-color: #333;
   color: rgb(211, 221, 230);
   text-align: center;
-  min-height: 70px;
   width: 100%;
-  padding: 50px;
+  padding: 31px;
   position: static;        /* for it to disappear under last body element */
   bottom: 0;
 }
