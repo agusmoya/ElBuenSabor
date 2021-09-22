@@ -1,4 +1,4 @@
-<div class="card mt-5 mx-auto" style="max-width: 50%">
+<div class="card mt-5 mx-auto" style="max-width: 100%">
   <div class="row g-0">
     <div class="col-12 col-lg-8 text-center">
       <img
@@ -11,14 +11,14 @@
           artInsumoBebida?.imagenHashCode
         "
         class="img-fluid rounded-start"
-        alt="img-artManuf"
+        alt="img-bebida"
         style="max-width: 100%"
       />
       <img
         *ngIf="!artInsumoBebida?.imagenHashCode"
-        class="img-fluid rounded-start mt-5"
+        class="img-fluid rounded-start p-4"
         src="/assets/images/no-bebida-img.png"
-        alt="img-artManuf"
+        alt="img-bebida"
         style="max-width: 100%"
       />
     </div>
@@ -51,6 +51,7 @@
             <label for="cantidad">Cantidad: </label>
           </b>
           <input
+            [disabled]="usuarioLogueado === null"
             (change)="verificarCantidad($event)"
             (keyup)="verificarCantidad($event)"
             class="form-control"
@@ -61,8 +62,9 @@
             [(ngModel)]="cantidadAVerificar"
           />
         </p>
-        <div class="d-grid mx-auto mt-5">
+        <div class="d-grid mx-auto mt-3">
           <button
+            *ngIf="usuarioLogueado?.email"
             [disabled]="
               !verificado && cantidadAVerificar > artInsumoBebida?.stockActual
             "
@@ -76,6 +78,15 @@
                 : "Agregar a mi pedido"
             }}
           </button>
+          <p *ngIf="usuarioLogueado === null">
+            Debe
+            <a routerLink="/usuarios/form" routerLinkActive="active"
+              >registrarse</a
+            >
+            o estar
+            <a routerLink="/login" routerLinkActive="active">logueado</a>
+            para iniciar un pedido.
+          </p>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
+import Swal from 'sweetalert2';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import Swal from 'sweetalert2';
 import { LocalStorageRefService } from './local-storage-ref-service.service';
 
 interface UserLogged {
@@ -29,11 +29,11 @@ export class LocalStorageService {
 
   filterSameItem(item: any): void {
     const userStorage = this.loadInfo();
-    for (const itemCarroStorage of userStorage.carroCompraItems) {
-      if (itemCarroStorage.product.id === item.product.id) {
-        if (!this.checkStockIf(itemCarroStorage.quantity, item)) return;
+    for (const itemCartStorage of userStorage.carroCompraItems) {
+      if (itemCartStorage.product.id === item.product.id) {
+        if (!this.checkStock(itemCartStorage.quantity, item)) return;
         //INCREMENTAMOS CANTIDAD DEL ITEM QUE *YA EXISTE* EN EL CARRO DE COMPRAS
-        itemCarroStorage.quantity += item.quantity;
+        itemCartStorage.quantity += item.quantity;
         return;
       }
     }
@@ -41,7 +41,7 @@ export class LocalStorageService {
     this._userLogged$.getValue().carroCompraItems.push(item);
   }
 
-  checkStockIf(itemStorageQuantity: number, item: any): boolean {
+  checkStock(itemStorageQuantity: number, item: any): boolean {
     if (item.product.esInsumo !== undefined) {
       // console.log('ADD Drink:', item.product.denominacion);
       return this.verifiedStockDrink(itemStorageQuantity, item);
@@ -66,15 +66,27 @@ export class LocalStorageService {
 
   verifiedStockArtManuf(itemStorageQuantity: number, item: any): boolean {
     const totalQuantity = itemStorageQuantity + item.quantity;
-    if (totalQuantity <= item.product.stockActual) return true;
-    Swal.fire({
-      icon: 'error',
-      title: 'Oops...',
-      text: `No hay suficiente stock. Quedan ${
-        item.product.stockActual - itemStorageQuantity
-      } disponibles.`,
+    let verified = true;
+    console.log('cantidad total: **', totalQuantity);
+
+    item.product.detallesArticuloManufacturado.forEach((detalle) => {
+      if (
+        totalQuantity * detalle.cantidad >
+        detalle.articuloInsumo.stockActual
+      ) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: `No hay suficiente stock para la cantidad solicitada.`,
+          // text: `No hay suficiente stock. Solo quedan ${
+          //   totalQuantity * detalle.cantidad -
+          //   detalle.articuloInsumo.stockActual
+          // } ${detalle.articuloInsumo.unidadMedida} disponibles.`,
+        });
+        verified = false;
+      }
     });
-    return false;
+    return verified;
   }
 
   removeItem(index: any): void {

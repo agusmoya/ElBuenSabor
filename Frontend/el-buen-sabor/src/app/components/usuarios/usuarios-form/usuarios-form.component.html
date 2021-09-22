@@ -1,4 +1,4 @@
-<div class="card text-dark bg-light">
+<div class="card text-dark bg-light mt-5">
   <div class="card-header">
     <h2>{{ titulo }}</h2>
   </div>
@@ -128,7 +128,8 @@
       </div>
 
       <div class="my-3 text-center mt-5">
-        <a routerLink="/usuarios" class="btn btn-secondary">Volver</a>
+        <!-- <a routerLink="/usuarios" class="btn btn-secondary">Volver</a> -->
+        <a (click)="goBack()" class="btn btn-secondary">Volver</a>
         <button
           class="btn btn-danger mx-5"
           (click)="model.id ? editar() : crear()"

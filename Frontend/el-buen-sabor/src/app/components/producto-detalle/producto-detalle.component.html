@@ -1,6 +1,6 @@
-<div class="card mt-5" style="max-width: 100%">
+<div class="card mt-5 mx-auto" style="max-width: 100%">
   <div class="row g-0">
-    <div class="col-12 col-lg-8">
+    <div class="col-12 col-lg-8 text-center">
       <img
         *ngIf="artManufSeleccionado?.imagenHashCode"
         [src]="
@@ -58,9 +58,11 @@
             </span>
           </li>
         </ul>
+
         <p class="card-text my-3">
           <b><label for="cantidad">Cantidad: </label> </b>
           <input
+            [disabled]="usuarioLogueado === null"
             (change)="verificarCantidad($event)"
             (keyup)="verificarCantidad($event)"
             class="form-control"
@@ -73,6 +75,7 @@
         </p>
         <div class="d-grid mx-auto mt-3">
           <button
+            *ngIf="usuarioLogueado?.email"
             [disabled]="!verificado"
             (click)="addToShoppingCart(artManufSeleccionado)"
             class="btn btn-outline-dark"
@@ -80,6 +83,15 @@
           >
             {{ !verificado ? "Sin stock" : "Agregar a mi pedido" }}
           </button>
+          <p *ngIf="usuarioLogueado === null">
+            Debe
+            <a routerLink="/usuarios/form" routerLinkActive="active"
+              >registrarse</a
+            >
+            o estar
+            <a routerLink="/login" routerLinkActive="active">logueado</a>
+            para iniciar un pedido.
+          </p>
         </div>
       </div>
     </div>

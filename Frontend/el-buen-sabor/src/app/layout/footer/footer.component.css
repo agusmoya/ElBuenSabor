@@ -3,8 +3,9 @@
   color: rgb(211, 221, 230);
   text-align: center;
   width: 100%;
+  height:16vh;
   padding: 30px;
-  position: static;        /* for it to disappear under last body element */
+  position: relative;        /* for it to disappear under last body element */
   bottom: 0;
 }
 

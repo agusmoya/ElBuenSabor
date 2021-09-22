@@ -13,17 +13,23 @@ import Swal from 'sweetalert2';
 })
 export class BebidaDetalleComponent implements OnInit {
   artInsumoBebida: ArticuloInsumo;
-  baseEndpoint = BASE_ENDPOINT + '/articulos-manufacturados';
-  verificado: boolean = true;
-  cantidadAVerificar: number = 1;
+  baseEndpoint = BASE_ENDPOINT + '/articulos-insumo';
+  verificado: boolean;
+  cantidadAVerificar: number;
+  usuarioLogueado: any;
 
   constructor(
     private route: ActivatedRoute,
     private serviceArtInsumo: ArticuloInsumoService,
     private _localStorageService: LocalStorageService
-  ) {}
+  ) {
+    this.verificado = true;
+    this.cantidadAVerificar = 1;
+    // this.usuarioLogueado = this._localStorageService.loadInfo();
+  }
 
   ngOnInit(): void {
+    this.usuarioLogueado = this._localStorageService.loadInfo();
     this.route.paramMap.subscribe((params) => {
       const id: number = Number(params.get('id'));
       if (id) {
@@ -32,6 +38,7 @@ export class BebidaDetalleComponent implements OnInit {
         });
       }
     });
+    
   }
 
   verificarCantidad(event: any): void {

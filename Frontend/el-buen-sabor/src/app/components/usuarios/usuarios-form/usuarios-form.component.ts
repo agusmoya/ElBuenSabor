@@ -7,6 +7,8 @@ import { UsuarioService } from 'src/app/services/usuario.service';
 import Swal from 'sweetalert2';
 import { CommonFormComponent } from '../../common-form.component';
 
+import { Location } from '@angular/common';
+
 @Component({
   selector: 'app-usuarios-form',
   templateUrl: './usuarios-form.component.html',
@@ -20,6 +22,7 @@ export class UsuariosFormComponent
   roles: Rol[] = [];
 
   constructor(
+    private location: Location,
     service: UsuarioService,
     private rolService: RolService,
     router: Router,
@@ -119,5 +122,9 @@ export class UsuariosFormComponent
         }
       );
     }
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 }

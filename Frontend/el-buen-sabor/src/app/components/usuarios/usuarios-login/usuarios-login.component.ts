@@ -11,6 +11,8 @@ import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { CommonFormComponent } from '../../common-form.component';
 
+import { Location } from '@angular/common';
+
 @Component({
   selector: 'app-usuarios-login',
   templateUrl: './usuarios-login.component.html',
@@ -24,6 +26,7 @@ export class UsuariosLoginComponent
   userLoggedInfo$ = this._localStorageService.userLogged$;
 
   constructor(
+    private location: Location,
     private _localStorageService: LocalStorageService,
     private socialAuthService: SocialAuthService,
     service: UsuarioService,
@@ -122,4 +125,8 @@ export class UsuariosLoginComponent
     });
   }
   // *** ---------------- ***
+
+  goBack(): void {
+    this.location.back();
+  }
 }

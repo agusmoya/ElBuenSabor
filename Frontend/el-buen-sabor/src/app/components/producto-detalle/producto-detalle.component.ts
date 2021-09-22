@@ -14,16 +14,21 @@ import Swal from 'sweetalert2';
 export class ProductoDetalleComponent implements OnInit {
   baseEndpoint = BASE_ENDPOINT + '/articulos-manufacturados';
   artManufSeleccionado: ArticuloManufacturado;
-  verificado: boolean = true;
-  cantidadAVerificar: number = 1;
+  verificado: boolean;
+  cantidadAVerificar: number;
+  usuarioLogueado: any;
 
   constructor(
     private route: ActivatedRoute,
     private serviceArtManuf: ArticuloManufacturadoService,
     private _localStorageService: LocalStorageService
-  ) {}
+  ) {
+    this.verificado = true;
+    this.cantidadAVerificar = 1;
+  }
 
   ngOnInit(): void {
+    this.usuarioLogueado = this._localStorageService.loadInfo();
     this.route.paramMap.subscribe((params) => {
       const id: number = Number(params.get('id'));
       if (id) {
@@ -32,6 +37,8 @@ export class ProductoDetalleComponent implements OnInit {
           .subscribe((artManuf) => (this.artManufSeleccionado = artManuf));
       }
     });
+    // BORRAR: probando usuario logueado o no!
+    // this.verifiedUserLogged();
   }
 
   verificarCantidad(event: any): void {
@@ -46,6 +53,7 @@ export class ProductoDetalleComponent implements OnInit {
           Swal.fire({
             icon: 'error',
             title: 'Ups...',
+            // text: '¡Lo sentimos, el stock de es insuficiente!',
             text: `¡Lo sentimos, el stock de ${detalleArt.articuloInsumo.denominacion} es insuficiente!`,
           });
           this.cantidadAVerificar = 1;
@@ -55,6 +63,7 @@ export class ProductoDetalleComponent implements OnInit {
             title: 'Ups...',
             text: 'Debe ingresar una cantidad superior a cero.',
           });
+          this.verificado = false;
           this.cantidadAVerificar = 1;
         } else {
           this.verificado = true;
@@ -70,4 +79,8 @@ export class ProductoDetalleComponent implements OnInit {
     });
     this.cantidadAVerificar = 1;
   }
+
+  // verifiedUserLogged(): void {
+  //   console.log(this.usuarioLogueado);
+  // }
 }

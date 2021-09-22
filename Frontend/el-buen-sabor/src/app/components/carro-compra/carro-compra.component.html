@@ -1,1 +1,62 @@
-<p>carro-compra works!</p>
+<div class="card text-dark bg-light">
+  <div class="card-header text-center">
+    <h1 class="pt-3">Carrito de Compras</h1>
+  </div>
+  <div class="card-body">
+    <div class="alert alert-info my-3 text-center" *ngIf="items?.length == 0">
+      ¡El carrito de compras está vacío!
+    </div>
+    <table
+      class="table table-hover table-striped text-center"
+      *ngIf="items?.length > 0"
+    >
+      <thead>
+        <tr>
+          <th class="d-none d-sm-block" scope="col">Imagen</th>
+          <th scope="col">Denominación</th>
+          <th scope="col">Precio</th>
+          <th class="d-none d-sm-block" scope="col">Cantidad</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of items" class="align-middle">
+          <td class="d-none d-sm-block">
+            <img
+              *ngIf="item.imagenHashCode"
+              [src]="
+                baseEndpoint +
+                '/cargar/img/' +
+                item.product.id +
+                '?imagenHashCode=' +
+                item.product.imagenHashCode
+              "
+              alt="img-item"
+              class="img-thumbnail rounded"
+              style="width: 100px; cursor: pointer"
+            />
+            <img
+              *ngIf="!item.imagenHashCode"
+              src="/assets/images/art-manuf-no-img.png"
+              alt="img-artManuf"
+              class="img-thumbnail rounded"
+              style="width: 100px; cursor: pointer"
+            />
+          </td>
+          <td>{{ item.product.denominacion }}</td>
+          <td>$ {{ item.product.precioVenta }} x {{ item.quantity }}</td>
+          <td class="d-none d-sm-block">{{ item.quantity }}</td>
+          <td>
+            <button class="btn btn-sm btn-outline-danger">
+              <i class="fas fa-trash fs-5 p-1"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card-footer text-end">
+    <p class="pl-auto"></p>
+    <p class="mr-auto">Total:</p>
+  </div>
+</div>
