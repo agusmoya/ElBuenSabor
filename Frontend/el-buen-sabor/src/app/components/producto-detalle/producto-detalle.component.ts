@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BASE_ENDPOINT } from 'src/app/config/app';
 import { ArticuloManufacturado } from 'src/app/models/articulo-manufacturado';
-import { ArticuloInsumoService } from 'src/app/services/articulo-insumo.service';
 import { ArticuloManufacturadoService } from 'src/app/services/articulo-manufacturado.service';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-producto-detalle',
@@ -11,13 +12,15 @@ import { ArticuloManufacturadoService } from 'src/app/services/articulo-manufact
   styleUrls: ['./producto-detalle.component.css'],
 })
 export class ProductoDetalleComponent implements OnInit {
-  
-  artManufSeleccionado: ArticuloManufacturado;
   baseEndpoint = BASE_ENDPOINT + '/articulos-manufacturados';
+  artManufSeleccionado: ArticuloManufacturado;
+  verificado: boolean = true;
+  cantidadAVerificar: number = 1;
 
   constructor(
     private route: ActivatedRoute,
-    private serviceArtManuf: ArticuloManufacturadoService
+    private serviceArtManuf: ArticuloManufacturadoService,
+    private _localStorageService: LocalStorageService
   ) {}
 
   ngOnInit(): void {
@@ -29,5 +32,42 @@ export class ProductoDetalleComponent implements OnInit {
           .subscribe((artManuf) => (this.artManufSeleccionado = artManuf));
       }
     });
+  }
+
+  verificarCantidad(event: any): void {
+    const cantidadAverificar: number = event.target.value;
+
+    this.artManufSeleccionado.detallesArticuloManufacturado.forEach(
+      (detalleArt) => {
+        if (
+          detalleArt.articuloInsumo.stockActual <
+          cantidadAverificar * detalleArt.cantidad
+        ) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Ups...',
+            text: `¡Lo sentimos, el stock de ${detalleArt.articuloInsumo.denominacion} es insuficiente!`,
+          });
+          this.cantidadAVerificar = 1;
+        } else if (cantidadAverificar <= 0) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Ups...',
+            text: 'Debe ingresar una cantidad superior a cero.',
+          });
+          this.cantidadAVerificar = 1;
+        } else {
+          this.verificado = true;
+        }
+      }
+    );
+  }
+
+  addToShoppingCart(artManufacturado: ArticuloManufacturado): void {
+    this._localStorageService.addItem({
+      product: artManufacturado,
+      quantity: this.cantidadAVerificar,
+    });
+    this.cantidadAVerificar = 1;
   }
 }

@@ -1,4 +1,4 @@
-<div class="card mt-5" style="max-width: 100%;">
+<div class="card mt-5" style="max-width: 100%">
   <div class="row g-0">
     <div class="col-12 col-lg-8">
       <img
@@ -60,11 +60,25 @@
         </ul>
         <p class="card-text my-3">
           <b><label for="cantidad">Cantidad: </label> </b>
-          <input class="form-control" type="number" name="cantidad" value="1" min="1" max="20"/>
+          <input
+            (change)="verificarCantidad($event)"
+            (keyup)="verificarCantidad($event)"
+            class="form-control"
+            type="number"
+            name="cantidad"
+            value="1"
+            min="1"
+            [(ngModel)]="cantidadAVerificar"
+          />
         </p>
         <div class="d-grid mx-auto mt-3">
-          <button class="btn btn-outline-dark" type="button">
-            Agregar a mi pedido
+          <button
+            [disabled]="!verificado"
+            (click)="addToShoppingCart(artManufSeleccionado)"
+            class="btn btn-outline-dark"
+            type="button"
+          >
+            {{ !verificado ? "Sin stock" : "Agregar a mi pedido" }}
           </button>
         </div>
       </div>

@@ -20,12 +20,9 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit(): void {
     this._localStorageService.loadInfo();
-    if (
-      this.userLoggedInfo$.subscribe((user) =>
-        user ? (this.isLogged = true) : (this.isLogged = false)
-      )
-    ) {
-    }
+    this.userLoggedInfo$.subscribe((user) =>
+      user ? (this.isLogged = true) : (this.isLogged = false)
+    );
   }
 
   logOut(): void {

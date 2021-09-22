@@ -57,12 +57,12 @@ export class BebidaDetalleComponent implements OnInit {
     }
   }
 
-  agregarAlCarroDeCompra(artInsumoBebida: ArticuloInsumo): void {
+  addToShoppingCart(artInsumoBebida: ArticuloInsumo): void {
     // console.log('***Cantidad:', this.cantidadAVerificar);
     // console.log('***ArtInsumo:', artInsumoBebida);
     this._localStorageService.addItem({
-      item: artInsumoBebida,
-      cantidad: this.cantidadAVerificar,
+      product: artInsumoBebida,
+      quantity: this.cantidadAVerificar,
     });
     this.cantidadAVerificar = 1;
   }
