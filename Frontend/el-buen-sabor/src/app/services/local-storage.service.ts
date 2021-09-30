@@ -28,7 +28,7 @@ export class LocalStorageService {
         icon: 'success',
         title: 'Producto agregado al carrito',
         showConfirmButton: false,
-        timer: 1500,
+        timer: 900,
       });
     }
     /*GUARDAMOS LOS CAMBIOS EN EL LOCALSTORAGE*/
@@ -93,13 +93,9 @@ export class LocalStorageService {
   }
 
   removeItem(index: any): void {
-    console.log(index);
-    console.log(this._userLogged$.getValue().carroCompraItems);
-
     this._userLogged$.getValue().carroCompraItems = this._userLogged$
       .getValue()
       .carroCompraItems.filter((item) => item.product.id !== index);
-
     this.setInfo(this._userLogged$.getValue());
   }
 

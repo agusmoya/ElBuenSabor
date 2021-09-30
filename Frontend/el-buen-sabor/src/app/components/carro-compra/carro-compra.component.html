@@ -3,7 +3,7 @@
     <h1 class="pt-3">Carrito de Compras</h1>
   </div>
   <div class="card-body">
-    <div class="alert alert-info my-3 text-center" *ngIf="items?.length == 0">
+    <div class="alert alert-warning my-3 text-center" *ngIf="items?.length == 0">
       ¡El carrito de compras está vacío!
     </div>
     <table
@@ -15,7 +15,6 @@
           <th scope="col">Imagen</th>
           <th scope="col">Denominación</th>
           <th scope="col">Precio</th>
-          <!-- <th scope="col">Cantidad</th> -->
           <th scope="col">Eliminar Item</th>
         </tr>
       </thead>
@@ -45,21 +44,9 @@
           </td>
           <td>{{ item.product.denominacion }}</td>
           <td>$ {{ item.product.precioVenta }} x {{ item.quantity }}</td>
-          <!-- <td>
-            <input
-              (change)="verificarCantidad(item)"
-              (keyup)="verificarCantidad(item)"
-              class="form-group text-center"
-              type="number"
-              name="cantidad"
-              value="1"
-              min="1"
-              [(ngModel)]="item.quantity"
-            />
-          </td> -->
           <td>
             <button
-              (click)="eliminarItem(item.product.id)"
+              (click)="eliminarItem(item)"
               class="btn btn-sm btn-outline-danger"
             >
               <i class="fas fa-trash fs-5 p-1"></i>

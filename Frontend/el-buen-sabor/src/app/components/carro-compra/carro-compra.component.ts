@@ -25,9 +25,9 @@ export class CarroCompraComponent implements OnInit {
   ngOnInit(): void {
     this.userLoggedInfo$.subscribe((user) => {
       this.items = user.carroCompraItems;
-      this.items.forEach((item) => {
-        this.total += item.product.precioVenta * item.quantity;
-      });
+    });
+    this.items.forEach((item) => {
+      this.total += item.product.precioVenta * item.quantity;
     });
   }
 
@@ -38,8 +38,9 @@ export class CarroCompraComponent implements OnInit {
     });
   }
 
-  eliminarItem(productId: number): void {
-    this._localStorageService.removeItem(productId);
+  eliminarItem(item: any): void {
+    this._localStorageService.removeItem(item.product.id);
+    this.total -= item.product.precioVenta * item.quantity;
   }
 
   goBack(): void {

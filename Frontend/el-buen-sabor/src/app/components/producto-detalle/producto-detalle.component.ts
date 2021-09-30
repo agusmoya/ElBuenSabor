@@ -5,6 +5,7 @@ import { ArticuloManufacturado } from 'src/app/models/articulo-manufacturado';
 import { ArticuloManufacturadoService } from 'src/app/services/articulo-manufacturado.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import Swal from 'sweetalert2';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-producto-detalle',
@@ -19,6 +20,7 @@ export class ProductoDetalleComponent implements OnInit {
   usuarioLogueado: any;
 
   constructor(
+    private location: Location,
     private route: ActivatedRoute,
     private serviceArtManuf: ArticuloManufacturadoService,
     private _localStorageService: LocalStorageService
@@ -37,8 +39,6 @@ export class ProductoDetalleComponent implements OnInit {
           .subscribe((artManuf) => (this.artManufSeleccionado = artManuf));
       }
     });
-    // BORRAR: probando usuario logueado o no!
-    // this.verifiedUserLogged();
   }
 
   verificarCantidad(event: any): void {
@@ -80,7 +80,7 @@ export class ProductoDetalleComponent implements OnInit {
     this.cantidadAVerificar = 1;
   }
 
-  // verifiedUserLogged(): void {
-  //   console.log(this.usuarioLogueado);
-  // }
+  goBack(): void {
+    this.location.back();
+  }
 }

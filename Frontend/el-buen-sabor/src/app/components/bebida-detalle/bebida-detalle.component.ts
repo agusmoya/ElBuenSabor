@@ -5,6 +5,7 @@ import { ArticuloInsumo } from 'src/app/models/articulo-insumo';
 import { ArticuloInsumoService } from 'src/app/services/articulo-insumo.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import Swal from 'sweetalert2';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-bebida-detalle',
@@ -19,6 +20,7 @@ export class BebidaDetalleComponent implements OnInit {
   usuarioLogueado: any;
 
   constructor(
+    private location: Location,
     private route: ActivatedRoute,
     private serviceArtInsumo: ArticuloInsumoService,
     private _localStorageService: LocalStorageService
@@ -38,7 +40,6 @@ export class BebidaDetalleComponent implements OnInit {
         });
       }
     });
-    
   }
 
   verificarCantidad(event: any): void {
@@ -72,5 +73,9 @@ export class BebidaDetalleComponent implements OnInit {
       quantity: this.cantidadAVerificar,
     });
     this.cantidadAVerificar = 1;
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 }
