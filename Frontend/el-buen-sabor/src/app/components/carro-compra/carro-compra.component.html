@@ -12,16 +12,16 @@
     >
       <thead>
         <tr>
-          <th class="d-none d-sm-block" scope="col">Imagen</th>
+          <th scope="col">Imagen</th>
           <th scope="col">Denominación</th>
           <th scope="col">Precio</th>
-          <th class="d-none d-sm-block" scope="col">Cantidad</th>
-          <th scope="col"></th>
+          <!-- <th scope="col">Cantidad</th> -->
+          <th scope="col">Eliminar Item</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let item of items" class="align-middle">
-          <td class="d-none d-sm-block">
+          <td>
             <img
               *ngIf="item.imagenHashCode"
               [src]="
@@ -45,9 +45,23 @@
           </td>
           <td>{{ item.product.denominacion }}</td>
           <td>$ {{ item.product.precioVenta }} x {{ item.quantity }}</td>
-          <td class="d-none d-sm-block">{{ item.quantity }}</td>
+          <!-- <td>
+            <input
+              (change)="verificarCantidad(item)"
+              (keyup)="verificarCantidad(item)"
+              class="form-group text-center"
+              type="number"
+              name="cantidad"
+              value="1"
+              min="1"
+              [(ngModel)]="item.quantity"
+            />
+          </td> -->
           <td>
-            <button class="btn btn-sm btn-outline-danger">
+            <button
+              (click)="eliminarItem(item.product.id)"
+              class="btn btn-sm btn-outline-danger"
+            >
               <i class="fas fa-trash fs-5 p-1"></i>
             </button>
           </td>
@@ -56,7 +70,11 @@
     </table>
   </div>
   <div class="card-footer text-end">
-    <p class="pl-auto"></p>
-    <p class="mr-auto">Total:</p>
+    <p class="pt-3 h6">
+      <b>Total: ${{ total }}</b>
+    </p>
+  </div>
+  <div class="text-start m-3">
+    <a (click)="goBack()" class="btn btn-secondary">Volver</a>
   </div>
 </div>

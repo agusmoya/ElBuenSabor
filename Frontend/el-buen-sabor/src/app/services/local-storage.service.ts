@@ -22,52 +22,59 @@ export class LocalStorageService {
   }
 
   addItem(item: any): void {
-    this.filterSameItem(item);
-    /GUARDAMOS LOS CAMBIOS EN EL LOCALSTORAGE/;
+    if (this.filterSameItem(item)) {
+      Swal.fire({
+        position: 'top-end',
+        icon: 'success',
+        title: 'Producto agregado al carrito',
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+    /*GUARDAMOS LOS CAMBIOS EN EL LOCALSTORAGE*/
     this.setInfo(this._userLogged$.getValue());
   }
 
-  filterSameItem(item: any): void {
+  filterSameItem(item: any): boolean {
     const userStorage = this.loadInfo();
     for (const itemCartStorage of userStorage.carroCompraItems) {
       if (itemCartStorage.product.id === item.product.id) {
-        if (!this.checkStock(itemCartStorage.quantity, item)) return;
+        //SIN STOCK. MUESTRO ALERTA Y NO SE REALIZA NINGUNA ACCION
+        if (!this.checkStock(itemCartStorage.quantity, item)) return false;
         //INCREMENTAMOS CANTIDAD DEL ITEM QUE *YA EXISTE* EN EL CARRO DE COMPRAS
         itemCartStorage.quantity += item.quantity;
-        return;
+        return true;
       }
     }
     //AGREGAMOS EL ITEM *NUEVO* AL CARRO DE COMPRAS
     this._userLogged$.getValue().carroCompraItems.push(item);
+    return true;
   }
 
-  checkStock(itemStorageQuantity: number, item: any): boolean {
+  checkStock(storedQuantity: number, item: any): boolean {
     if (item.product.esInsumo !== undefined) {
       // console.log('ADD Drink:', item.product.denominacion);
-      return this.verifiedStockDrink(itemStorageQuantity, item);
+      return this.verifiedStockDrink(storedQuantity, item);
     } else {
       // console.log('ADD ArtManuf:', item.product.denominacion);
-      return this.verifiedStockArtManuf(itemStorageQuantity, item);
+      return this.verifiedStockArtManuf(storedQuantity, item);
     }
   }
 
-  verifiedStockDrink(itemStorageQuantity: number, item: any): boolean {
-    const totalQuantity = itemStorageQuantity + item.quantity;
+  verifiedStockDrink(storedQuantity: number, item: any): boolean {
+    const totalQuantity = storedQuantity + item.quantity;
     if (totalQuantity <= item.product.stockActual) return true;
     Swal.fire({
       icon: 'error',
       title: 'Oops...',
-      text: `No hay suficiente stock. Quedan ${
-        item.product.stockActual - itemStorageQuantity
-      } disponibles.`,
+      text: '¡No hay stock disponible en estos momentos!',
     });
     return false;
   }
 
-  verifiedStockArtManuf(itemStorageQuantity: number, item: any): boolean {
-    const totalQuantity = itemStorageQuantity + item.quantity;
+  verifiedStockArtManuf(storedQuantity: number, item: any): boolean {
+    const totalQuantity = Number(storedQuantity) + Number(item.quantity);
     let verified = true;
-    console.log('cantidad total: **', totalQuantity);
 
     item.product.detallesArticuloManufacturado.forEach((detalle) => {
       if (
@@ -77,11 +84,7 @@ export class LocalStorageService {
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
-          text: `No hay suficiente stock para la cantidad solicitada.`,
-          // text: `No hay suficiente stock. Solo quedan ${
-          //   totalQuantity * detalle.cantidad -
-          //   detalle.articuloInsumo.stockActual
-          // } ${detalle.articuloInsumo.unidadMedida} disponibles.`,
+          text: '¡No hay suficiente stock para la cantidad solicitada!',
         });
         verified = false;
       }
@@ -90,7 +93,14 @@ export class LocalStorageService {
   }
 
   removeItem(index: any): void {
-    this._userLogged$.getValue().carroCompraItems.splice(1, index);
+    console.log(index);
+    console.log(this._userLogged$.getValue().carroCompraItems);
+
+    this._userLogged$.getValue().carroCompraItems = this._userLogged$
+      .getValue()
+      .carroCompraItems.filter((item) => item.product.id !== index);
+
+    this.setInfo(this._userLogged$.getValue());
   }
 
   setInfo(data: UserLogged) {

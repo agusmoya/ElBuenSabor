@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BASE_ENDPOINT } from 'src/app/config/app';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-carro-compra',
@@ -9,15 +10,39 @@ import { LocalStorageService } from 'src/app/services/local-storage.service';
 })
 export class CarroCompraComponent implements OnInit {
   items: any[];
-  // baseEndpointArtManuf = BASE_ENDPOINT + '/articulos-manufacturados';
+  total: number;
   baseEndpoint = BASE_ENDPOINT + '/articulos-manufacturados';
-  // baseEndpointBebidas = BASE_ENDPOINT + '/articulos-insumo';
+  userLoggedInfo$ = this._localStorageService.userLogged$;
 
-  constructor(private _localStorageService: LocalStorageService) {
+  constructor(
+    private location: Location,
+    private _localStorageService: LocalStorageService
+  ) {
     this.items = [];
+    this.total = 0;
   }
 
   ngOnInit(): void {
-    this.items = this._localStorageService.loadInfo().carroCompraItems;
+    this.userLoggedInfo$.subscribe((user) => {
+      this.items = user.carroCompraItems;
+      this.items.forEach((item) => {
+        this.total += item.product.precioVenta * item.quantity;
+      });
+    });
+  }
+
+  verificarCantidad(item: any): void {
+    this._localStorageService.addItem({
+      product: item.product,
+      quantity: item.quantity,
+    });
+  }
+
+  eliminarItem(productId: number): void {
+    this._localStorageService.removeItem(productId);
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 }
