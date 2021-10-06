@@ -11,8 +11,10 @@ import { Location } from '@angular/common';
 export class CarroCompraComponent implements OnInit {
   items: any[];
   total: number;
-  baseEndpoint = BASE_ENDPOINT + '/articulos-manufacturados';
+  baseEndpointArtManuf = BASE_ENDPOINT + '/articulos-manufacturados';
+  baseEndpointBebida = BASE_ENDPOINT + '/articulos-insumo';
   userLoggedInfo$ = this._localStorageService.userLogged$;
+  tipoRetiro: string;
 
   constructor(
     private location: Location,
@@ -20,15 +22,20 @@ export class CarroCompraComponent implements OnInit {
   ) {
     this.items = [];
     this.total = 0;
+    this.tipoRetiro = '';
   }
 
   ngOnInit(): void {
     this.userLoggedInfo$.subscribe((user) => {
-      this.items = user.carroCompraItems;
+      user ? (this.items = user.carroCompraItems) : [];
     });
     this.items.forEach((item) => {
       this.total += item.product.precioVenta * item.quantity;
     });
+  }
+
+  tieneTipoRetiro(): void {
+    console.log(this.tipoRetiro);
   }
 
   verificarCantidad(item: any): void {

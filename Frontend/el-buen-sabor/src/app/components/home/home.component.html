@@ -15,22 +15,14 @@
   <div class="col" *ngFor="let artManuf of arrArtManufacturados">
     <a class="link-prod" [routerLink]="['/producto-detalle', artManuf.id]">
       <div class="card">
-        <img
-          *ngIf="artManuf.imagenHashCode"
-          [src]="
-            baseEndpoint +
+        <img *ngIf="artManuf.imagenHashCode" [src]="
+          baseEndpointArtManuf +
             '/cargar/img/' +
             artManuf.id +
             '?imagenHashCode=' +
             artManuf.imagenHashCode
-          "
-          alt="img-artManuf"
-        />
-        <img
-          *ngIf="!artManuf.imagenHashCode"
-          src="/assets/images/art-manuf-no-img.png"
-          alt="img-artManuf"
-        />
+          " alt="img-artManuf" />
+        <img *ngIf="!artManuf.imagenHashCode" src="/assets/images/art-manuf-no-img.png" alt="img-artManuf" />
 
         <div class="card-body text-center">
           <h2 class="card-title">{{ artManuf.denominacion }}</h2>
@@ -46,22 +38,14 @@
   <div class="col" *ngFor="let bebida of arrBebidas">
     <a class="link-prod" [routerLink]="['/bebida-detalle', bebida.id]">
       <div class="card">
-        <img
-          *ngIf="bebida.imagenHashCode"
-          [src]="
-            baseEndpoint +
+        <img *ngIf="bebida.imagenHashCode" [src]="
+          baseEndpointBebida +
             '/cargar/img/' +
             bebida.id +
             '?imagenHashCode=' +
             bebida.imagenHashCode
-          "
-          alt="img-bebida"
-        />
-        <img
-          *ngIf="!bebida.imagenHashCode"
-          src="/assets/images/no-bebida-img.png"
-          alt="img-bebida"
-        />
+          " alt="img-bebida" />
+        <img *ngIf="!bebida.imagenHashCode" src="/assets/images/no-bebida-img.png" alt="img-bebida" />
 
         <div class="card-body text-center">
           <h2 class="card-title">{{ bebida.denominacion }}</h2>

@@ -11,7 +11,8 @@ import { ArticuloManufacturadoService } from 'src/app/services/articulo-manufact
   styleUrls: ['./home.component.css'],
 })
 export class HomeComponent implements OnInit {
-  baseEndpoint = BASE_ENDPOINT + '/articulos-manufacturados';
+  baseEndpointArtManuf = BASE_ENDPOINT + '/articulos-manufacturados';
+  baseEndpointBebida = BASE_ENDPOINT + '/articulos-insumo';
   arrArtManufacturados: ArticuloManufacturado[];
   arrBebidas: ArticuloInsumo[];
 
@@ -36,7 +37,9 @@ export class HomeComponent implements OnInit {
 
   getBebidas(): void {
     this.serviceArtInsumo.listar().subscribe((articulos) => {
-      this.arrBebidas = articulos.filter((articulo) => !articulo.esInsumo);
+      this.arrBebidas = articulos.filter(
+        (articulo) => articulo.esInsumo == false
+      );
     });
   }
 }
