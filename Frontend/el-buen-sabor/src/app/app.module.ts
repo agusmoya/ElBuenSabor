@@ -36,6 +36,7 @@ import { RubrosGeneralesFormComponent } from './components/rubros-generales/rubr
 import { ProductoDetalleComponent } from './components/producto-detalle/producto-detalle.component';
 import { BebidaDetalleComponent } from './components/bebida-detalle/bebida-detalle.component';
 import { CarroCompraComponent } from './components/carro-compra/carro-compra.component';
+import { PedidosComponent } from './components/pedidos/pedidos.component';
 
 const CLIENT_ID = environment.client_id;
 
@@ -59,6 +60,7 @@ const CLIENT_ID = environment.client_id;
     ProductoDetalleComponent,
     BebidaDetalleComponent,
     CarroCompraComponent,
+    PedidosComponent,
   ],
   imports: [
     MatIconModule,

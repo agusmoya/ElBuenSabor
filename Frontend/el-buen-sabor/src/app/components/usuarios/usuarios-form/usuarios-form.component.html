@@ -10,33 +10,14 @@
           <label for="nombre" class="col-form-label"> Email Usuario: </label>
         </div>
         <div class="col-9">
-          <input
-            type="email"
-            id="nombre"
-            name="nombre"
-            class="form-control"
-            [(ngModel)]="model.nombre"
-          />
-          <small
-            *ngIf="error && error.nombre"
-            id="errorMessageEmpty"
-            class="form-text"
-            style="color: red"
-            ><i>{{ error.nombre }}</i></small
-          >
-          <small
-            *ngIf="error && error.nombreUnique"
-            id="errorMessageUnique"
-            class="form-text"
-            style="color: red"
-            ><i>{{ error.nombreUnique }}</i>
+          <input type="email" id="nombre" name="nombre" class="form-control" [(ngModel)]="model.nombre" />
+          <small *ngIf="error && error.nombre" id="errorMessageEmpty" class="form-text"
+            style="color: red"><i>{{ error.nombre }}</i></small>
+          <small *ngIf="error && error.nombreUnique" id="errorMessageUnique" class="form-text"
+            style="color: red"><i>{{ error.nombreUnique }}</i>
           </small>
-          <small
-            *ngIf="error && error.denominacionUnique"
-            id="errorMessageUnique"
-            class="form-text"
-            style="color: red"
-            ><i>{{ error.denominacionUnique }}</i>
+          <small *ngIf="error && error.denominacionUnique" id="errorMessageUnique" class="form-text"
+            style="color: red"><i>{{ error.denominacionUnique }}</i>
           </small>
         </div>
       </div>
@@ -45,19 +26,8 @@
           <label for="clave" class="col-form-label"> Clave: </label>
         </div>
         <div class="col-9">
-          <input
-            type="text"
-            id="clave"
-            name="clave"
-            class="form-control"
-            [(ngModel)]="model.clave"
-          />
-          <small
-            *ngIf="error && error.clave"
-            id="errorMessageEmpty"
-            class="form-text"
-            style="color: red"
-          >
+          <input type="text" id="clave" name="clave" class="form-control" [(ngModel)]="model.clave" />
+          <small *ngIf="error && error.clave" id="errorMessageEmpty" class="form-text" style="color: red">
             <i>{{ error.clave }}</i>
           </small>
         </div>
@@ -68,28 +38,37 @@
         </div>
 
         <div class="col-9">
-          <select
-            class="form-select"
-            id="rol"
-            name="rol"
-            (change)="seleccionarRol($event)"
-          >
-            <option value="null">Elija un rol</option>
-            <option
-              [value]="rol.id"
-              *ngFor="let rol of roles"
-              [selected]="rol.denominacion == model.rol?.denominacion"
-            >
+          <select class="form-select" id="rol" name="rol" (change)="seleccionarRol($event)">
+            <option value="null" disabled selected>Elija un rol</option>
+            <option [value]="rol.id" *ngFor="let rol of roles" [selected]="rol.denominacion == model.rol?.denominacion">
               {{ rol.denominacion }}
             </option>
           </select>
-          <small
-            *ngIf="error && error.rol"
-            id="errorMessageEmpty"
-            class="form-text"
-            style="color: red"
-            ><i>{{ error.rol }}</i></small
-          >
+          <small *ngIf="error && error.rol" id="errorMessageEmpty" class="form-text"
+            style="color: red"><i>{{ error.rol }}</i></small>
+        </div>
+      </div>
+      <div *ngIf="model?.rol?.denominacion == 'Cliente'" class="row g-3 align-items-center mt-1">
+        <div class="col-3">
+          <label for="nombreCliente" class="col-form-label"> Nombre: </label>
+        </div>
+        <div class="col-9">
+          <input type="text" id="nombreCliente" name="nombreCliente" class="form-control"
+            [(ngModel)]="cliente.nombre" />
+        </div>
+        <div class="col-3">
+          <label for="apellidoCliente" class="col-form-label"> Apellido: </label>
+        </div>
+        <div class="col-9">
+          <input type="text" id="apellidoCliente" name="apellidoCliente" class="form-control"
+            [(ngModel)]="cliente.apellido" />
+        </div>
+        <div class="col-3">
+          <label for="telefonoCliente" class="col-form-label"> Teléfono: </label>
+        </div>
+        <div class="col-9">
+          <input type="text" id="telefonoCliente" name="telefonoCliente" class="form-control"
+            [(ngModel)]="cliente.telefono" />
         </div>
       </div>
       <div class="row g-3 align-items-center mt-1" *ngIf="model.id">
@@ -97,12 +76,7 @@
           <label for="estado" class="col-form-label"> Estado: </label>
         </div>
         <div class="col-9">
-          <select
-            class="form-select"
-            id="estado"
-            name="estado"
-            [(ngModel)]="model.estado"
-          >
+          <select class="form-select" id="estado" name="estado" [(ngModel)]="model.estado">
             <option value="0" [selected]="model.estado === 0">
               Deshabilitado
             </option>
@@ -118,22 +92,13 @@
           <label for="imgUsuario" class="col-form-label"> Imagen: </label>
         </div>
         <div class="col-9">
-          <input
-            (change)="seleccinarFoto($event)"
-            class="form-control"
-            type="file"
-            id="imgUsuario"
-          />
+          <input (change)="seleccinarFoto($event)" class="form-control" type="file" id="imgUsuario" />
         </div>
       </div>
 
       <div class="my-3 text-center mt-5">
-        <!-- <a routerLink="/usuarios" class="btn btn-secondary">Volver</a> -->
         <a (click)="goBack()" class="btn btn-secondary">Volver</a>
-        <button
-          class="btn btn-danger mx-5"
-          (click)="model.id ? editar() : crear()"
-        >
+        <button class="btn btn-danger mx-5" (click)="model.id ? editar() : crear()">
           {{ model.id ? "Editar" : "Crear" }}
         </button>
       </div>

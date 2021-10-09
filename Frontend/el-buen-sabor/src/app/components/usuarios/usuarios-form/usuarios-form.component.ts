@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import { CommonFormComponent } from '../../common-form.component';
 
 import { Location } from '@angular/common';
+import { Cliente } from 'src/app/models/cliente';
 
 @Component({
   selector: 'app-usuarios-form',
@@ -20,6 +21,8 @@ export class UsuariosFormComponent
 {
   private fotoSeleccionada: File;
   roles: Rol[] = [];
+
+  cliente: Cliente;
 
   constructor(
     private location: Location,
@@ -42,10 +45,13 @@ export class UsuariosFormComponent
 
   public seleccionarRol(event: any): void {
     if (event.target.value != 'null') {
-      this.rolService
-        .ver(event.target.value)
-        .subscribe((rol) => (this.model.rol = rol));
-      console.log('Rol: ', this.model.rol);
+      this.rolService.ver(event.target.value).subscribe((rol) => {
+        this.model.rol = rol;
+        if (this.model.rol.denominacion == 'Cliente') {
+          this.cliente = new Cliente();
+        } else {
+        }
+      });
     }
   }
 

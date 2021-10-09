@@ -18,21 +18,23 @@
       <tbody>
         <tr *ngFor="let item of items" class="align-middle">
           <td>
-            <img *ngIf="item?.product.imagenHashCode && item?.product.esInsumo == false" [src]="
-            baseEndpointBebida +
+            <img class="img-thumbnail rounded" style="width: 100px; cursor: pointer" alt="img-item"
+              *ngIf="item?.product.imagenHashCode && item?.product.esInsumo == false" [src]="
+                baseEndpointBebida +
                 '/cargar/img/' +
                 item.product.id +
                 '?imagenHashCode=' +
                 item.product.imagenHashCode
-              " class="img-thumbnail rounded" style="width: 100px; cursor: pointer" alt="img-item" />
-            <img *ngIf="item?.product.imagenHashCode && item?.product.esInsumo == null" [src]="
-            baseEndpointArtManuf +
+              " />
+            <img class="img-thumbnail rounded" style="width: 100px; cursor: pointer" alt="img-item"
+              *ngIf="item?.product.imagenHashCode && item?.product.esInsumo == null" [src]="
+                baseEndpointArtManuf +
                 '/cargar/img/' +
                 item.product.id +
                 '?imagenHashCode=' +
                 item.product.imagenHashCode
-              " class="img-thumbnail rounded" style="width: 100px; cursor: pointer" alt="img-item" />
-            <img *ngIf="!item?.product.imagenHashCode" src="/assets/images/art-manuf-no-img.png" alt="img-artManuf"
+              " />
+            <img *ngIf="!item?.product.imagenHashCode" src="/assets/images/art-manuf-no-img.png" alt="img-item-cart"
               class="img-thumbnail rounded" style="width: 100px; cursor: pointer" />
           </td>
           <td>{{ item?.product.denominacion }}</td>
