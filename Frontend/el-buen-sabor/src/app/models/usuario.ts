@@ -5,5 +5,4 @@ export class Usuario extends Generic {
   clave: string;
   rol: Rol;
   imagenHashCode: number;
-
 }

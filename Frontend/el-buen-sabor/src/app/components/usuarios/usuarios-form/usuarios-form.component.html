@@ -67,8 +67,46 @@
           <label for="telefonoCliente" class="col-form-label"> Teléfono: </label>
         </div>
         <div class="col-9">
-          <input type="text" id="telefonoCliente" name="telefonoCliente" class="form-control"
+          <input type="number" id="telefonoCliente" name="telefonoCliente" class="form-control"
             [(ngModel)]="cliente.telefono" />
+        </div>
+        <div class="col-3">
+          <label for="provincia" class="col-form-label"> Provincia: </label>
+        </div>
+        <div class="col-9">
+          <input type="text" id="provincia" name="provincia" class="form-control" value="Mendoza" disabled />
+        </div>
+        <div class="col-3">
+          <label for="departamento" class="col-form-label"> Departamento: </label>
+        </div>
+        <div class="col-9">
+          <select (change)="seleccionarDpto($event)" class="form-select" name="departamento" id="departamento" required>
+            <option name="nombreDpto" value="undefined" disabled selected>
+              --- Seleccione un departamento ---
+            </option>
+            <option *ngFor="
+              let dpto of departamentos;
+              let indiceDpto = index
+            " [ngValue]="dpto">
+              {{ dpto.nombre }}
+            </option>
+          </select>
+        </div>
+        <div class="col-3">
+          <label for="localidad" class="col-form-label"> Localidad: </label>
+        </div>
+        <div class="col-9">
+          <select (change)="seleccionarLocalidad($event)" class="form-select" name="localidad" id="localidad" required>
+            <option name="nombreDpto" value="undefined" disabled selected>
+              --- Seleccione un localidad ---
+            </option>
+            <option *ngFor="
+              let localidad of localidades;
+              let indiceDpto = index
+            " [ngValue]="localidad">
+              {{ localidad.nombre }}
+            </option>
+          </select>
         </div>
       </div>
       <div class="row g-3 align-items-center mt-1" *ngIf="model.id">

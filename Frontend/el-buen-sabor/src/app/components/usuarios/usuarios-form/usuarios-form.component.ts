@@ -9,6 +9,7 @@ import { CommonFormComponent } from '../../common-form.component';
 
 import { Location } from '@angular/common';
 import { Cliente } from 'src/app/models/cliente';
+import { MendozaService } from 'src/app/services/mendoza.service';
 
 @Component({
   selector: 'app-usuarios-form',
@@ -20,7 +21,9 @@ export class UsuariosFormComponent
   implements OnInit
 {
   private fotoSeleccionada: File;
-  roles: Rol[] = [];
+  roles: Rol[];
+  departamentos: any[];
+  localidades: any[];
 
   cliente: Cliente;
 
@@ -28,6 +31,7 @@ export class UsuariosFormComponent
     private location: Location,
     service: UsuarioService,
     private rolService: RolService,
+    private mendozaService: MendozaService,
     router: Router,
     route: ActivatedRoute
   ) {
@@ -36,6 +40,9 @@ export class UsuariosFormComponent
     this.model = new Usuario();
     this.redirect = '/usuarios';
     this.nombreModelo = Usuario.name;
+    this.roles = [];
+    this.departamentos = [];
+    this.localidades = [];
   }
 
   ngOnInit(): void {
@@ -49,10 +56,37 @@ export class UsuariosFormComponent
         this.model.rol = rol;
         if (this.model.rol.denominacion == 'Cliente') {
           this.cliente = new Cliente();
-        } else {
+          this.mendozaService
+            .getAllDepartamentos()
+            .subscribe((departamentosAPI) => {
+              // console.log(departamentosAPI.departamentos);
+              // departamentosAPI.departamentos.forEach((d) => console.log(d.nombre));
+              this.departamentos = departamentosAPI.departamentos.filter(
+                (d) =>
+                  d.nombre == 'Guaymallén' ||
+                  d.nombre == 'Godoy Cruz' ||
+                  d.nombre == 'Capital' ||
+                  d.nombre == 'Maipú'
+              );
+            });
         }
       });
     }
+  }
+
+  seleccionarDpto(event: any): void {
+    console.log(event.target.value);
+    this.mendozaService
+      .getLocalidadesXdepartamento(event.target.value)
+      .subscribe((localidadesAPI) => {
+        // console.log(localidadesAPI.localidades);
+        // localidadesAPI.localidades.forEach((d) => console.log(d.nombre));
+        this.localidades = localidadesAPI.localidades;
+      });
+  }
+
+  seleccionarLocalidad(event: any): void {
+    console.log(event.target.value);
   }
 
   public seleccinarFoto(event: any): void {

@@ -95,7 +95,7 @@ export class ArticulosManufacturadosFormComponent
 
     // asigno unidad de medida. Quiero que sea el mismo valor
     // en el art-insumo y en art-manufacturado
-    // para trabajar el stock con iguales unidades
+    // para trabajar el stock con unidades iguales
     this.model.detallesArticuloManufacturado[
       posicionArrayArtManufacturados
     ].unidadMedida = objArtInsumo.unidadMedida;
