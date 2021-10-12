@@ -27,8 +27,8 @@ export class UsuariosFormComponent
   cliente: Cliente;
 
   constructor(
-    private location: Location,
     service: UsuarioService,
+    private location: Location,
     private rolService: RolService,
     private clienteService: ClienteService,
     private mendozaService: MendozaService,
@@ -49,13 +49,26 @@ export class UsuariosFormComponent
     super.ngOnInit();
     this.rolService.listar().subscribe((roles) => (this.roles = roles));
     this.listarDepartamentosMendoza();
-    if (
-      this.model.id &&
-      (this.model.rol.denominacion == 'Cliente' ||
-        this.model.rol.denominacion == 'Administrador')
-    ) {
-      this.clienteService.ver();
-    }
+    // if (
+    //   this.model.id &&
+    //   (this.model.rol.denominacion == 'Cliente' ||
+    //     this.model.rol.denominacion == 'Administrador')
+    // ) {
+    //   this.verClienteDeUsuario();
+    // }
+    this.verClienteDeUsuario();
+  }
+
+  verClienteDeUsuario(): void {
+    this.clienteService
+      .buscarPorEmail(this.model.nombre)
+      .subscribe((cliente) => {
+        this.cliente = cliente;
+        console.log('**Nombre usuario:', this.model.nombre);
+        console.log('**Id usuario:', this.model.id);
+        console.log('**Rol usuario:', this.model.rol.denominacion);
+        console.log('**Obj Cliente', cliente);
+      });
   }
 
   listarDepartamentosMendoza(): void {

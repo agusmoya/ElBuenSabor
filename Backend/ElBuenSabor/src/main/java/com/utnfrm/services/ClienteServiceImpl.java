@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ClienteServiceImpl extends BaseServiceImpl<Cliente, Long> implements ClienteService {
+
     @Autowired
     private ClienteRepository clienteRepository;
 

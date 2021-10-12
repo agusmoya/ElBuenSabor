@@ -50,20 +50,20 @@
       </div>
       <div *ngIf="model.rol?.denominacion == 'Cliente' || model.rol?.denominacion == 'Administrador'"
         class="row g-3 align-items-center mt-1">
-        <div class="col-3">
-          <label for="nombreCliente" class="col-form-label"> Nombre: </label>
+        <!-- <div class="col-3">
+          <label for="nombre" class="col-form-label"> Nombre: </label>
         </div>
         <div class="col-9">
-          <input type="text" name="nombreCliente" class="form-control" [(ngModel)]="cliente.nombre" />
+          <input type="text" name="nombre" class="form-control" [(ngModel)]="cliente.nombre" />
         </div>
         <div class="col-3">
-          <label for="apellidoCliente" class="col-form-label"> Apellido: </label>
+          <label for="apellido" class="col-form-label"> Apellido: </label>
         </div>
         <div class="col-9">
-          <input type="text" name="apellidoCliente" class="form-control" [(ngModel)]="cliente.apellido" />
+          <input type="text" name="apellido" class="form-control" [(ngModel)]="cliente.apellido" />
         </div>
         <div class="col-3">
-          <label for="telefonoCliente" class="col-form-label"> Teléfono: </label>
+          <label for="telefono" class="col-form-label"> Teléfono: </label>
         </div>
         <div class="col-9">
           <input type="number" id="telefonoCliente" name="telefonoCliente" class="form-control"
@@ -76,11 +76,11 @@
           <input type="text" name="calle" class="form-control" [(ngModel)]="cliente.domicilio.calle" />
         </div>
         <div class="col-3">
-          <label for="numeroCalle" class="col-form-label"> Numero: </label>
+          <label for="numero" class="col-form-label"> Numero: </label>
         </div>
         <div class="col-9">
           <input type="number" id="numero" name="numero" class="form-control" [(ngModel)]="cliente.domicilio.numero" />
-        </div>
+        </div> -->
 
         <div class="col-3">
           <label for="provincia" class="col-form-label"> Provincia: </label>
@@ -93,7 +93,7 @@
         </div>
         <div class="col-9">
           <select (change)="seleccionarDpto($event)" class="form-select" name="departamento" id="departamento" required>
-            <option name="nombreDpto" value="undefined" disabled selected>
+            <option value="null" disabled selected>
               --- Seleccione un departamento ---
             </option>
             <option *ngFor="
@@ -109,7 +109,7 @@
         </div>
         <div class="col-9">
           <select (change)="seleccionarLocalidad($event)" class="form-select" name="localidad" id="localidad" required>
-            <option name="nombreLocalidad" value="undefined" disabled selected>
+            <option name="localidad" value="null" disabled selected>
               --- Seleccione un localidad ---
             </option>
             <option *ngFor="
