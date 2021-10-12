@@ -28,7 +28,6 @@ export abstract class CommonFormComponent<
       const id: number = Number(params.get('id'));
       if (id) {
         this.service.ver(id).subscribe((entity) => {
-          // metodo para nombrar la entidad a eliminar, dentro del modal de SweetAlert
           this.nombrarEntidad(entity);
           this.titulo = `Editar ${this.nombreModelo}: ${this.denominacionEntidad}`;
           this.model = entity;
@@ -40,7 +39,6 @@ export abstract class CommonFormComponent<
   public crear(): void {
     this.service.crear(this.model).subscribe(
       (entity) => {
-        // metodo para nombrar la entidad a crear, dentro del modal de SweetAlert
         this.nombrarEntidad(entity);
         Swal.fire(
           'Nuevo:',
@@ -78,7 +76,6 @@ export abstract class CommonFormComponent<
   public editar(): void {
     this.service.editar(this.model).subscribe(
       (entity) => {
-        // metodo para nombrar la entidad a crear, dentro del modal de SweetAlert
         this.nombrarEntidad(entity);
         Swal.fire(
           'Modificado',
@@ -96,7 +93,7 @@ export abstract class CommonFormComponent<
     );
   }
 
-  // metodo para nombrar la entidad a crear, dentro del modal de SweetAlert
+  // metodo para nombrar la entidad dentro del modal de SweetAlert
   protected nombrarEntidad(entity: E): void {
     if (entity.denominacion) {
       this.denominacionEntidad = entity.denominacion;

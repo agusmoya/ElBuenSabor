@@ -109,12 +109,12 @@
         </div>
         <div class="col-9">
           <select (change)="seleccionarLocalidad($event)" class="form-select" name="localidad" id="localidad" required>
-            <option name="nombreDpto" value="undefined" disabled selected>
+            <option name="nombreLocalidad" value="undefined" disabled selected>
               --- Seleccione un localidad ---
             </option>
             <option *ngFor="
               let localidad of localidades;
-              let indiceDpto = index
+              let indiceLocalidad = index
             " [ngValue]="localidad">
               {{ localidad.nombre }}
             </option>

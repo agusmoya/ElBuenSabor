@@ -28,7 +28,9 @@ public class Cliente extends Base {
     @Column(unique = true)
     private String email;
 
-    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    // optional = false, cascade = CascadeType.ALL
+    // SOLUCIONA **detached entity passed to persist: com.utnfrm.entities.Usuario; nested exception is org.hibernate.PersistentObjectException**
+    @OneToOne()
     @JoinColumn(name = "fk_usuario")
     private Usuario usuario;
 

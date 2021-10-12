@@ -4,17 +4,12 @@ import { Rol } from 'src/app/models/rol';
 import { Usuario } from 'src/app/models/usuario';
 import { RolService } from 'src/app/services/rol.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
-import Swal from 'sweetalert2';
 import { CommonFormComponent } from '../../common-form.component';
-
 import { Location } from '@angular/common';
 import { Cliente } from 'src/app/models/cliente';
 import { MendozaService } from 'src/app/services/mendoza.service';
-import { Domicilio } from 'src/app/models/domicilio';
-import { Localidad } from 'src/app/models/localidad';
-import { Provincia } from 'src/app/models/provincia';
-import { Departamento } from 'src/app/models/departamento';
 import { ClienteService } from 'src/app/services/cliente.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-usuarios-form',
@@ -53,6 +48,28 @@ export class UsuariosFormComponent
   ngOnInit(): void {
     super.ngOnInit();
     this.rolService.listar().subscribe((roles) => (this.roles = roles));
+    this.listarDepartamentosMendoza();
+    if (
+      this.model.id &&
+      (this.model.rol.denominacion == 'Cliente' ||
+        this.model.rol.denominacion == 'Administrador')
+    ) {
+      this.clienteService.ver();
+    }
+  }
+
+  listarDepartamentosMendoza(): void {
+    this.mendozaService.getAllDepartamentos().subscribe((departamentosAPI) => {
+      // console.log(departamentosAPI.departamentos);
+      // departamentosAPI.departamentos.forEach((d) => console.log(d.nombre));
+      this.departamentos = departamentosAPI.departamentos.filter(
+        (d) =>
+          d.nombre == 'Guaymallén' ||
+          d.nombre == 'Godoy Cruz' ||
+          d.nombre == 'Capital' ||
+          d.nombre == 'Maipú'
+      );
+    });
   }
 
   public seleccionarRol(event: any): void {
@@ -64,26 +81,15 @@ export class UsuariosFormComponent
           this.model.rol.denominacion == 'Administrador'
         ) {
           this.cliente = new Cliente();
-          this.mendozaService
-            .getAllDepartamentos()
-            .subscribe((departamentosAPI) => {
-              // console.log(departamentosAPI.departamentos);
-              // departamentosAPI.departamentos.forEach((d) => console.log(d.nombre));
-              this.departamentos = departamentosAPI.departamentos.filter(
-                (d) =>
-                  d.nombre == 'Guaymallén' ||
-                  d.nombre == 'Godoy Cruz' ||
-                  d.nombre == 'Capital' ||
-                  d.nombre == 'Maipú'
-              );
-            });
+        } else {
+          this.cliente = null;
         }
       });
     }
   }
 
   seleccionarDpto(event: any): void {
-    console.log(event.target.value);
+    // console.log(event.target.value);
     this.cliente.domicilio.localidad.departamento.provincia.denominacion =
       'Mendoza';
     this.cliente.domicilio.localidad.departamento.denominacion =
@@ -96,9 +102,9 @@ export class UsuariosFormComponent
   }
 
   seleccionarLocalidad(event: any): void {
-    console.log(event.target.value);
+    // console.log(event.target.value);
     this.cliente.domicilio.localidad.denominacion = event.target.value;
-    console.log(this.cliente);
+    // console.log(this.cliente);
   }
 
   public seleccinarFoto(event: any): void {
@@ -129,6 +135,11 @@ export class UsuariosFormComponent
   public crear(): void {
     if (!this.fotoSeleccionada) {
       super.crear();
+      if (this.model.rol.denominacion == 'Cliente') {
+        setTimeout(() => {
+          this.crearCliente();
+        }, 500);
+      }
     } else {
       this.service.crearConFoto(this.model, this.fotoSeleccionada).subscribe(
         (usuario) => {
@@ -139,6 +150,11 @@ export class UsuariosFormComponent
             `${this.nombreModelo} * ${this.denominacionEntidad} * creado con éxito`,
             'success'
           );
+          if (this.model.rol.denominacion == 'Cliente') {
+            setTimeout(() => {
+              this.crearCliente();
+            }, 500);
+          }
           this.router.navigate([this.redirect]);
         },
         (err) => {
@@ -149,11 +165,18 @@ export class UsuariosFormComponent
         }
       );
     }
-    if (this.model.rol.denominacion == 'Cliente') {
+  }
+
+  public crearCliente(): void {
+    this.service.buscarPorEmail(this.model.nombre).subscribe((usuario) => {
+      console.log('Usuario mail:', this.model.nombre);
+      this.cliente.email = this.model.nombre;
+      console.log('Usuario encontrado sin cliente:', usuario);
+      this.cliente.usuario = usuario;
       this.clienteService
         .crear(this.cliente)
         .subscribe((cliente) => console.log(cliente));
-    }
+    });
   }
 
   public editar(): void {

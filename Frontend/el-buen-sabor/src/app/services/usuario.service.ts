@@ -46,8 +46,8 @@ export class UsuarioService extends CommonService<Usuario> {
     );
   }
 
-  public buscarPorEmail(email: String): Observable<any> {
-    return this.http.get<any>(`${this.baseEndpoint}/buscar-por-email/${email}`);
+  public buscarPorEmail(email: String): Observable<Usuario> {
+    return this.http.get<Usuario>(`${this.baseEndpoint}/buscar-por-email/${email}`);
   }
 
   public validarUsuario(usuario: Usuario): Observable<Usuario> {
