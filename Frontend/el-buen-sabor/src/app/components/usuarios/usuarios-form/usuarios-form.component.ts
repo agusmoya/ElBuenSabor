@@ -14,6 +14,7 @@ import { Domicilio } from 'src/app/models/domicilio';
 import { Localidad } from 'src/app/models/localidad';
 import { Provincia } from 'src/app/models/provincia';
 import { Departamento } from 'src/app/models/departamento';
+import { ClienteService } from 'src/app/services/cliente.service';
 
 @Component({
   selector: 'app-usuarios-form',
@@ -34,6 +35,7 @@ export class UsuariosFormComponent
     private location: Location,
     service: UsuarioService,
     private rolService: RolService,
+    private clienteService: ClienteService,
     private mendozaService: MendozaService,
     router: Router,
     route: ActivatedRoute
@@ -127,8 +129,6 @@ export class UsuariosFormComponent
   public crear(): void {
     if (!this.fotoSeleccionada) {
       super.crear();
-      if (this.model.rol.denominacion == 'Cliente') {
-      }
     } else {
       this.service.crearConFoto(this.model, this.fotoSeleccionada).subscribe(
         (usuario) => {
@@ -148,6 +148,11 @@ export class UsuariosFormComponent
           }
         }
       );
+    }
+    if (this.model.rol.denominacion == 'Cliente') {
+      this.clienteService
+        .crear(this.cliente)
+        .subscribe((cliente) => console.log(cliente));
     }
   }
 
