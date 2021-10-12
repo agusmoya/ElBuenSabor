@@ -5,4 +5,9 @@ export class Domicilio extends Generic {
   numero: number;
   calle: string;
   localidad: Localidad;
+
+  constructor() {
+    super();
+    this.localidad = new Localidad();
+  }
 }

@@ -9,4 +9,9 @@ export class Cliente extends Generic {
   email: string;
   usuario: Usuario;
   domicilio: Domicilio;
+
+  constructor() {
+    super();
+    this.domicilio = new Domicilio();
+  }
 }

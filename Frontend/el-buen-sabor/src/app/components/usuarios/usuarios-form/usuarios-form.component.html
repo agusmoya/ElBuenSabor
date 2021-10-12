@@ -48,20 +48,19 @@
             style="color: red"><i>{{ error.rol }}</i></small>
         </div>
       </div>
-      <div *ngIf="model?.rol?.denominacion == 'Cliente'" class="row g-3 align-items-center mt-1">
+      <div *ngIf="model.rol?.denominacion == 'Cliente' || model.rol?.denominacion == 'Administrador'"
+        class="row g-3 align-items-center mt-1">
         <div class="col-3">
           <label for="nombreCliente" class="col-form-label"> Nombre: </label>
         </div>
         <div class="col-9">
-          <input type="text" id="nombreCliente" name="nombreCliente" class="form-control"
-            [(ngModel)]="cliente.nombre" />
+          <input type="text" name="nombreCliente" class="form-control" [(ngModel)]="cliente.nombre" />
         </div>
         <div class="col-3">
           <label for="apellidoCliente" class="col-form-label"> Apellido: </label>
         </div>
         <div class="col-9">
-          <input type="text" id="apellidoCliente" name="apellidoCliente" class="form-control"
-            [(ngModel)]="cliente.apellido" />
+          <input type="text" name="apellidoCliente" class="form-control" [(ngModel)]="cliente.apellido" />
         </div>
         <div class="col-3">
           <label for="telefonoCliente" class="col-form-label"> Teléfono: </label>
@@ -70,6 +69,19 @@
           <input type="number" id="telefonoCliente" name="telefonoCliente" class="form-control"
             [(ngModel)]="cliente.telefono" />
         </div>
+        <div class="col-3">
+          <label for="calle" class="col-form-label"> Calle: </label>
+        </div>
+        <div class="col-9">
+          <input type="text" name="calle" class="form-control" [(ngModel)]="cliente.domicilio.calle" />
+        </div>
+        <div class="col-3">
+          <label for="numeroCalle" class="col-form-label"> Numero: </label>
+        </div>
+        <div class="col-9">
+          <input type="number" id="numero" name="numero" class="form-control" [(ngModel)]="cliente.domicilio.numero" />
+        </div>
+
         <div class="col-3">
           <label for="provincia" class="col-form-label"> Provincia: </label>
         </div>
@@ -108,6 +120,7 @@
             </option>
           </select>
         </div>
+
       </div>
       <div class="row g-3 align-items-center mt-1" *ngIf="model.id">
         <div class="col-3">

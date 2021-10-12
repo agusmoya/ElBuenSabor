@@ -10,6 +10,10 @@ import { CommonFormComponent } from '../../common-form.component';
 import { Location } from '@angular/common';
 import { Cliente } from 'src/app/models/cliente';
 import { MendozaService } from 'src/app/services/mendoza.service';
+import { Domicilio } from 'src/app/models/domicilio';
+import { Localidad } from 'src/app/models/localidad';
+import { Provincia } from 'src/app/models/provincia';
+import { Departamento } from 'src/app/models/departamento';
 
 @Component({
   selector: 'app-usuarios-form',
@@ -24,7 +28,6 @@ export class UsuariosFormComponent
   roles: Rol[];
   departamentos: any[];
   localidades: any[];
-
   cliente: Cliente;
 
   constructor(
@@ -54,7 +57,10 @@ export class UsuariosFormComponent
     if (event.target.value != 'null') {
       this.rolService.ver(event.target.value).subscribe((rol) => {
         this.model.rol = rol;
-        if (this.model.rol.denominacion == 'Cliente') {
+        if (
+          this.model.rol.denominacion == 'Cliente' ||
+          this.model.rol.denominacion == 'Administrador'
+        ) {
           this.cliente = new Cliente();
           this.mendozaService
             .getAllDepartamentos()
@@ -76,17 +82,21 @@ export class UsuariosFormComponent
 
   seleccionarDpto(event: any): void {
     console.log(event.target.value);
+    this.cliente.domicilio.localidad.departamento.provincia.denominacion =
+      'Mendoza';
+    this.cliente.domicilio.localidad.departamento.denominacion =
+      event.target.value;
     this.mendozaService
       .getLocalidadesXdepartamento(event.target.value)
       .subscribe((localidadesAPI) => {
-        // console.log(localidadesAPI.localidades);
-        // localidadesAPI.localidades.forEach((d) => console.log(d.nombre));
         this.localidades = localidadesAPI.localidades;
       });
   }
 
   seleccionarLocalidad(event: any): void {
     console.log(event.target.value);
+    this.cliente.domicilio.localidad.denominacion = event.target.value;
+    console.log(this.cliente);
   }
 
   public seleccinarFoto(event: any): void {
@@ -117,6 +127,8 @@ export class UsuariosFormComponent
   public crear(): void {
     if (!this.fotoSeleccionada) {
       super.crear();
+      if (this.model.rol.denominacion == 'Cliente') {
+      }
     } else {
       this.service.crearConFoto(this.model, this.fotoSeleccionada).subscribe(
         (usuario) => {
