@@ -23,8 +23,8 @@
             #denominacion="ngModel"
             [ngClass]="{
               'is-invalid':
-                denominacion.invalid &&
-                (artManufactForm.submitted || denominacion.touched)
+                (denominacion.invalid && denominacion.touched) ||
+                artManufactForm.submitted
             }"
             required
           />
@@ -42,6 +42,16 @@
             style="color: red"
             ><i>{{ error.denominacionUnique }}</i></small
           >
+          <small
+            *ngIf="
+              (denominacion.invalid && denominacion.touched) ||
+              artManufactForm.submitted
+            "
+            id="errorMessageUnique"
+            class="form-text"
+            style="color: red"
+            ><i>Este campo es obligatorio</i>
+          </small>
         </div>
       </div>
 
@@ -62,8 +72,9 @@
             #tiempoEstimadoCocina="ngModel"
             [ngClass]="{
               'is-invalid':
-                tiempoEstimadoCocina.invalid &&
-                (artManufactForm.submitted || tiempoEstimadoCocina.touched)
+                (tiempoEstimadoCocina.invalid &&
+                  tiempoEstimadoCocina.touched) ||
+                artManufactForm.submitted
             }"
             required
           />
@@ -74,6 +85,16 @@
             style="color: red"
             ><i>{{ error.tiempoEstimadoCocina }}</i></small
           >
+          <small
+            *ngIf="
+              (tiempoEstimadoCocina.invalid && tiempoEstimadoCocina.touched) ||
+              artManufactForm.submitted
+            "
+            id="errorMessageUnique"
+            class="form-text"
+            style="color: red"
+            ><i>Este campo es obligatorio</i>
+          </small>
         </div>
       </div>
 
@@ -94,8 +115,8 @@
             #precioVenta="ngModel"
             [ngClass]="{
               'is-invalid':
-                precioVenta.invalid &&
-                (artManufactForm.submitted || precioVenta.touched)
+                (precioVenta.invalid && precioVenta.touched) ||
+                artManufactForm.submitted
             }"
             required
           />
@@ -104,8 +125,19 @@
             id="errorMessage"
             class="form-text"
             style="color: red"
-            ><i>{{ error.precioVenta }}</i></small
           >
+            <i>{{ error.precioVenta }}</i>
+          </small>
+          <small
+            *ngIf="
+              (precioVenta.invalid && precioVenta.touched) ||
+              artManufactForm.submitted
+            "
+            id="errorMessageUnique"
+            class="form-text"
+            style="color: red"
+            ><i>Este campo es obligatorio</i>
+          </small>
         </div>
       </div>
 
@@ -164,12 +196,10 @@
             }"
             required
           >
-            <option value="0" ng-selected="model.estado === 0">
+            <option value="0" [selected]="model.estado === 0">
               Deshabilitar
             </option>
-            <option value="1" ng-selected="model.estado === 1">
-              Habilitar
-            </option>
+            <option value="1" [selected]="model.estado === 1">Habilitar</option>
           </select>
         </div>
       </div>

@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "departamentos")
@@ -16,12 +18,13 @@ import javax.persistence.*;
 //@Audited
 public class Departamento extends Base {
 
-
     @Column
+    @NotEmpty
     private String nombre;
 
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "fk_provincia")
+    @NotNull
     private Provincia provincia;
 
 }

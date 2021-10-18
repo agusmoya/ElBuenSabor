@@ -223,7 +223,6 @@ export class UsuariosFormComponent
             `${this.nombreModelo} * ${this.denominacionEntidad} * actualizado con éxito`,
             'success'
           );
-          this.router.navigate([this.redirect]);
           if (
             this.model.rol.denominacion == 'Cliente' ||
             this.model.rol.denominacion == 'Administrador'
@@ -232,6 +231,7 @@ export class UsuariosFormComponent
               this.editarCliente();
             }, 500);
           }
+          this.router.navigate([this.redirect]);
         },
         (err) => {
           if (err.status === 400) {
@@ -244,25 +244,53 @@ export class UsuariosFormComponent
   }
 
   public crearCliente(): void {
-    this.service.buscarPorEmail(this.model.nombre).subscribe((usuario) => {
-      this.cliente.email = this.model.nombre;
-      this.cliente.usuario = usuario;
-      this.clienteService
-        .crear(this.cliente)
-        .subscribe((cliente) => console.log(cliente));
-    });
+    this.service.buscarPorEmail(this.model.nombre).subscribe(
+      (usuario) => {
+        this.cliente.email = this.model.nombre;
+        this.cliente.usuario = usuario;
+        this.clienteService.crear(this.cliente).subscribe(
+          (cliente) => console.log(cliente),
+          (err) => {
+            if (err.status === 400) {
+              this.error = err.error;
+              console.log(this.error);
+            }
+          }
+        );
+      },
+      (err) => {
+        if (err.status === 400) {
+          this.error = err.error;
+          console.log(this.error);
+        }
+      }
+    );
   }
 
   public editarCliente(): void {
-    this.service.buscarPorEmail(this.model.nombre).subscribe((usuario) => {
-      // console.log('Usuario mail:', this.model.nombre);
-      this.cliente.email = this.model.nombre;
-      // console.log('Usuario encontrado sin cliente:', usuario);
-      this.cliente.usuario = usuario;
-      this.clienteService
-        .editar(this.cliente)
-        .subscribe((cliente) => console.log(cliente));
-    });
+    this.service.buscarPorEmail(this.model.nombre).subscribe(
+      (usuario) => {
+        // console.log('Usuario mail:', this.model.nombre);
+        this.cliente.email = this.model.nombre;
+        // console.log('Usuario encontrado sin cliente:', usuario);
+        this.cliente.usuario = usuario;
+        this.clienteService.editar(this.cliente).subscribe(
+          (cliente) => console.log(cliente),
+          (err) => {
+            if (err.status === 400) {
+              this.error = err.error;
+              console.log(this.error);
+            }
+          }
+        );
+      },
+      (err) => {
+        if (err.status === 400) {
+          this.error = err.error;
+          console.log(this.error);
+        }
+      }
+    );
   }
 
   goBack(): void {

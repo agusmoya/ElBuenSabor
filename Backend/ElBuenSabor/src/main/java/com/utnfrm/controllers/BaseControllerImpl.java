@@ -86,7 +86,7 @@ public abstract class BaseControllerImpl<E extends Base, S extends BaseServiceIm
     protected ResponseEntity<?> validar(BindingResult result) {
         Map<String, Object> errores = new HashMap<>();
         result.getFieldErrors().forEach(error -> {
-            errores.put(error.getField(), "Este campo " + " " + error.getDefaultMessage());
+            errores.put(error.getField(), "Este campo " + error.getDefaultMessage());
         });
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores);
     }

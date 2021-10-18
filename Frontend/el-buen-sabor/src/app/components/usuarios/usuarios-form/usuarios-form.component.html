@@ -2,9 +2,7 @@
   <div class="card-header">
     <h2>{{ titulo }}</h2>
   </div>
-
-  {{ usuarioForm.value | json }}
-
+  <!-- {{ usuarioForm.value | json }} -->
   <div class="card-body">
     <form #usuarioForm="ngForm">
       <div class="row g-3 align-items-center">
@@ -18,14 +16,20 @@
             id="nombre"
             name="nombre"
             [(ngModel)]="model.nombre"
+            #nombre="ngModel"
+            required
+            [ngClass]="{
+              'is-invalid':
+                (nombre.invalid && nombre.touched) || usuarioForm.submitted
+            }"
           />
           <small
-            *ngIf="error && error.nombre"
+            *ngIf="!model.nombre && error && error.nombre"
             id="errorMessageEmpty"
             class="form-text"
             style="color: red"
-            ><i>{{ error.nombre }}</i></small
-          >
+            ><i>{{ error.nombre }}</i>
+          </small>
           <small
             *ngIf="error && error.nombreUnique"
             id="errorMessageUnique"
@@ -40,6 +44,13 @@
             style="color: red"
             ><i>{{ error.denominacionUnique }}</i>
           </small>
+          <small
+            *ngIf="(nombre.invalid && nombre.touched) || usuarioForm.submitted"
+            id="errorMessageUnique"
+            class="form-text"
+            style="color: red"
+            ><i>Este campo es obligatorio</i>
+          </small>
         </div>
       </div>
       <div class="row g-3 align-items-center mt-1">
@@ -53,6 +64,12 @@
             name="clave"
             class="form-control"
             [(ngModel)]="model.clave"
+            #clave="ngModel"
+            required
+            [ngClass]="{
+              'is-invalid':
+                (clave.invalid && clave.touched) || usuarioForm.submitted
+            }"
           />
           <small
             *ngIf="error && error.clave"
@@ -62,19 +79,26 @@
           >
             <i>{{ error.clave }}</i>
           </small>
+          <small
+            *ngIf="(clave.invalid && clave.touched) || usuarioForm.submitted"
+            id="errorMessageUnique"
+            class="form-text"
+            style="color: red"
+            ><i>Este campo es obligatorio</i>
+          </small>
         </div>
       </div>
       <div class="row g-3 align-items-center mt-1">
         <div class="col-3">
           <label for="estado" class="col-form-label"> Rol: </label>
         </div>
-
         <div class="col-9">
           <select
             class="form-select"
             id="rol"
             name="rol"
             (change)="asignarRol($event)"
+            required
           >
             <option value="null" disabled selected>Elija un rol</option>
             <option
@@ -90,8 +114,8 @@
             id="errorMessageEmpty"
             class="form-text"
             style="color: red"
-            ><i>{{ error.rol }}</i></small
-          >
+            ><i>{{ error.rol }}</i>
+          </small>
         </div>
       </div>
       <div
@@ -111,7 +135,31 @@
             class="form-control"
             name="nombreCliente"
             [(ngModel)]="cliente.nombre"
+            required
+            #nombreCliente="ngModel"
+            [ngClass]="{
+              'is-invalid':
+                (nombreCliente.invalid && nombreCliente.touched) ||
+                usuarioForm.submitted
+            }"
           />
+          <small
+            *ngIf="!cliente.nombre && error && error.nombre"
+            id="errorMessageEmpty"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.nombre }}</i>
+          </small>
+          <small
+            *ngIf="
+              (nombreCliente.invalid && nombreCliente.touched) ||
+              usuarioForm.submitted
+            "
+            id="errorMessageUnique"
+            class="form-text"
+            style="color: red"
+            ><i>Este campo es obligatorio</i>
+          </small>
         </div>
         <div class="col-3">
           <label for="apellido" class="col-form-label"> Apellido: </label>
@@ -122,7 +170,29 @@
             class="form-control"
             name="apellido"
             [(ngModel)]="cliente.apellido"
+            #apellido="ngModel"
+            required
+            [ngClass]="{
+              'is-invalid':
+                (apellido.invalid && apellido.touched) || usuarioForm.submitted
+            }"
           />
+          <small
+            *ngIf="error && error.apellido"
+            id="errorMessageEmpty"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.apellido }}</i>
+          </small>
+          <small
+            *ngIf="
+              (apellido.invalid && apellido.touched) || usuarioForm.submitted
+            "
+            id="errorMessageUnique"
+            class="form-text"
+            style="color: red"
+            ><i>Este campo es obligatorio</i>
+          </small>
         </div>
         <div class="col-3">
           <label for="telefono" class="col-form-label"> Teléfono: </label>
@@ -133,7 +203,29 @@
             class="form-control"
             name="telefono"
             [(ngModel)]="cliente.telefono"
+            #telefono="ngModel"
+            required
+            [ngClass]="{
+              'is-invalid':
+                (telefono.invalid && telefono.touched) || usuarioForm.submitted
+            }"
           />
+          <small
+            *ngIf="error && error.telefono"
+            id="errorMessageEmpty"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.telefono }}</i>
+          </small>
+          <small
+            *ngIf="
+              (telefono.invalid && telefono.touched) || usuarioForm.submitted
+            "
+            id="errorMessageUnique"
+            class="form-text"
+            style="color: red"
+            ><i>Este campo es obligatorio</i>
+          </small>
         </div>
         <div class="col-3">
           <label for="calle" class="col-form-label"> Calle: </label>
@@ -144,7 +236,20 @@
             name="calle"
             class="form-control"
             [(ngModel)]="cliente.domicilio.calle"
+            #calle="ngModel"
+            required
+            [ngClass]="{
+              'is-invalid':
+                (calle.invalid && calle.touched) || usuarioForm.submitted
+            }"
           />
+          <small
+            *ngIf="(calle.invalid && calle.touched) || usuarioForm.submitted"
+            id="errorMessageUnique"
+            class="form-text"
+            style="color: red"
+            ><i>Este campo es obligatorio</i>
+          </small>
         </div>
         <div class="col-3">
           <label for="numero" class="col-form-label"> Numero: </label>
@@ -156,7 +261,20 @@
             name="numero"
             class="form-control"
             [(ngModel)]="cliente.domicilio.numero"
+            #numero="ngModel"
+            required
+            [ngClass]="{
+              'is-invalid':
+                (numero.invalid && numero.touched) || usuarioForm.submitted
+            }"
           />
+          <small
+            *ngIf="(numero.invalid && numero.touched) || usuarioForm.submitted"
+            id="errorMessageUnique"
+            class="form-text"
+            style="color: red"
+            ><i>Este campo es obligatorio</i>
+          </small>
         </div>
 
         <div class="col-3">
@@ -182,12 +300,20 @@
             class="form-select"
             name="departamento"
             required
+            [(ngModel)]="cliente.domicilio.localidad.departamento.nombre"
+            #departamento="ngModel"
+            [ngClass]="{
+              'is-invalid':
+                (departamento.invalid && departamento.touched) ||
+                usuarioForm.submitted
+            }"
           >
             <option
-              value="null"
+              *ngIf="!model.id"
+              [value]="cliente.domicilio.localidad.departamento.nombre"
               disabled
               [selected]="
-                cliente.domicilio.localidad.departamento.nombre?.length <= 0
+                cliente.domicilio.localidad.departamento.nombre === undefined
               "
             >
               --- Seleccione un departamento ---
@@ -202,6 +328,16 @@
               {{ dpto.nombre }}
             </option>
           </select>
+          <small
+            *ngIf="
+              (departamento.invalid && departamento.touched) ||
+              usuarioForm.submitted
+            "
+            id="errorMessageUnique"
+            class="form-text"
+            style="color: red"
+            ><i>Este campo es obligatorio</i>
+          </small>
         </div>
         <div class="col-3">
           <label for="localidad" class="col-form-label"> Localidad: </label>
@@ -212,11 +348,19 @@
             class="form-select"
             name="localidad"
             required
+            [(ngModel)]="cliente.domicilio.localidad.nombre"
+            #localidad="ngModel"
+            [ngClass]="{
+              'is-invalid':
+                (localidad.invalid && localidad.touched) ||
+                usuarioForm.submitted
+            }"
           >
             <option
-              value="null"
+              *ngIf="!model.id"
+              [value]="cliente.domicilio.localidad.nombre"
               disabled
-              [selected]="cliente.domicilio.localidad.nombre?.length <= 0"
+              [selected]="cliente.domicilio.localidad.nombre === undefined"
             >
               --- Seleccione un localidad ---
             </option>
@@ -230,6 +374,15 @@
               {{ localidad.nombre }}
             </option>
           </select>
+          <small
+            *ngIf="
+              (localidad.invalid && localidad.touched) || usuarioForm.submitted
+            "
+            id="errorMessageUnique"
+            class="form-text"
+            style="color: red"
+            ><i>Este campo es obligatorio</i>
+          </small>
         </div>
       </div>
       <div class="row g-3 align-items-center mt-1" *ngIf="model.id">
@@ -265,6 +418,7 @@
       <div class="my-3 text-center mt-5">
         <a (click)="goBack()" class="btn btn-secondary">Volver</a>
         <button
+          [disabled]="usuarioForm.invalid"
           class="btn btn-danger mx-5"
           (click)="model.id ? editar() : crear()"
         >

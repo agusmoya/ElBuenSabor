@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "provincias")
@@ -18,5 +19,6 @@ import javax.persistence.*;
 public class Provincia extends Base {
 
     @Column
+    @NotEmpty
     private String nombre;
 }

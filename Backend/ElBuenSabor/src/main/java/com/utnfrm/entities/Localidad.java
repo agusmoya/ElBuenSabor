@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "localidades")
@@ -17,9 +19,11 @@ import javax.persistence.*;
 public class Localidad extends Base {
 
     @Column
+    @NotEmpty
     private String nombre;
 
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "fk_departamento")
+    @NotNull
     private Departamento departamento;
 }
