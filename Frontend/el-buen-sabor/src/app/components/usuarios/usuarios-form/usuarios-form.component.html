@@ -3,21 +3,42 @@
     <h2>{{ titulo }}</h2>
   </div>
 
+  {{ usuarioForm.value | json }}
+
   <div class="card-body">
-    <form>
+    <form #usuarioForm="ngForm">
       <div class="row g-3 align-items-center">
         <div class="col-3">
           <label for="nombre" class="col-form-label"> Email Usuario: </label>
         </div>
         <div class="col-9">
-          <input type="email" id="nombre" name="nombre" class="form-control" [(ngModel)]="model.nombre" />
-          <small *ngIf="error && error.nombre" id="errorMessageEmpty" class="form-text"
-            style="color: red"><i>{{ error.nombre }}</i></small>
-          <small *ngIf="error && error.nombreUnique" id="errorMessageUnique" class="form-text"
-            style="color: red"><i>{{ error.nombreUnique }}</i>
+          <input
+            class="form-control"
+            type="email"
+            id="nombre"
+            name="nombre"
+            [(ngModel)]="model.nombre"
+          />
+          <small
+            *ngIf="error && error.nombre"
+            id="errorMessageEmpty"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.nombre }}</i></small
+          >
+          <small
+            *ngIf="error && error.nombreUnique"
+            id="errorMessageUnique"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.nombreUnique }}</i>
           </small>
-          <small *ngIf="error && error.denominacionUnique" id="errorMessageUnique" class="form-text"
-            style="color: red"><i>{{ error.denominacionUnique }}</i>
+          <small
+            *ngIf="error && error.denominacionUnique"
+            id="errorMessageUnique"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.denominacionUnique }}</i>
           </small>
         </div>
       </div>
@@ -26,8 +47,19 @@
           <label for="clave" class="col-form-label"> Clave: </label>
         </div>
         <div class="col-9">
-          <input type="text" id="clave" name="clave" class="form-control" [(ngModel)]="model.clave" />
-          <small *ngIf="error && error.clave" id="errorMessageEmpty" class="form-text" style="color: red">
+          <input
+            type="text"
+            id="clave"
+            name="clave"
+            class="form-control"
+            [(ngModel)]="model.clave"
+          />
+          <small
+            *ngIf="error && error.clave"
+            id="errorMessageEmpty"
+            class="form-text"
+            style="color: red"
+          >
             <i>{{ error.clave }}</i>
           </small>
         </div>
@@ -38,68 +70,135 @@
         </div>
 
         <div class="col-9">
-          <select class="form-select" id="rol" name="rol" (change)="seleccionarRol($event)">
+          <select
+            class="form-select"
+            id="rol"
+            name="rol"
+            (change)="asignarRol($event)"
+          >
             <option value="null" disabled selected>Elija un rol</option>
-            <option [value]="rol.id" *ngFor="let rol of roles" [selected]="rol.denominacion == model.rol?.denominacion">
+            <option
+              [value]="rol.id"
+              *ngFor="let rol of roles"
+              [selected]="rol.denominacion == model.rol?.denominacion"
+            >
               {{ rol.denominacion }}
             </option>
           </select>
-          <small *ngIf="error && error.rol" id="errorMessageEmpty" class="form-text"
-            style="color: red"><i>{{ error.rol }}</i></small>
+          <small
+            *ngIf="error && error.rol"
+            id="errorMessageEmpty"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.rol }}</i></small
+          >
         </div>
       </div>
-      <div *ngIf="model.rol?.denominacion == 'Cliente' || model.rol?.denominacion == 'Administrador'"
-        class="row g-3 align-items-center mt-1">
-        <!-- <div class="col-3">
-          <label for="nombre" class="col-form-label"> Nombre: </label>
+      <div
+        *ngIf="
+          cliente &&
+          (model.rol?.denominacion == 'Cliente' ||
+            model.rol?.denominacion == 'Administrador')
+        "
+        class="row g-3 align-items-center mt-1"
+      >
+        <div class="col-3">
+          <label for="nombreCliente" class="col-form-label"> Nombre: </label>
         </div>
         <div class="col-9">
-          <input type="text" name="nombre" class="form-control" [(ngModel)]="cliente.nombre" />
+          <input
+            type="text"
+            class="form-control"
+            name="nombreCliente"
+            [(ngModel)]="cliente.nombre"
+          />
         </div>
         <div class="col-3">
           <label for="apellido" class="col-form-label"> Apellido: </label>
         </div>
         <div class="col-9">
-          <input type="text" name="apellido" class="form-control" [(ngModel)]="cliente.apellido" />
+          <input
+            type="text"
+            class="form-control"
+            name="apellido"
+            [(ngModel)]="cliente.apellido"
+          />
         </div>
         <div class="col-3">
           <label for="telefono" class="col-form-label"> Teléfono: </label>
         </div>
         <div class="col-9">
-          <input type="number" id="telefonoCliente" name="telefonoCliente" class="form-control"
-            [(ngModel)]="cliente.telefono" />
+          <input
+            type="number"
+            class="form-control"
+            name="telefono"
+            [(ngModel)]="cliente.telefono"
+          />
         </div>
         <div class="col-3">
           <label for="calle" class="col-form-label"> Calle: </label>
         </div>
         <div class="col-9">
-          <input type="text" name="calle" class="form-control" [(ngModel)]="cliente.domicilio.calle" />
+          <input
+            type="text"
+            name="calle"
+            class="form-control"
+            [(ngModel)]="cliente.domicilio.calle"
+          />
         </div>
         <div class="col-3">
           <label for="numero" class="col-form-label"> Numero: </label>
         </div>
         <div class="col-9">
-          <input type="number" id="numero" name="numero" class="form-control" [(ngModel)]="cliente.domicilio.numero" />
-        </div> -->
+          <input
+            type="number"
+            id="numero"
+            name="numero"
+            class="form-control"
+            [(ngModel)]="cliente.domicilio.numero"
+          />
+        </div>
 
         <div class="col-3">
           <label for="provincia" class="col-form-label"> Provincia: </label>
         </div>
         <div class="col-9">
-          <input type="text" id="provincia" name="provincia" class="form-control" value="Mendoza" disabled />
+          <input
+            type="text"
+            class="form-control"
+            name="provincia"
+            value="Mendoza"
+            disabled
+          />
         </div>
         <div class="col-3">
-          <label for="departamento" class="col-form-label"> Departamento: </label>
+          <label for="departamento" class="col-form-label">
+            Departamento:
+          </label>
         </div>
         <div class="col-9">
-          <select (change)="seleccionarDpto($event)" class="form-select" name="departamento" id="departamento" required>
-            <option value="null" disabled selected>
+          <select
+            (change)="asignarDpto($event)"
+            class="form-select"
+            name="departamento"
+            required
+          >
+            <option
+              value="null"
+              disabled
+              [selected]="
+                cliente.domicilio.localidad.departamento.nombre?.length <= 0
+              "
+            >
               --- Seleccione un departamento ---
             </option>
-            <option *ngFor="
-              let dpto of departamentos;
-              let indiceDpto = index
-            " [ngValue]="dpto">
+            <option
+              *ngFor="let dpto of departamentos; let indiceDpto = index"
+              [value]="dpto.nombre"
+              [selected]="
+                cliente.domicilio.localidad.departamento.nombre === dpto.nombre
+              "
+            >
               {{ dpto.nombre }}
             </option>
           </select>
@@ -108,26 +207,37 @@
           <label for="localidad" class="col-form-label"> Localidad: </label>
         </div>
         <div class="col-9">
-          <select (change)="seleccionarLocalidad($event)" class="form-select" name="localidad" id="localidad" required>
-            <option name="localidad" value="null" disabled selected>
+          <select
+            (change)="asignarLocalidad($event)"
+            class="form-select"
+            name="localidad"
+            required
+          >
+            <option
+              value="null"
+              disabled
+              [selected]="cliente.domicilio.localidad.nombre?.length <= 0"
+            >
               --- Seleccione un localidad ---
             </option>
-            <option *ngFor="
-              let localidad of localidades;
-              let indiceLocalidad = index
-            " [ngValue]="localidad">
+            <option
+              *ngFor="let localidad of localidades; let indiceLocalidad = index"
+              [value]="localidad.nombre"
+              [selected]="
+                cliente.domicilio.localidad.nombre === localidad.nombre
+              "
+            >
               {{ localidad.nombre }}
             </option>
           </select>
         </div>
-
       </div>
       <div class="row g-3 align-items-center mt-1" *ngIf="model.id">
         <div class="col-3">
           <label for="estado" class="col-form-label"> Estado: </label>
         </div>
         <div class="col-9">
-          <select class="form-select" id="estado" name="estado" [(ngModel)]="model.estado">
+          <select class="form-select" name="estado" [(ngModel)]="model.estado">
             <option value="0" [selected]="model.estado === 0">
               Deshabilitado
             </option>
@@ -143,13 +253,21 @@
           <label for="imgUsuario" class="col-form-label"> Imagen: </label>
         </div>
         <div class="col-9">
-          <input (change)="seleccinarFoto($event)" class="form-control" type="file" id="imgUsuario" />
+          <input
+            (change)="seleccinarFoto($event)"
+            class="form-control"
+            type="file"
+            id="imgUsuario"
+          />
         </div>
       </div>
 
       <div class="my-3 text-center mt-5">
         <a (click)="goBack()" class="btn btn-secondary">Volver</a>
-        <button class="btn btn-danger mx-5" (click)="model.id ? editar() : crear()">
+        <button
+          class="btn btn-danger mx-5"
+          (click)="model.id ? editar() : crear()"
+        >
           {{ model.id ? "Editar" : "Crear" }}
         </button>
       </div>

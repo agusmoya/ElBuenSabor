@@ -69,10 +69,10 @@ export class ArticulosManufacturadosFormComponent
   }
 
   asignarRubroGeneral(event: any): void {
-    let rubroSelecionado: RubroGeneral = this.arrayRubrosGenerales.find(
+    let rubroSeleccionado: RubroGeneral = this.arrayRubrosGenerales.find(
       (rubro) => rubro.denominacion == event.target.value
     );
-    this.model.rubroGeneral = rubroSelecionado;
+    this.model.rubroGeneral = rubroSeleccionado;
     console.log(this.model);
   }
 

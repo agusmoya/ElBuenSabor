@@ -15,8 +15,8 @@ export class ClienteService extends CommonService<Cliente> {
     super(http);
   }
 
-  public buscarPorEmail(email: String): Observable<Cliente> {
-    return this.http.get<Cliente>(
+  public buscarPorEmail(email: String): Observable<any> {
+    return this.http.get<any>(
       `${this.baseEndpoint}/buscar-por-email/${email}`
     );
   }
