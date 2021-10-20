@@ -26,7 +26,7 @@ public class Domicilio extends Base {
     @NotEmpty
     private int numero;
 
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(optional = false, cascade = CascadeType.MERGE)
     @JoinColumn(name = "fk_localidad")
     @NotNull
     private Localidad localidad;

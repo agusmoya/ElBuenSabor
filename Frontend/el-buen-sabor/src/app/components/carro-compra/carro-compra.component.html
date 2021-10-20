@@ -3,10 +3,16 @@
     <h1 class="pt-3">Carrito de Compras</h1>
   </div>
   <div class="card-body">
-    <div class="alert alert-warning my-3 text-center" *ngIf="items?.length == 0">
+    <div
+      class="alert alert-warning my-3 text-center"
+      *ngIf="items?.length == 0"
+    >
       ¡El carrito de compras está vacío!
     </div>
-    <table class="table table-hover table-striped text-center" *ngIf="items?.length > 0">
+    <table
+      class="table table-hover table-striped text-center"
+      *ngIf="items?.length > 0"
+    >
       <thead>
         <tr>
           <th scope="col">Imagen</th>
@@ -18,29 +24,51 @@
       <tbody>
         <tr *ngFor="let item of items" class="align-middle">
           <td>
-            <img class="img-thumbnail rounded" style="width: 100px; cursor: pointer" alt="img-item"
-              *ngIf="item?.product.imagenHashCode && item?.product.esInsumo == false" [src]="
+            <img
+              class="img-thumbnail rounded"
+              style="width: 100px; cursor: pointer"
+              alt="img-item"
+              *ngIf="
+                item?.product.imagenHashCode && item?.product.esInsumo == false
+              "
+              [src]="
                 baseEndpointBebida +
                 '/cargar/img/' +
                 item.product.id +
                 '?imagenHashCode=' +
                 item.product.imagenHashCode
-              " />
-            <img class="img-thumbnail rounded" style="width: 100px; cursor: pointer" alt="img-item"
-              *ngIf="item?.product.imagenHashCode && item?.product.esInsumo == null" [src]="
+              "
+            />
+            <img
+              class="img-thumbnail rounded"
+              style="width: 100px; cursor: pointer"
+              alt="img-item"
+              *ngIf="
+                item?.product.imagenHashCode && item?.product.esInsumo == null
+              "
+              [src]="
                 baseEndpointArtManuf +
                 '/cargar/img/' +
                 item.product.id +
                 '?imagenHashCode=' +
                 item.product.imagenHashCode
-              " />
-            <img *ngIf="!item?.product.imagenHashCode" src="/assets/images/art-manuf-no-img.png" alt="img-item-cart"
-              class="img-thumbnail rounded" style="width: 100px; cursor: pointer" />
+              "
+            />
+            <img
+              *ngIf="!item?.product.imagenHashCode"
+              src="/assets/images/art-manuf-no-img.png"
+              alt="img-item-cart"
+              class="img-thumbnail rounded"
+              style="width: 100px; cursor: pointer"
+            />
           </td>
           <td>{{ item?.product.denominacion }}</td>
           <td>$ {{ item?.product.precioVenta }} x {{ item?.quantity }}</td>
           <td>
-            <button (click)="eliminarItem(item)" class="btn btn-sm btn-outline-danger">
+            <button
+              (click)="eliminarItem(item)"
+              class="btn btn-sm btn-outline-danger"
+            >
               <i class="fas fa-trash fs-5 p-1"></i>
             </button>
           </td>
@@ -49,27 +77,230 @@
     </table>
   </div>
   <div *ngIf="items?.length != 0" class="card-footer text-center">
+    <h2>Despacho de pedido:</h2>
     <label class="list-group-item">
-      <input (change)="tieneTipoRetiro()" class="form-check-input" type="radio" name="tipoRetiro" id="local"
-        value="local" [(ngModel)]="tipoRetiro">
+      <input
+        (change)="tieneTipoRetiro()"
+        class="form-check-input"
+        type="radio"
+        name="tipoRetiro"
+        id="local"
+        value="local"
+        [(ngModel)]="tipoRetiro"
+      />
       Retiro en Local
     </label>
     <label class="list-group-item">
-      <input (change)="tieneTipoRetiro()" class="form-check-input" type="radio" name="tipoRetiro" id="domicilio"
-        value="domicilio" [(ngModel)]="tipoRetiro">
+      <input
+        (change)="tieneTipoRetiro()"
+        class="form-check-input"
+        type="radio"
+        name="tipoRetiro"
+        id="domicilio"
+        value="domicilio"
+        [(ngModel)]="tipoRetiro"
+      />
       Envío a Domicilio
     </label>
-    <small *ngIf="tipoRetiro.length == 0" style="color:red"><i>*Debe seleccionar una opción antes de finalizar
-        pedido</i></small>
+    <small *ngIf="tipoRetiro.length == 0" style="color: red">
+      <i>*Debe seleccionar una opción antes de finalizar pedido</i>
+    </small>
+  </div>
+  <div
+    *ngIf="tipoRetiro.length != 0 && tipoRetiro == 'domicilio'"
+    class="card-footer"
+  >
+    <h2 class="text-center">Domicilio del cliente:</h2>
+    <div class="row g-3 align-items-center mt-1">
+      <div class="col-3">
+        <label for="telefono" class="col-form-label"> Teléfono: </label>
+      </div>
+      <div class="col-9">
+        <input
+          type="number"
+          class="form-control"
+          name="telefono"
+          [(ngModel)]="cliente.telefono"
+          #telefono="ngModel"
+          required
+          [ngClass]="{
+            'is-invalid': telefono.invalid && telefono.touched
+          }"
+        />
+
+        <small
+          *ngIf="telefono.invalid && telefono.touched"
+          id="errorMessageUnique"
+          class="form-text"
+          style="color: red"
+          ><i>Este campo es obligatorio</i>
+        </small>
+      </div>
+      <div class="col-3">
+        <label for="calle" class="col-form-label"> Calle: </label>
+      </div>
+      <div class="col-9">
+        <input
+          type="text"
+          name="calle"
+          class="form-control"
+          [(ngModel)]="cliente.domicilio.calle"
+          #calle="ngModel"
+          required
+          [ngClass]="{
+            'is-invalid': calle.invalid && calle.touched
+          }"
+        />
+        <small
+          *ngIf="calle.invalid && calle.touched"
+          id="errorMessageUnique"
+          class="form-text"
+          style="color: red"
+          ><i>Este campo es obligatorio</i>
+        </small>
+      </div>
+      <div class="col-3">
+        <label for="numero" class="col-form-label"> Numero: </label>
+      </div>
+      <div class="col-9">
+        <input
+          type="number"
+          id="numero"
+          name="numero"
+          class="form-control"
+          [(ngModel)]="cliente.domicilio.numero"
+          #numero="ngModel"
+          required
+          [ngClass]="{
+            'is-invalid': numero.invalid && numero.touched
+          }"
+        />
+        <small
+          *ngIf="numero.invalid && numero.touched"
+          id="errorMessageUnique"
+          class="form-text"
+          style="color: red"
+          ><i>Este campo es obligatorio</i>
+        </small>
+      </div>
+      <div class="col-3">
+        <label for="departamento" class="col-form-label"> Departamento: </label>
+      </div>
+      <div class="col-9">
+        <select
+          (change)="asignarDpto($event)"
+          class="form-select"
+          name="departamento"
+          required
+          [(ngModel)]="cliente.domicilio.localidad.departamento.nombre"
+          #departamento="ngModel"
+          [ngClass]="{
+            'is-invalid': departamento.invalid && departamento.touched
+          }"
+        >
+          <option
+            *ngFor="let dpto of departamentos; let indiceDpto = index"
+            [value]="dpto.nombre"
+            [selected]="
+              cliente.domicilio.localidad.departamento.nombre === dpto.nombre
+            "
+          >
+            {{ dpto.nombre }}
+          </option>
+        </select>
+        <small
+          *ngIf="departamento.invalid && departamento.touched"
+          id="errorMessageUnique"
+          class="form-text"
+          style="color: red"
+          ><i>Este campo es obligatorio</i>
+        </small>
+      </div>
+      <div class="col-3">
+        <label for="localidad" class="col-form-label"> Localidad: </label>
+      </div>
+      <div class="col-9">
+        <select
+          (change)="modificarLocalidad($event)"
+          class="form-select"
+          name="localidad"
+          required
+          [(ngModel)]="cliente.domicilio.localidad.nombre"
+          #localidad="ngModel"
+          [ngClass]="{
+            'is-invalid': localidad.invalid && localidad.touched
+          }"
+        >
+          <option
+            *ngFor="let localidad of localidades; let indiceLocalidad = index"
+            [value]="localidad.nombre"
+            [selected]="cliente.domicilio.localidad.nombre === localidad.nombre"
+          >
+            {{ localidad.nombre }}
+          </option>
+        </select>
+        <small
+          *ngIf="localidad.invalid && localidad.touched"
+          id="errorMessageUnique"
+          class="form-text"
+          style="color: red"
+          ><i>Este campo es obligatorio</i>
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="tipoRetiro && tipoRetiro.length > 0"
+    class="card-footer text-center"
+  >
+    <h2>Método de pago:</h2>
+    <label *ngIf="tipoRetiro != 'domicilio'" class="list-group-item">
+      <input
+        (change)="tieneMetodoPago()"
+        class="form-check-input"
+        type="radio"
+        name="metodoPago"
+        id="efectivo"
+        value="efectivo"
+        [(ngModel)]="metodoPago"
+      />
+      Efectivo
+    </label>
+    <label class="list-group-item">
+      <input
+        (change)="tieneMetodoPago()"
+        class="form-check-input"
+        type="radio"
+        name="metodoPago"
+        id="mercadoPago"
+        value="mercadoPago"
+        [(ngModel)]="metodoPago"
+      />
+      Mercado Pago
+    </label>
+    <small *ngIf="metodoPago.length == 0" style="color: red">
+      <i>*Debe seleccionar una opción antes de finalizar pedido</i>
+    </small>
   </div>
   <div *ngIf="items?.length != 0" class="card-footer text-end">
     <p>
       <b>Subtotal: ${{ total }}</b>
     </p>
-    <p class="h6">
-      <b>Total: ${{ total }}</b>
+    <p *ngIf="tipoRetiro == 'local'">
+      <b>Dto. retiro local -10%: ${{ total * 0.1 }}</b>
     </p>
-    <button type="button" class="btn btn-warning" [disabled]="tipoRetiro.length == 0">Confirmar Pedido</button>
+    <p class="h6">
+      <b>Total: ${{ tipoRetiro == "local" ? total - total * 0.1 : total }}</b>
+    </p>
+    <button
+      type="button"
+      class="btn btn-warning"
+      [disabled]="tipoRetiro.length == 0 || metodoPago.length == 0"
+      (click)="crearPedido()"
+    >
+      Confirmar Pedido
+    </button>
   </div>
   <div class="text-start m-3">
     <a (click)="goBack()" class="btn btn-secondary">Volver</a>

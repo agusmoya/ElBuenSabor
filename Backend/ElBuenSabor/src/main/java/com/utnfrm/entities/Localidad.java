@@ -22,7 +22,7 @@ public class Localidad extends Base {
     @NotEmpty
     private String nombre;
 
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(optional = false, cascade = CascadeType.MERGE)
     @JoinColumn(name = "fk_departamento")
     @NotNull
     private Departamento departamento;
