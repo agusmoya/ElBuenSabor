@@ -1,3 +1,12 @@
 import { Generic } from './generic';
 
-export class EstadoPedido extends Generic {}
+enum Status {
+  Pendiente = 'PENDIENTE',
+  EnProceso = 'EN PROCESO',
+  Terminado = 'TERMINADO',
+  EnCamino = 'EN CAMINO',
+}
+export class EstadoPedido extends Generic {
+  static readonly estado = Status;
+  denominacion: string;
+}

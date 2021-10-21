@@ -5,6 +5,11 @@ import { Location } from '@angular/common';
 import { ClienteService } from 'src/app/services/cliente.service';
 import { Cliente } from 'src/app/models/cliente';
 import { MendozaService } from 'src/app/services/mendoza.service';
+import { DetallePedido } from 'src/app/models/detalle-pedido';
+import { Pedido } from 'src/app/models/pedido';
+import { EstadoPedido } from 'src/app/models/estado-pedido';
+import { MercadoPagoDatos } from 'src/app/models/mercado-pago-datos';
+import { Factura } from 'src/app/models/factura';
 
 @Component({
   selector: 'app-carro-compra',
@@ -126,11 +131,38 @@ export class CarroCompraComponent implements OnInit {
   }
 
   crearPedido(): void {
+    const pedido: Pedido = new Pedido();
+    const itemsCarroCompra =
+      this._localStorageService.loadInfo().carroCompraItems;
 
-    
+    itemsCarroCompra.forEach((item) => {
+      this.cargarDetalleDePedido(pedido, item);
+    });
 
+    pedido.cliente = this.cliente;
+    pedido.domicilio = this.cliente.domicilio;
+    pedido.fecha = new Date();
+    pedido.horaEstimadaFin = new Date();
+    // pedido.horaEstimadaFin.setMinutes(pedido.fecha.getMinutes()+ 'SUMATORIA');
+    pedido.tipoEnvio = this.tipoRetiro == 'local' ? 0 : 1;
+    // pedido.mercadoPagoDatos = new MercadoPagoDatos();
+    // pedido.factura = new Factura();
+    pedido.estadosPedido.push();
 
+    pedido.numero = Pedido.NUMERO++;
+  }
 
+  cargarDetalleDePedido(pedido: Pedido, item: any): void {
+    const detalle = new DetallePedido();
+    detalle.cantidad = item.quantity;
+    detalle.subtotal = item.product.precioVenta * item.quantity;
+
+    if (item.product.esInsumo && item.product.esInsumo === false) {
+      detalle.articuloInsumo = item.product;
+    } else {
+      detalle.articuloManufacturado = item.product;
+    }
+    pedido.detallesPedido.push(detalle);
   }
 
   goBack(): void {

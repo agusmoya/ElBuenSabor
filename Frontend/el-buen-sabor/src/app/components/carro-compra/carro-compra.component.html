@@ -296,9 +296,10 @@
     <button
       type="button"
       class="btn btn-warning"
-      [disabled]="tipoRetiro.length == 0 || metodoPago.length == 0"
+      
       (click)="crearPedido()"
     >
+    <!-- [disabled]="tipoRetiro.length == 0 || metodoPago.length == 0" -->
       Confirmar Pedido
     </button>
   </div>
