@@ -10,6 +10,9 @@ import { Pedido } from 'src/app/models/pedido';
 import { EstadoPedido } from 'src/app/models/estado-pedido';
 import { MercadoPagoDatos } from 'src/app/models/mercado-pago-datos';
 import { Factura } from 'src/app/models/factura';
+import { UsuarioService } from 'src/app/services/usuario.service';
+import { PedidoService } from 'src/app/services/pedido.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-carro-compra',
@@ -17,7 +20,7 @@ import { Factura } from 'src/app/models/factura';
   styleUrls: ['./carro-compra.component.css'],
 })
 export class CarroCompraComponent implements OnInit {
-  items: any[];
+  itemsCarroCompra: any[];
   total: number;
   baseEndpointArtManuf = BASE_ENDPOINT + '/articulos-manufacturados';
   baseEndpointBebida = BASE_ENDPOINT + '/articulos-insumo';
@@ -27,39 +30,40 @@ export class CarroCompraComponent implements OnInit {
   cliente: Cliente;
   departamentos: any[];
   localidades: any[];
+  cocinerosDisponibles: any[];
+  pedidosEnCocina: Pedido[];
 
   constructor(
     private location: Location,
     private clienteService: ClienteService,
+    private usuarioService: UsuarioService,
+    private pedidoService: PedidoService,
     private mendozaService: MendozaService,
     private _localStorageService: LocalStorageService
   ) {
-    this.items = [];
+    this.itemsCarroCompra = [];
     this.total = 0;
     this.tipoRetiro = '';
     this.metodoPago = '';
     this.departamentos = [];
     this.localidades = [];
+    this.cocinerosDisponibles = [];
+    this.pedidosEnCocina = [];
   }
 
   ngOnInit(): void {
+    this.obtenerItemsCarroCompra();
     this.verCliente();
     this.listarDepartamentosMendoza();
     this.listarLocalidadesMendoza();
-
-    this.userLoggedInfo$.subscribe((user) => {
-      user ? (this.items = user.carroCompraItems) : [];
-    });
-    this.items.forEach((item) => {
-      this.total += item.product.precioVenta * item.quantity;
-    });
+    this.obtenerCocinerosDisponibles();
+    this.obtenerPedidosEnCocina();
   }
 
   verCliente(): void {
     const emailUser = this._localStorageService.loadInfo().email;
     this.clienteService.buscarPorEmail(emailUser).subscribe((cliente) => {
       this.cliente = cliente;
-      console.log(this.cliente);
     });
   }
 
@@ -92,11 +96,10 @@ export class CarroCompraComponent implements OnInit {
   }
 
   modificarLocalidad(event: any): void {
-    console.log(event.target.value);
+    // console.log(event.target.value);
   }
 
   asignarDpto(event: any): void {
-    console.log(event.target.value);
     this.cliente.domicilio.localidad.departamento.nombre = event.target.value;
     this.cliente.domicilio.localidad.departamento.provincia.nombre = 'Mendoza';
     this.mendozaService
@@ -105,17 +108,17 @@ export class CarroCompraComponent implements OnInit {
         this.localidades = localidadesAPI.localidades;
       });
   }
+
   asignarLocalidad(event: any): void {
     this.cliente.domicilio.localidad.nombre = event.target.value;
-    console.log(this.cliente);
   }
 
   tieneTipoRetiro(): void {
-    console.log(this.tipoRetiro);
+    // console.log(this.tipoRetiro);
   }
 
   tieneMetodoPago(): void {
-    console.log(this.metodoPago);
+    // console.log(this.metodoPago);
   }
 
   verificarCantidad(item: any): void {
@@ -131,28 +134,45 @@ export class CarroCompraComponent implements OnInit {
   }
 
   crearPedido(): void {
-    const pedido: Pedido = new Pedido();
-    const itemsCarroCompra =
-      this._localStorageService.loadInfo().carroCompraItems;
+    const pedido = new Pedido();
 
-    itemsCarroCompra.forEach((item) => {
-      this.cargarDetalleDePedido(pedido, item);
+    this.itemsCarroCompra.forEach((item) => {
+      this.cargarDetallesDePedido(pedido, item);
     });
 
     pedido.cliente = this.cliente;
     pedido.domicilio = this.cliente.domicilio;
     pedido.fecha = new Date();
     pedido.horaEstimadaFin = new Date();
-    // pedido.horaEstimadaFin.setMinutes(pedido.fecha.getMinutes()+ 'SUMATORIA');
+
+    pedido.horaEstimadaFin.setMinutes(
+      pedido.fecha.getMinutes() + this.calcularHoraEstimadaPedido(pedido)
+    );
+
+    // 0 --> local | 1 --> domicilio
     pedido.tipoEnvio = this.tipoRetiro == 'local' ? 0 : 1;
+
     // pedido.mercadoPagoDatos = new MercadoPagoDatos();
+
     // pedido.factura = new Factura();
-    pedido.estadosPedido.push();
+
+    pedido.estadosPedido.push(new EstadoPedido(EstadoPedido.status.Pendiente));
 
     pedido.numero = Pedido.NUMERO++;
+
+    console.log('** Pedido: ', pedido);
   }
 
-  cargarDetalleDePedido(pedido: Pedido, item: any): void {
+  obtenerItemsCarroCompra(): void {
+    this.userLoggedInfo$.subscribe((user) => {
+      user ? (this.itemsCarroCompra = user.carroCompraItems) : ''; //[]
+    });
+    this.itemsCarroCompra.forEach((item) => {
+      this.total += item.product.precioVenta * item.quantity;
+    });
+  }
+
+  cargarDetallesDePedido(pedido: Pedido, item: any): void {
     const detalle = new DetallePedido();
     detalle.cantidad = item.quantity;
     detalle.subtotal = item.product.precioVenta * item.quantity;
@@ -163,6 +183,85 @@ export class CarroCompraComponent implements OnInit {
       detalle.articuloManufacturado = item.product;
     }
     pedido.detallesPedido.push(detalle);
+  }
+
+  calcularHoraEstimadaPedido(pedido: Pedido): number {
+    let totalTiempoEstimadoPedidoActual: number = 0;
+
+    let tiempoEstimadoArticulosSolicitados: number =
+      this.calcularTiempoEstimadoDeArticulosSolicitados(pedido);
+
+    let tiempoEstimadoDePedidosEnCocina =
+      this.obtenerTiempoEstimadoDePedidosEnCocina();
+
+    if (this.cocinerosDisponibles.length == 0) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: '¡No hay Cocineros disponibles!',
+      });
+    } else {
+      totalTiempoEstimadoPedidoActual =
+        tiempoEstimadoArticulosSolicitados +
+        tiempoEstimadoDePedidosEnCocina / this.cocinerosDisponibles.length;
+
+      pedido.tipoEnvio === 1 ? (totalTiempoEstimadoPedidoActual += 10) : 0;
+    }
+
+    return totalTiempoEstimadoPedidoActual;
+  }
+
+  // resolver la condicion del if
+  calcularTiempoEstimadoDeArticulosSolicitados(pedido: Pedido): number {
+    let tiempoEstimado = 0;
+    pedido.detallesPedido.forEach((detalle) => {
+      if (detalle.articuloManufacturado && !detalle.articuloInsumo) {
+        tiempoEstimado += detalle.articuloManufacturado.tiempoEstimadoCocina;
+        console.log(detalle.articuloManufacturado);
+        console.log(tiempoEstimado);
+      }
+    });
+    console.log('Tiempo estimado Art. Solicitados: ', tiempoEstimado);
+
+    return tiempoEstimado;
+  }
+
+  obtenerTiempoEstimadoDePedidosEnCocina(): number {
+    let tiempoEstimado = 0;
+
+    if (this.pedidosEnCocina.length != 0) {
+      this.pedidosEnCocina.forEach((pedido) => {
+        pedido.detallesPedido.forEach((detalle) => {
+          tiempoEstimado += detalle.articuloManufacturado.tiempoEstimadoCocina;
+        });
+      });
+    }
+
+    return tiempoEstimado;
+  }
+
+  obtenerPedidosEnCocina(): void {
+    this.pedidoService.listar().subscribe((pedidos) => {
+      this.pedidosEnCocina = pedidos.filter(
+        (pedido) =>
+          pedido.estadosPedido.length == 2 &&
+          pedido.estadosPedido[1].denominacion == 'APROBADO'
+      );
+    });
+  }
+
+  obtenerCocinerosDisponibles(): void {
+    this.usuarioService.listar().subscribe((usuarios) => {
+      usuarios.forEach((user) => {
+        if (
+          user.estado == 1 &&
+          user.rol.estado == 1 &&
+          user.rol.denominacion == 'Cocinero'
+        ) {
+          this.cocinerosDisponibles.push(user);
+        }
+      });
+    });
   }
 
   goBack(): void {

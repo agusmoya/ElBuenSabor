@@ -5,13 +5,13 @@
   <div class="card-body">
     <div
       class="alert alert-warning my-3 text-center"
-      *ngIf="items?.length == 0"
+      *ngIf="itemsCarroCompra?.length == 0"
     >
       ¡El carrito de compras está vacío!
     </div>
     <table
       class="table table-hover table-striped text-center"
-      *ngIf="items?.length > 0"
+      *ngIf="itemsCarroCompra?.length > 0"
     >
       <thead>
         <tr>
@@ -22,7 +22,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of items" class="align-middle">
+        <tr *ngFor="let item of itemsCarroCompra" class="align-middle">
           <td>
             <img
               class="img-thumbnail rounded"
@@ -76,7 +76,7 @@
       </tbody>
     </table>
   </div>
-  <div *ngIf="items?.length != 0" class="card-footer text-center">
+  <div *ngIf="itemsCarroCompra?.length != 0" class="card-footer text-center">
     <h2>Despacho de pedido:</h2>
     <label class="list-group-item">
       <input
@@ -283,7 +283,7 @@
       <i>*Debe seleccionar una opción antes de finalizar pedido</i>
     </small>
   </div>
-  <div *ngIf="items?.length != 0" class="card-footer text-end">
+  <div *ngIf="itemsCarroCompra?.length != 0" class="card-footer text-end">
     <p>
       <b>Subtotal: ${{ total }}</b>
     </p>
@@ -296,10 +296,9 @@
     <button
       type="button"
       class="btn btn-warning"
-      
+      [disabled]="tipoRetiro.length == 0 || metodoPago.length == 0"
       (click)="crearPedido()"
     >
-    <!-- [disabled]="tipoRetiro.length == 0 || metodoPago.length == 0" -->
       Confirmar Pedido
     </button>
   </div>
