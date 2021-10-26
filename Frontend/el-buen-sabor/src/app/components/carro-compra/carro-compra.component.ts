@@ -13,6 +13,8 @@ import { Factura } from 'src/app/models/factura';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { PedidoService } from 'src/app/services/pedido.service';
 import Swal from 'sweetalert2';
+import { ArticuloInsumo } from 'src/app/models/articulo-insumo';
+import { ArticuloManufacturado } from 'src/app/models/articulo-manufacturado';
 
 @Component({
   selector: 'app-carro-compra',
@@ -145,12 +147,12 @@ export class CarroCompraComponent implements OnInit {
     pedido.fecha = new Date();
     pedido.horaEstimadaFin = new Date();
 
+    // 0 --> local | 1 --> domicilio
+    pedido.tipoEnvio = this.tipoRetiro == 'local' ? 0 : 1;
+
     pedido.horaEstimadaFin.setMinutes(
       pedido.fecha.getMinutes() + this.calcularHoraEstimadaPedido(pedido)
     );
-
-    // 0 --> local | 1 --> domicilio
-    pedido.tipoEnvio = this.tipoRetiro == 'local' ? 0 : 1;
 
     // pedido.mercadoPagoDatos = new MercadoPagoDatos();
 
@@ -165,7 +167,7 @@ export class CarroCompraComponent implements OnInit {
 
   obtenerItemsCarroCompra(): void {
     this.userLoggedInfo$.subscribe((user) => {
-      user ? (this.itemsCarroCompra = user.carroCompraItems) : ''; //[]
+      user ? (this.itemsCarroCompra = user.carroCompraItems) : '';
     });
     this.itemsCarroCompra.forEach((item) => {
       this.total += item.product.precioVenta * item.quantity;
@@ -177,10 +179,15 @@ export class CarroCompraComponent implements OnInit {
     detalle.cantidad = item.quantity;
     detalle.subtotal = item.product.precioVenta * item.quantity;
 
-    if (item.product.esInsumo && item.product.esInsumo === false) {
+    if (
+      item.product.esInsumo !== undefined &&
+      item.product.esInsumo === false
+    ) {
       detalle.articuloInsumo = item.product;
+      // console.log('*** Art. Insumo: ', item.producto);
     } else {
       detalle.articuloManufacturado = item.product;
+      // console.log('*** Art. Manuf: ', item.producto);
     }
     pedido.detallesPedido.push(detalle);
   }
@@ -205,37 +212,30 @@ export class CarroCompraComponent implements OnInit {
         tiempoEstimadoArticulosSolicitados +
         tiempoEstimadoDePedidosEnCocina / this.cocinerosDisponibles.length;
 
-      pedido.tipoEnvio === 1 ? (totalTiempoEstimadoPedidoActual += 10) : 0;
+      // pedido.tipoEnvio === 1 ? (totalTiempoEstimadoPedidoActual += 10) : 0;
+      if (pedido.tipoEnvio === 1) {
+        totalTiempoEstimadoPedidoActual += 10;
+        console.log(
+          '** Adicional por envío a  Domicilio:',
+          totalTiempoEstimadoPedidoActual
+        );
+      }
     }
 
     return totalTiempoEstimadoPedidoActual;
   }
 
-  // resolver la condicion del if
   calcularTiempoEstimadoDeArticulosSolicitados(pedido: Pedido): number {
     let tiempoEstimado = 0;
     pedido.detallesPedido.forEach((detalle) => {
-      if (detalle.articuloManufacturado && !detalle.articuloInsumo) {
+      if (
+        detalle.articuloManufacturado &&
+        detalle.articuloManufacturado.tiempoEstimadoCocina
+      ) {
         tiempoEstimado += detalle.articuloManufacturado.tiempoEstimadoCocina;
-        console.log(detalle.articuloManufacturado);
-        console.log(tiempoEstimado);
       }
     });
     console.log('Tiempo estimado Art. Solicitados: ', tiempoEstimado);
-
-    return tiempoEstimado;
-  }
-
-  obtenerTiempoEstimadoDePedidosEnCocina(): number {
-    let tiempoEstimado = 0;
-
-    if (this.pedidosEnCocina.length != 0) {
-      this.pedidosEnCocina.forEach((pedido) => {
-        pedido.detallesPedido.forEach((detalle) => {
-          tiempoEstimado += detalle.articuloManufacturado.tiempoEstimadoCocina;
-        });
-      });
-    }
 
     return tiempoEstimado;
   }
@@ -248,6 +248,20 @@ export class CarroCompraComponent implements OnInit {
           pedido.estadosPedido[1].denominacion == 'APROBADO'
       );
     });
+  }
+
+  obtenerTiempoEstimadoDePedidosEnCocina(): number {
+    let tiempoEstimado = 0;
+
+    if (this.pedidosEnCocina.length > 0) {
+      this.pedidosEnCocina.forEach((pedido) => {
+        pedido.detallesPedido.forEach((detalle) => {
+          tiempoEstimado += detalle.articuloManufacturado.tiempoEstimadoCocina;
+        });
+      });
+    }
+    console.log('Tiempo estimado Pedidos en cocina: ', tiempoEstimado);
+    return tiempoEstimado;
   }
 
   obtenerCocinerosDisponibles(): void {
