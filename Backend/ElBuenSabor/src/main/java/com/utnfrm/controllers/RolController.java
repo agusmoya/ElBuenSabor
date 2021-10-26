@@ -2,7 +2,6 @@ package com.utnfrm.controllers;
 
 import com.utnfrm.entities.Rol;
 import com.utnfrm.services.RolServiceImpl;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.io.IOException;
 
 @RestController
 @RequestMapping(path = "api/el-buen-sabor/roles")

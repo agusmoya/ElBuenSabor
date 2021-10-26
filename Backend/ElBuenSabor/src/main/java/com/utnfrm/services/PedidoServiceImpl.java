@@ -15,4 +15,5 @@ public class PedidoServiceImpl extends BaseServiceImpl<Pedido, Long> implements 
     public PedidoServiceImpl(BaseRepository<Pedido, Long> baseRepository) {
         super(baseRepository);
     }
+
 }
