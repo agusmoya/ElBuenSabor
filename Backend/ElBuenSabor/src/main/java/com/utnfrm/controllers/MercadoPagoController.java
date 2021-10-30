@@ -25,7 +25,7 @@ public class MercadoPagoController {
                 new BackUrls()
                         .setFailure("http://localhost:9000/failure")
                         .setPending("http://localhost:9000/pending")
-                        .setSuccess("http://localhost:9000/success")
+                        .setSuccess("http://localhost:4200/home") // Anduvo!
         );
         preference.setAutoReturn(Preference.AutoReturn.approved);
 

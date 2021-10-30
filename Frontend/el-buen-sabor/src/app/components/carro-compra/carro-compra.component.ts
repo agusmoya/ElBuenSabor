@@ -13,8 +13,7 @@ import { Factura } from 'src/app/models/factura';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { PedidoService } from 'src/app/services/pedido.service';
 import Swal from 'sweetalert2';
-import { ArticuloInsumo } from 'src/app/models/articulo-insumo';
-import { ArticuloManufacturado } from 'src/app/models/articulo-manufacturado';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-carro-compra',
@@ -37,6 +36,7 @@ export class CarroCompraComponent implements OnInit {
 
   constructor(
     private location: Location,
+    private router: Router,
     private clienteService: ClienteService,
     private usuarioService: UsuarioService,
     private pedidoService: PedidoService,
@@ -146,22 +146,22 @@ export class CarroCompraComponent implements OnInit {
     pedido.domicilio = this.cliente.domicilio;
     pedido.fecha = new Date();
     pedido.horaEstimadaFin = new Date();
-
     // 0 --> local | 1 --> domicilio
     pedido.tipoEnvio = this.tipoRetiro == 'local' ? 0 : 1;
-
     pedido.horaEstimadaFin.setMinutes(
       pedido.fecha.getMinutes() + this.calcularHoraEstimadaPedido(pedido)
     );
-
-    // pedido.mercadoPagoDatos = new MercadoPagoDatos();
-
-    // pedido.factura = new Factura();
-
     pedido.estadosPedido.push(new EstadoPedido(EstadoPedido.status.Pendiente));
 
-    pedido.numero = Pedido.NUMERO++;
+    if (this.metodoPago === 'mercadoPago') {
+      // pedido.mercadoPagoDatos = new MercadoPagoDatos();
+      this.pedidoService.crearPreferencia(pedido).subscribe((preference) => {
+        // console.log(preference.sandboxInitPoint);
+        window.location.href = preference.sandboxInitPoint;
+      });
+    }
 
+    // pedido.factura = new Factura();
     console.log('** Pedido: ', pedido);
   }
 

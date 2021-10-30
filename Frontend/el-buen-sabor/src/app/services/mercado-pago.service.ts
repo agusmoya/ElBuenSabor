@@ -8,20 +8,17 @@ import { CommonService } from './common.service';
 @Injectable({
   providedIn: 'root',
 })
-export class PedidoService extends CommonService<Pedido> {
-  protected baseEndpoint = BASE_ENDPOINT + '/pedidos';
+export class MercadoPagoService extends CommonService<Pedido>{
+
+  protected baseEndpoint = BASE_ENDPOINT + '/mercado-pago';
 
   constructor(http: HttpClient) {
     super(http);
   }
 
-  public crearPreferencia(pedido: Pedido): Observable<any> {
-    return this.http.post<any>(
-      `${this.baseEndpoint}/createAndRedirect`,
-      pedido,
-      {
-        headers: this.cabeceras,
-      }
-    );
+  public crearPreferencia(pedido: Pedido): Observable<Pedido> {
+    return this.http.post<Pedido>(`${this.baseEndpoint}/createAndRedirect`, pedido, {
+      headers: this.cabeceras,
+    });
   }
 }

@@ -18,4 +18,9 @@ export class Pedido extends Generic {
   detallesPedido: DetallePedido[] = [];
   cliente: Cliente;
   domicilio: Domicilio;
+
+  public constructor(){
+    super();
+    Pedido.NUMERO++;
+  }
 }
