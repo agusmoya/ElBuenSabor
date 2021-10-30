@@ -26,14 +26,15 @@ public class PedidoController extends BaseControllerImpl<Pedido, PedidoServiceIm
     @PostMapping("/createAndRedirect")
     public String createAndRedirect(@RequestBody Pedido pedido) throws MPException {
         Preference preference = new Preference();
+//                .setSuccess("http://localhost:4200/home")
         preference.setBackUrls(
                 new BackUrls()
                         .setFailure("http://localhost:9000/failure")
                         .setPending("http://localhost:9000/pending")
-                        .setSuccess("http://localhost:4200/home")
+                        .setSuccess("http://localhost:9000/api/el-buen-sabor/pedidos/success")
         );
         preference.setAutoReturn(Preference.AutoReturn.approved);
-
+        preference.setExternalReference(pedido.getId().toString());
         pedido.getDetallesPedido().forEach(detallePedido -> {
             Item item = new Item();
 
@@ -56,80 +57,62 @@ public class PedidoController extends BaseControllerImpl<Pedido, PedidoServiceIm
         return new GsonBuilder().setPrettyPrinting().create().toJson(result);
     }
 
-//    @PostMapping("/createAndRedirect")
-//    public ResponseEntity<?> createAndRedirectMP(@RequestBody Pedido pedido) {
-//        try {
-//            Preference preference = new Preference();
-//            preference.setBackUrls(
-//                    new BackUrls()
-//                            .setFailure("http://localhost:9000/failure")
-//                            .setPending("http://localhost:9000/pending")
-//                            .setSuccess("http://localhost:4200/home") // Anduvo!
-//            );
-//            preference.setAutoReturn(Preference.AutoReturn.approved);
-//
-//            pedido.getDetallesPedido().forEach(detallePedido -> {
-//                Item item = new Item();
-//
-//                if (detallePedido.getArticuloInsumo() != null) {
-//                    item.setTitle(detallePedido.getArticuloInsumo().getDenominacion())
-//                            .setQuantity(detallePedido.getCantidad())
-//                            .setUnitPrice(Float.parseFloat(detallePedido.getArticuloInsumo().getPrecioVenta().toString()));
-//                    System.out.println("ARTICULO INSUMO");
-//                } else {
-//                    item.setTitle(detallePedido.getArticuloManufacturado().getDenominacion())
-//                            .setQuantity(detallePedido.getCantidad())
-//                            .setUnitPrice(Float.parseFloat(detallePedido.getArticuloInsumo().getPrecioVenta().toString()));
-//                    System.out.println("ARTICULO MANUF");
-//                }
-//                preference.appendItem(item);
-//            });
-//
-//            var result = preference.save();
-//
-//            return ResponseEntity.status(HttpStatus.OK).body(new GsonBuilder().setPrettyPrinting().create().toJson(result));
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e);
-//        }
-//    }
 
+    @GetMapping("/success")
+    public String success(HttpServletRequest request,
+                          @RequestParam("collection_id") String collectionId,
+                          @RequestParam("collection_status") String collectionStatus,
+                          @RequestParam("external_reference") String externalReference,
+                          @RequestParam("payment_type") String paymentType,
+                          @RequestParam("merchant_order_id") String merchantOrderId,
+                          @RequestParam("preference_id") String preferenceId,
+                          @RequestParam("site_id") String siteId,
+                          @RequestParam("processing_mode") String processingMode,
+                          @RequestParam("merchant_account_id") String merchantAccountId,
+                          Model model
+    ) throws MPException {
+        var payment = com.mercadopago.resources.Payment.findById(collectionId);
+        System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(payment));
+        model.addAttribute("payment", payment);
+        return "ok";
+    }
 
-//    @GetMapping("/success")
-//    public String success(HttpServletRequest request,
-//                          @RequestParam("collection_id") String collectionId,
-//                          @RequestParam("collection_status") String collectionStatus,
-//                          @RequestParam("external_reference") String externalReference,
-//                          @RequestParam("payment_type") String paymentType,
-//                          @RequestParam("merchant_order_id") String merchantOrderId,
-//                          @RequestParam("preference_id") String preferenceId,
-//                          @RequestParam("site_id") String siteId,
-//                          @RequestParam("processing_mode") String processingMode,
-//                          @RequestParam("merchant_account_id") String merchantAccountId,
-//                          Model model
-//    ) throws MPException {
-//        var payment = com.mercadopago.resources.Payment.findById(collectionId);
-////        System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(payment));
-//        model.addAttribute("payment", payment);
-//        return "ok";
-//    }
-//
-//    @GetMapping("/failure")
-//    public String failure(HttpServletRequest request,
-//                          @RequestParam("collection_id") String collectionId,
-//                          @RequestParam("collection_status") String collectionStatus,
-//                          @RequestParam("external_reference") String externalReference,
-//                          @RequestParam("payment_type") String paymentType,
-//                          @RequestParam("merchant_order_id") String merchantOrderId,
-//                          @RequestParam("preference_id") String preferenceId,
-//                          @RequestParam("site_id") String siteId,
-//                          @RequestParam("processing_mode") String processingMode,
-//                          @RequestParam("merchant_account_id") String merchantAccountId,
-//                          Model model
-//    ) throws MPException {
-//        var payment = com.mercadopago.resources.Payment.findById(collectionId);
-//        System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(payment));
-//        model.addAttribute("payment", payment);
-//        return "fail";
-//    }
+    @GetMapping("/failure")
+    public String failure(HttpServletRequest request,
+                          @RequestParam("collection_id") String collectionId,
+                          @RequestParam("collection_status") String collectionStatus,
+                          @RequestParam("external_reference") String externalReference,
+                          @RequestParam("payment_type") String paymentType,
+                          @RequestParam("merchant_order_id") String merchantOrderId,
+                          @RequestParam("preference_id") String preferenceId,
+                          @RequestParam("site_id") String siteId,
+                          @RequestParam("processing_mode") String processingMode,
+                          @RequestParam("merchant_account_id") String merchantAccountId,
+                          Model model
+    ) throws MPException {
+        var payment = com.mercadopago.resources.Payment.findById(collectionId);
+        System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(payment));
+        model.addAttribute("payment", payment);
+        return "fail";
+    }
+
+    @GetMapping("/pending")
+    public String pending(HttpServletRequest request,
+                          @RequestParam("collection_id") String collectionId,
+                          @RequestParam("collection_status") String collectionStatus,
+                          @RequestParam("external_reference") String externalReference,
+                          @RequestParam("payment_type") String paymentType,
+                          @RequestParam("merchant_order_id") String merchantOrderId,
+                          @RequestParam("preference_id") String preferenceId,
+                          @RequestParam("site_id") String siteId,
+                          @RequestParam("processing_mode") String processingMode,
+                          @RequestParam("merchant_account_id") String merchantAccountId,
+                          Model model
+    ) throws MPException {
+        var payment = com.mercadopago.resources.Payment.findById(collectionId);
+        System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(payment));
+        model.addAttribute("payment", payment);
+        return "pending";
+    }
 
 }

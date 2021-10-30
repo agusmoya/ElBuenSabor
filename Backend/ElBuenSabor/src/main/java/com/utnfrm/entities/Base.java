@@ -32,10 +32,10 @@ public class Base implements Serializable {
     @Column(updatable = false)
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    protected Date createdAt;
 
     @Column
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+    protected Date updatedAt;
 }

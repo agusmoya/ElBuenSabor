@@ -151,14 +151,27 @@ export class CarroCompraComponent implements OnInit {
     pedido.horaEstimadaFin.setMinutes(
       pedido.fecha.getMinutes() + this.calcularHoraEstimadaPedido(pedido)
     );
+
+
     pedido.estadosPedido.push(new EstadoPedido(EstadoPedido.status.Pendiente));
 
     if (this.metodoPago === 'mercadoPago') {
-      // pedido.mercadoPagoDatos = new MercadoPagoDatos();
-      this.pedidoService.crearPreferencia(pedido).subscribe((preference) => {
-        // console.log(preference.sandboxInitPoint);
-        window.location.href = preference.sandboxInitPoint;
+      this.pedidoService.crear(pedido).subscribe((pedido) => {
+        this.pedidoService.crearPreferencia(pedido).subscribe((preference) => {
+          // pedido.mercadoPagoDatos = new MercadoPagoDatos();
+          // pedido.mercadoPagoDatos.estado = 1;
+          // pedido.mercadoPagoDatos.fechaCreacion = preference.dateCreated;
+          // pedido.mercadoPagoDatos.fechaAprobacion = preference.dateCreated;
+          // pedido.mercadoPagoDatos.formaPago = preference.;
+
+          console.log(preference);
+          window.location.href = preference.initPoint;
+        });
       });
+      // this.pedidoService.crearPreferencia(pedido).subscribe((preference) => {
+      //   console.log(preference.sandboxInitPoint);
+      //   window.location.href = preference.sandboxInitPoint;
+      // });
     }
 
     // pedido.factura = new Factura();

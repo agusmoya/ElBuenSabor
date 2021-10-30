@@ -39,7 +39,8 @@ public class Pedido extends Base {
     @Column
     private int tipoEnvio;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    // cascade = CascadeType.ALL
+    @OneToOne()
     @JoinColumn(name = "fk_mercado_pago_datos")
     private MercadoPagoDatos mercadoPagoDatos;
 
@@ -50,11 +51,13 @@ public class Pedido extends Base {
     @OneToMany(cascade = CascadeType.ALL)
     private List<DetallePedido> detallesPedido = new ArrayList<>();
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "fk_cliente")
     private Cliente cliente;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    // detached entity passed to persist: com.utnfrm.entities.Domicilio;
+    // corregido quitando ALL por MERGE
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "fk_domicilio")
     private Domicilio domicilio;
 

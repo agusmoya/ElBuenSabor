@@ -42,7 +42,7 @@ public class ArticuloManufacturado extends Base {
     @NotNull
     private RubroGeneral rubroGeneral;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.MERGE)
     @NotEmpty
     private List<ArticuloManufacturadoDetalle> detallesArticuloManufacturado = new ArrayList<>();
 

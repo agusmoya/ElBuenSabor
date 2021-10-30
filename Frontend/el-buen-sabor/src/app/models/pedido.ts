@@ -19,8 +19,8 @@ export class Pedido extends Generic {
   cliente: Cliente;
   domicilio: Domicilio;
 
-  public constructor(){
+  public constructor() {
     super();
-    Pedido.NUMERO++;
+    this.numero = Pedido.NUMERO++;
   }
 }
