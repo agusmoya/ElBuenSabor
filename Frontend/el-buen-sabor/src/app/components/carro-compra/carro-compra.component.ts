@@ -13,7 +13,7 @@ import { Factura } from 'src/app/models/factura';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { PedidoService } from 'src/app/services/pedido.service';
 import Swal from 'sweetalert2';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-carro-compra',
@@ -37,6 +37,7 @@ export class CarroCompraComponent implements OnInit {
   constructor(
     private location: Location,
     private router: Router,
+    protected route: ActivatedRoute,
     private clienteService: ClienteService,
     private usuarioService: UsuarioService,
     private pedidoService: PedidoService,
@@ -54,6 +55,7 @@ export class CarroCompraComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.comprobarEstadoPago();
     this.obtenerItemsCarroCompra();
     this.verCliente();
     this.listarDepartamentosMendoza();
@@ -152,26 +154,16 @@ export class CarroCompraComponent implements OnInit {
       pedido.fecha.getMinutes() + this.calcularHoraEstimadaPedido(pedido)
     );
 
-
     pedido.estadosPedido.push(new EstadoPedido(EstadoPedido.status.Pendiente));
 
     if (this.metodoPago === 'mercadoPago') {
       this.pedidoService.crear(pedido).subscribe((pedido) => {
         this.pedidoService.crearPreferencia(pedido).subscribe((preference) => {
-          // pedido.mercadoPagoDatos = new MercadoPagoDatos();
-          // pedido.mercadoPagoDatos.estado = 1;
-          // pedido.mercadoPagoDatos.fechaCreacion = preference.dateCreated;
-          // pedido.mercadoPagoDatos.fechaAprobacion = preference.dateCreated;
-          // pedido.mercadoPagoDatos.formaPago = preference.;
-
-          console.log(preference);
-          window.location.href = preference.initPoint;
+          // RTA desde endpoint "/createAndRedirect"
+          console.log("** PREFERENCE: ",preference);
+          window.location.href = preference.initPoint;          
         });
       });
-      // this.pedidoService.crearPreferencia(pedido).subscribe((preference) => {
-      //   console.log(preference.sandboxInitPoint);
-      //   window.location.href = preference.sandboxInitPoint;
-      // });
     }
 
     // pedido.factura = new Factura();
@@ -225,7 +217,6 @@ export class CarroCompraComponent implements OnInit {
         tiempoEstimadoArticulosSolicitados +
         tiempoEstimadoDePedidosEnCocina / this.cocinerosDisponibles.length;
 
-      // pedido.tipoEnvio === 1 ? (totalTiempoEstimadoPedidoActual += 10) : 0;
       if (pedido.tipoEnvio === 1) {
         totalTiempoEstimadoPedidoActual += 10;
         console.log(
@@ -288,6 +279,19 @@ export class CarroCompraComponent implements OnInit {
           this.cocinerosDisponibles.push(user);
         }
       });
+    });
+  }
+
+  comprobarEstadoPago():void {
+    this.route.paramMap.subscribe((params) => {
+      const status: string = params.get('status');
+      if (status && status == 'approved') {
+        Swal.fire(
+          'Pago Aprobado:',
+          `El pago se ha realizado con éxito.`,
+          'success'
+        );
+      }
     });
   }
 

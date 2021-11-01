@@ -39,8 +39,7 @@ public class Pedido extends Base {
     @Column
     private int tipoEnvio;
 
-    // cascade = CascadeType.ALL
-    @OneToOne()
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "fk_mercado_pago_datos")
     private MercadoPagoDatos mercadoPagoDatos;
 
