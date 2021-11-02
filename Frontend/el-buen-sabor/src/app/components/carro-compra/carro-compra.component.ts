@@ -14,6 +14,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ArticuloInsumoService } from 'src/app/services/articulo-insumo.service';
 import { ArticuloManufacturadoService } from 'src/app/services/articulo-manufacturado.service';
 import { ArticuloInsumo } from 'src/app/models/articulo-insumo';
+import { EstadoPedido } from 'src/app/models/estado-pedido';
 
 @Component({
   selector: 'app-carro-compra',
@@ -34,6 +35,7 @@ export class CarroCompraComponent implements OnInit {
   cocinerosDisponibles: any[];
   pedidosEnCocina: Pedido[];
   pedido: Pedido;
+  horarioAtencion: Date;
 
   constructor(
     private location: Location,
@@ -57,6 +59,7 @@ export class CarroCompraComponent implements OnInit {
     this.localidades = [];
     this.cocinerosDisponibles = [];
     this.pedidosEnCocina = [];
+    this.horarioAtencion = new Date();
   }
 
   ngOnInit(): void {
@@ -142,40 +145,77 @@ export class CarroCompraComponent implements OnInit {
     this.total -= item.product.precioVenta * item.quantity;
   }
 
-  crearPedido(): void {
-    this.pedido = new Pedido();
+  validarPedidoHorariosAtencion(): boolean {
+    const daysNames = [
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+    ];
 
+    if (
+      ((daysNames[this.horarioAtencion.getDay()] === 'Monday' ||
+        daysNames[this.horarioAtencion.getDay()] === 'Tuesday' ||
+        daysNames[this.horarioAtencion.getDay()] === 'Wednesday' ||
+        daysNames[this.horarioAtencion.getDay()] === 'Thursday' ||
+        daysNames[this.horarioAtencion.getDay()] === 'Friday') &&
+        this.horarioAtencion.getHours() < 20) ||
+      this.horarioAtencion.getHours() > 0 ||
+      ((daysNames[this.horarioAtencion.getDay()] === 'Sunday' ||
+        daysNames[this.horarioAtencion.getDay()] === 'Saturday') &&
+        this.horarioAtencion.getHours() < 11) ||
+      this.horarioAtencion.getHours() > 15 ||
+      this.horarioAtencion.getHours() < 20 ||
+      this.horarioAtencion.getHours() > 0
+    ) {
+      Swal.fire(
+        'Atención:',
+        'Los pedidos se encuentras deshabilitados hasta el inicio del horario de atención: Lunes a Domingos de 20:00 a 00:00 hs. Sábados y Domingos de 11:00 a 15:00 hs y de 20:00 a 00:00 hs.',
+        'warning'
+      );
+      return false;
+    }
+    return true;
+  }
+
+  crearPedido(): void {
+    if (!this.validarPedidoHorariosAtencion()) {
+      return;
+    }
+
+    this.pedido = new Pedido();
     this.itemsCarroCompra.forEach((item) => {
       this.cargarDetallesDePedido(this.pedido, item);
     });
-    this.controlDeStock();
-    // this.pedido.cliente = this.cliente;
-    // this.pedido.domicilio = this.cliente.domicilio;
-    // this.pedido.fecha = new Date();
-    // this.pedido.horaEstimadaFin = new Date();
-    // // 0 --> local | 1 --> domicilio
-    // this.pedido.tipoEnvio = this.tipoRetiro == 'local' ? 0 : 1;
-    // this.pedido.horaEstimadaFin.setMinutes(
-    //   this.pedido.fecha.getMinutes() +
-    //     this.calcularHoraEstimadaPedido(this.pedido)
-    // );
-
-    // this.pedido.estadosPedido.push(
-    //   new EstadoPedido(EstadoPedido.status.Pendiente)
-    // );
-
-    // if (this.metodoPago === 'mercadoPago') {
-    //   this.pedidoService.crear(this.pedido).subscribe((pedido) => {
-    //     this.pedidoService.crearPreferencia(pedido).subscribe((preference) => {
-    //       // RTA desde endpoint "/createAndRedirect"
-    //       console.log('** PREFERENCE: ', preference);
-    //       window.location.href = preference.initPoint;
-    //     });
-    //   });
-    // }
-
-    // // pedido.factura = new Factura();
-    // console.log('** Pedido: ', this.pedido);
+    // haciendo pruebas
+    // this.controlDeStock();
+    this.pedido.cliente = this.cliente;
+    this.pedido.domicilio = this.cliente.domicilio;
+    this.pedido.fecha = new Date();
+    this.pedido.horaEstimadaFin = new Date();
+    // 0 --> local | 1 --> domicilio
+    this.pedido.tipoEnvio = this.tipoRetiro == 'local' ? 0 : 1;
+    this.pedido.horaEstimadaFin.setMinutes(
+      this.pedido.fecha.getMinutes() +
+        this.calcularHoraEstimadaPedido(this.pedido)
+    );
+    this.pedido.estadosPedido.push(
+      new EstadoPedido(EstadoPedido.status.Pendiente)
+    );
+    if (this.metodoPago === 'mercadoPago') {
+      this.pedidoService.crear(this.pedido).subscribe((pedido) => {
+        this.pedidoService.crearPreferencia(pedido).subscribe((preference) => {
+          // RTA desde endpoint "/createAndRedirect"
+          console.log('** PREFERENCE: ', preference);
+          window.location.href = preference.initPoint;
+        });
+      });
+    }
+    // pedido.factura = new Factura();
+    console.log('** Pedido: ', this.pedido);
   }
 
   obtenerItemsCarroCompra(): void {
@@ -318,6 +358,7 @@ export class CarroCompraComponent implements OnInit {
         detallePedido.articuloInsumo !== undefined &&
         detallePedido.articuloInsumo.esInsumo === false
       ) {
+        // bebidas con stock en unidades
         detallePedido.articuloInsumo.stockActual -= detallePedido.cantidad;
         this.actualizarDecrementoStockArtInsumo(detallePedido.articuloInsumo);
       } else {
