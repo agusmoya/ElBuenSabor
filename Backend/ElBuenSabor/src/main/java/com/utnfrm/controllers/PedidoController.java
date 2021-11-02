@@ -1,24 +1,17 @@
 package com.utnfrm.controllers;
 
 import com.google.gson.GsonBuilder;
-import com.mercadopago.exceptions.MPException;
-import com.mercadopago.resources.Payment;
-import com.mercadopago.resources.Preference;
-import com.mercadopago.resources.datastructures.preference.BackUrls;
-import com.mercadopago.resources.datastructures.preference.Item;
-import com.utnfrm.entities.DetallePedido;
 import com.utnfrm.entities.Pedido;
 import com.utnfrm.services.PedidoServiceImpl;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.Objects;
+import javax.servlet.http.HttpServletResponse;
+import java.net.URI;
+
 
 @RestController
 @RequestMapping(path = "api/el-buen-sabor/pedidos")
@@ -38,7 +31,7 @@ public class PedidoController extends BaseControllerImpl<Pedido, PedidoServiceIm
     }
 
     @GetMapping("/success")
-    public ResponseEntity<?> success(HttpServletRequest request,
+    public ResponseEntity<?> success(HttpServletResponse response,
                                      @RequestParam("collection_id") String collectionId,
                                      @RequestParam("collection_status") String collectionStatus,
                                      @RequestParam("payment_id") String paymentId,
@@ -52,13 +45,17 @@ public class PedidoController extends BaseControllerImpl<Pedido, PedidoServiceIm
                                      @RequestParam("merchant_account_id") String merchantAccountId
     ) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new GsonBuilder()
-                            .setPrettyPrinting()
-                            .create()
-                            .toJson(servicio.obtainPayment(collectionId)));
+            servicio.obtainPayment(collectionId);
+//            return ResponseEntity.status(HttpStatus.OK).body(
+//                    new GsonBuilder()
+//                            .setPrettyPrinting()
+//                            .create()
+//                            .toJson(servicio.obtainPayment(collectionId)));
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .location(URI.create("http://localhost:4200/carro-compra?status=" + status))
+                    .build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("SUCCESS: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("SUCCESS ERROR: " + e.getMessage());
         }
     }
 
@@ -77,13 +74,12 @@ public class PedidoController extends BaseControllerImpl<Pedido, PedidoServiceIm
                                      @RequestParam("merchant_account_id") String merchantAccountId
     ) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new GsonBuilder()
-                            .setPrettyPrinting()
-                            .create()
-                            .toJson(servicio.obtainPayment(collectionId)));
+            servicio.obtainPayment(collectionId);
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .location(URI.create("http://localhost:4200/carro-compra?status=" + status))
+                    .build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("FAILURE: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("FAILURE ERROR: " + e.getMessage());
         }
     }
 
@@ -102,13 +98,12 @@ public class PedidoController extends BaseControllerImpl<Pedido, PedidoServiceIm
                                      @RequestParam("merchant_account_id") String merchantAccountId
     ) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new GsonBuilder()
-                            .setPrettyPrinting()
-                            .create()
-                            .toJson(servicio.obtainPayment(collectionId)));
+            servicio.obtainPayment(collectionId);
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .location(URI.create("http://localhost:4200/carro-compra?status=" + status))
+                    .build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("PENDING: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("PENDING ERROR: " + e.getMessage());
         }
     }
 

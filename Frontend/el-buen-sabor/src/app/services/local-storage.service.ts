@@ -99,6 +99,11 @@ export class LocalStorageService {
     this.setInfo(this._userLogged$.getValue());
   }
 
+  cleanShoppinCart(): void {
+    this._userLogged$.getValue().carroCompraItems = [];
+    this.setInfo(this._userLogged$.getValue());
+  }
+
   setInfo(data: UserLogged) {
     const jsonData = JSON.stringify(data);
     this._localStorage.setItem('userLogged', jsonData);

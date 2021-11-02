@@ -31,6 +31,9 @@ const routes: Routes = [
   { path: 'bebida-detalle/:id', component: BebidaDetalleComponent },
   //  CARRO-COMPRA
   { path: 'carro-compra', component: CarroCompraComponent },
+  { path: 'carro-compra/success', component: CarroCompraComponent },
+  { path: 'carro-compra/failure', component: CarroCompraComponent },
+  { path: 'carro-compra/pending', component: CarroCompraComponent },
 
   // ABMC usuarios
   { path: 'usuarios', component: UsuariosComponent },

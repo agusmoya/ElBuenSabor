@@ -7,13 +7,13 @@ import { Cliente } from 'src/app/models/cliente';
 import { MendozaService } from 'src/app/services/mendoza.service';
 import { DetallePedido } from 'src/app/models/detalle-pedido';
 import { Pedido } from 'src/app/models/pedido';
-import { EstadoPedido } from 'src/app/models/estado-pedido';
-import { MercadoPagoDatos } from 'src/app/models/mercado-pago-datos';
-import { Factura } from 'src/app/models/factura';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { PedidoService } from 'src/app/services/pedido.service';
 import Swal from 'sweetalert2';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ArticuloInsumoService } from 'src/app/services/articulo-insumo.service';
+import { ArticuloManufacturadoService } from 'src/app/services/articulo-manufacturado.service';
+import { ArticuloInsumo } from 'src/app/models/articulo-insumo';
 
 @Component({
   selector: 'app-carro-compra',
@@ -23,9 +23,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class CarroCompraComponent implements OnInit {
   itemsCarroCompra: any[];
   total: number;
-  baseEndpointArtManuf = BASE_ENDPOINT + '/articulos-manufacturados';
-  baseEndpointBebida = BASE_ENDPOINT + '/articulos-insumo';
-  userLoggedInfo$ = this._localStorageService.userLogged$;
+  baseEndpointArtManuf: string;
+  baseEndpointBebida: string;
+  userLoggedInfo$: any;
   tipoRetiro: string;
   metodoPago: string;
   cliente: Cliente;
@@ -33,6 +33,7 @@ export class CarroCompraComponent implements OnInit {
   localidades: any[];
   cocinerosDisponibles: any[];
   pedidosEnCocina: Pedido[];
+  pedido: Pedido;
 
   constructor(
     private location: Location,
@@ -41,9 +42,13 @@ export class CarroCompraComponent implements OnInit {
     private clienteService: ClienteService,
     private usuarioService: UsuarioService,
     private pedidoService: PedidoService,
+    private artInsumoService: ArticuloInsumoService,
     private mendozaService: MendozaService,
     private _localStorageService: LocalStorageService
   ) {
+    this.baseEndpointArtManuf = BASE_ENDPOINT + '/articulos-manufacturados';
+    this.baseEndpointBebida = BASE_ENDPOINT + '/articulos-insumo';
+    this.userLoggedInfo$ = this._localStorageService.userLogged$;
     this.itemsCarroCompra = [];
     this.total = 0;
     this.tipoRetiro = '';
@@ -138,36 +143,39 @@ export class CarroCompraComponent implements OnInit {
   }
 
   crearPedido(): void {
-    const pedido = new Pedido();
+    this.pedido = new Pedido();
 
     this.itemsCarroCompra.forEach((item) => {
-      this.cargarDetallesDePedido(pedido, item);
+      this.cargarDetallesDePedido(this.pedido, item);
     });
+    this.controlDeStock();
+    // this.pedido.cliente = this.cliente;
+    // this.pedido.domicilio = this.cliente.domicilio;
+    // this.pedido.fecha = new Date();
+    // this.pedido.horaEstimadaFin = new Date();
+    // // 0 --> local | 1 --> domicilio
+    // this.pedido.tipoEnvio = this.tipoRetiro == 'local' ? 0 : 1;
+    // this.pedido.horaEstimadaFin.setMinutes(
+    //   this.pedido.fecha.getMinutes() +
+    //     this.calcularHoraEstimadaPedido(this.pedido)
+    // );
 
-    pedido.cliente = this.cliente;
-    pedido.domicilio = this.cliente.domicilio;
-    pedido.fecha = new Date();
-    pedido.horaEstimadaFin = new Date();
-    // 0 --> local | 1 --> domicilio
-    pedido.tipoEnvio = this.tipoRetiro == 'local' ? 0 : 1;
-    pedido.horaEstimadaFin.setMinutes(
-      pedido.fecha.getMinutes() + this.calcularHoraEstimadaPedido(pedido)
-    );
+    // this.pedido.estadosPedido.push(
+    //   new EstadoPedido(EstadoPedido.status.Pendiente)
+    // );
 
-    pedido.estadosPedido.push(new EstadoPedido(EstadoPedido.status.Pendiente));
+    // if (this.metodoPago === 'mercadoPago') {
+    //   this.pedidoService.crear(this.pedido).subscribe((pedido) => {
+    //     this.pedidoService.crearPreferencia(pedido).subscribe((preference) => {
+    //       // RTA desde endpoint "/createAndRedirect"
+    //       console.log('** PREFERENCE: ', preference);
+    //       window.location.href = preference.initPoint;
+    //     });
+    //   });
+    // }
 
-    if (this.metodoPago === 'mercadoPago') {
-      this.pedidoService.crear(pedido).subscribe((pedido) => {
-        this.pedidoService.crearPreferencia(pedido).subscribe((preference) => {
-          // RTA desde endpoint "/createAndRedirect"
-          console.log("** PREFERENCE: ",preference);
-          window.location.href = preference.initPoint;          
-        });
-      });
-    }
-
-    // pedido.factura = new Factura();
-    console.log('** Pedido: ', pedido);
+    // // pedido.factura = new Factura();
+    // console.log('** Pedido: ', this.pedido);
   }
 
   obtenerItemsCarroCompra(): void {
@@ -189,10 +197,8 @@ export class CarroCompraComponent implements OnInit {
       item.product.esInsumo === false
     ) {
       detalle.articuloInsumo = item.product;
-      // console.log('*** Art. Insumo: ', item.producto);
     } else {
       detalle.articuloManufacturado = item.product;
-      // console.log('*** Art. Manuf: ', item.producto);
     }
     pedido.detallesPedido.push(detalle);
   }
@@ -282,17 +288,61 @@ export class CarroCompraComponent implements OnInit {
     });
   }
 
-  comprobarEstadoPago():void {
-    this.route.paramMap.subscribe((params) => {
-      const status: string = params.get('status');
+  comprobarEstadoPago(): void {
+    this.route.queryParams.subscribe((params) => {
+      const status: string = params['status'];
+
       if (status && status == 'approved') {
         Swal.fire(
           'Pago Aprobado:',
           `El pago se ha realizado con éxito.`,
           'success'
         );
+        this.controlDeStock();
+        this.vaciarCarroCompras();
+      } else if (status && status == 'failure') {
+        Swal.fire('Pago Falló:', `El pago no ha podido realizarse.`, 'error');
+      } else if (status && status == 'pending') {
+        Swal.fire(
+          'Pago Pendiente:',
+          `El pago ha quedado pendiente.`,
+          'warning'
+        );
       }
     });
+  }
+
+  controlDeStock(): void {
+    this.pedido.detallesPedido.forEach((detallePedido) => {
+      if (
+        detallePedido.articuloInsumo !== undefined &&
+        detallePedido.articuloInsumo.esInsumo === false
+      ) {
+        detallePedido.articuloInsumo.stockActual -= detallePedido.cantidad;
+        this.actualizarDecrementoStockArtInsumo(detallePedido.articuloInsumo);
+      } else {
+        detallePedido.articuloManufacturado.detallesArticuloManufacturado.forEach(
+          (detalleArtManuf) => {
+            detalleArtManuf.articuloInsumo.stockActual -=
+              detalleArtManuf.cantidad * detallePedido.cantidad;
+            this.actualizarDecrementoStockArtInsumo(
+              detalleArtManuf.articuloInsumo
+            );
+          }
+        );
+      }
+    });
+  }
+
+  actualizarDecrementoStockArtInsumo(artInsumo: ArticuloInsumo): void {
+    this.artInsumoService
+      .editar(artInsumo)
+      .subscribe((artInsumo) => console.log(artInsumo));
+  }
+
+  vaciarCarroCompras(): void {
+    this._localStorageService.cleanShoppinCart();
+    this.router.navigate(['/home']);
   }
 
   goBack(): void {
