@@ -5,8 +5,11 @@
   <p class="my-5 lh-lg">
     Ofrecemos a nuestros clientes una amplia variedad de bebidas y de comidas de
     fabricación propia.<br />
-    Horarios de atención: LUNES a VIERNES de 20:00 HS a 12:00 HS, y SÁBADOS y
-    DOMIGOS de 11:00 HS a 15:00 HS.
+    Horarios de atención:
+    <b
+      >LUNES a VIERNES de 20:00 a 00:00 hs, y SÁBADOS y DOMIGOS de 11:00 a 15:00
+      hs y de 20:00 a 00:00 hs</b
+    >.
   </p>
 </div>
 
@@ -15,14 +18,22 @@
   <div class="col" *ngFor="let artManuf of arrArtManufacturados">
     <a class="link-prod" [routerLink]="['/producto-detalle', artManuf.id]">
       <div class="card">
-        <img *ngIf="artManuf.imagenHashCode" [src]="
-          baseEndpointArtManuf +
+        <img
+          *ngIf="artManuf.imagenHashCode"
+          [src]="
+            baseEndpointArtManuf +
             '/cargar/img/' +
             artManuf.id +
             '?imagenHashCode=' +
             artManuf.imagenHashCode
-          " alt="img-artManuf" />
-        <img *ngIf="!artManuf.imagenHashCode" src="/assets/images/art-manuf-no-img.png" alt="img-artManuf" />
+          "
+          alt="img-artManuf"
+        />
+        <img
+          *ngIf="!artManuf.imagenHashCode"
+          src="/assets/images/art-manuf-no-img.png"
+          alt="img-artManuf"
+        />
 
         <div class="card-body text-center">
           <h2 class="card-title">{{ artManuf.denominacion }}</h2>
@@ -38,14 +49,22 @@
   <div class="col" *ngFor="let bebida of arrBebidas">
     <a class="link-prod" [routerLink]="['/bebida-detalle', bebida.id]">
       <div class="card">
-        <img *ngIf="bebida.imagenHashCode" [src]="
-          baseEndpointBebida +
+        <img
+          *ngIf="bebida.imagenHashCode"
+          [src]="
+            baseEndpointBebida +
             '/cargar/img/' +
             bebida.id +
             '?imagenHashCode=' +
             bebida.imagenHashCode
-          " alt="img-bebida" />
-        <img *ngIf="!bebida.imagenHashCode" src="/assets/images/no-bebida-img.png" alt="img-bebida" />
+          "
+          alt="img-bebida"
+        />
+        <img
+          *ngIf="!bebida.imagenHashCode"
+          src="/assets/images/no-bebida-img.png"
+          alt="img-bebida"
+        />
 
         <div class="card-body text-center">
           <h2 class="card-title">{{ bebida.denominacion }}</h2>

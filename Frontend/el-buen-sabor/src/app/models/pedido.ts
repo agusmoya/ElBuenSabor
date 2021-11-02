@@ -21,6 +21,6 @@ export class Pedido extends Generic {
 
   public constructor() {
     super();
-    this.numero = Pedido.NUMERO++;
+    this.numero = ++Pedido.NUMERO;
   }
 }

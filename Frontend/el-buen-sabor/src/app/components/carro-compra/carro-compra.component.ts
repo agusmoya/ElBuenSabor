@@ -182,9 +182,9 @@ export class CarroCompraComponent implements OnInit {
   }
 
   crearPedido(): void {
-    if (!this.validarPedidoHorariosAtencion()) {
-      return;
-    }
+    // if (!this.validarPedidoHorariosAtencion()) {
+    //   return;
+    // }
 
     this.pedido = new Pedido();
     this.itemsCarroCompra.forEach((item) => {
@@ -205,15 +205,15 @@ export class CarroCompraComponent implements OnInit {
     this.pedido.estadosPedido.push(
       new EstadoPedido(EstadoPedido.status.Pendiente)
     );
-    if (this.metodoPago === 'mercadoPago') {
-      this.pedidoService.crear(this.pedido).subscribe((pedido) => {
+    this.pedidoService.crear(this.pedido).subscribe((pedido) => {
+      if (this.metodoPago === 'mercadoPago') {
         this.pedidoService.crearPreferencia(pedido).subscribe((preference) => {
           // RTA desde endpoint "/createAndRedirect"
           console.log('** PREFERENCE: ', preference);
           window.location.href = preference.initPoint;
         });
-      });
-    }
+      }
+    });
     // pedido.factura = new Factura();
     console.log('** Pedido: ', this.pedido);
   }

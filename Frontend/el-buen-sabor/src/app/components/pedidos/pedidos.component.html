@@ -1,1 +1,66 @@
-<p>pedidos works!</p>
+<div class="card text-dark bg-light">
+  <div class="card-header">
+    <h1 class="text-center">{{ titulo }}</h1>
+  </div>
+  <div class="card-body">
+    <div class="alert alert-info my-3 text-center" *ngIf="lista?.length == 0">
+      ¡No hay Pedidos PENDIENTES cargados en el Sistema!
+    </div>
+    <table
+      class="table table-hover table-striped text-center align-middle"
+      *ngIf="lista?.length > 0"
+    >
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Pedido nro.</th>
+          <th scope="col">Estado Actual</th>
+          <th scope="col">Fecha</th>
+          <th scope="col">Aprobación</th>
+          <th scope="col">Rechazo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pedido of lista">
+          <td>{{ pedido.id }}</td>
+          <td>{{ pedido.numero }}</td>
+          <td>
+            {{
+              pedido.estadosPedido[pedido.estadosPedido.length - 1].denominacion
+            }}
+          </td>
+          <td>
+            {{ pedido.fecha | date: "EEEE, M/d/yy, h:mm a" | uppercase }}
+          </td>
+          <td>
+            <a
+              class="btn btn-sm btn-outline-dark"
+              [routerLink]="['/roles/form', pedido.id]"
+              >Aprobar</a
+            >
+          </td>
+          <td>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-danger"
+              (click)="eliminar(pedido)"
+              [disabled]="!pedido.estado"
+            >
+              {{ !pedido.estado ? "Rechazado" : "Rechazar" }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <mat-paginator
+      *ngIf="lista?.length > 0"
+      [length]="totalRegistros"
+      [pageSize]="totalPorPagina"
+      [pageIndex]="paginaActual"
+      [pageSizeOptions]="pageSizeOptions"
+      showFirstLastButtons
+      (page)="paginar($event)"
+    >
+    </mat-paginator>
+  </div>
+</div>

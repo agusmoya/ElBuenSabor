@@ -3,9 +3,10 @@ import { Generic } from './generic';
 enum Status {
   Pendiente = 'PENDIENTE',
   Aprobado = 'APROBADO',
+  Rechazado = 'RECHAZADO',
   EnProceso = 'EN PROCESO',
   Terminado = 'TERMINADO',
-  EnCamino = 'EN CAMINO',
+  EnDelivery = 'EN DELIVERY',
   Facturado = 'FACTURADO',
 }
 export class EstadoPedido extends Generic {

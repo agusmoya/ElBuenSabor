@@ -1,4 +1,9 @@
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
+// Cambio Idioma a español
+import localeEs from '@angular/common/locales/es';
+import { registerLocaleData } from '@angular/common';
+registerLocaleData(localeEs, 'es');
+
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -88,6 +93,7 @@ const CLIENT_ID = environment.client_id;
         ],
       } as SocialAuthServiceConfig,
     },
+    { provide: LOCALE_ID, useValue: 'es' },
   ],
   bootstrap: [AppComponent],
 })
