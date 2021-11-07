@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 @Entity
 @Table(name = "usuarios")
@@ -40,5 +41,18 @@ public class Usuario extends Base {
 
     public Integer getImagenHashCode() {
         return (this.imagen != null) ? this.imagen.hashCode() : null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Usuario usuario = (Usuario) o;
+        return nombre.equals(usuario.nombre) && rol.equals(usuario.rol);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nombre, rol);
     }
 }

@@ -60,7 +60,6 @@ public abstract class BaseServiceImpl<E extends Base, ID extends Serializable> i
             entity = baseRepository.save(entity);
             return entity;
         } catch (ConstraintViolationException ce) {
-            System.out.println("CAMPO REPETIDOOOO" + entity); // no entiendo por que no imprime este cartel, averiguar al final
             throw new Exception(ce.getMessage());
         }
     }

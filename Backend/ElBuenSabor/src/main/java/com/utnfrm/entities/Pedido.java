@@ -56,7 +56,7 @@ public class Pedido extends Base {
 
     // detached entity passed to persist: com.utnfrm.entities.Domicilio;
     // corregido quitando ALL por MERGE
-    @OneToOne(cascade = CascadeType.MERGE)
+    @OneToOne(cascade = {CascadeType.MERGE})
     @JoinColumn(name = "fk_domicilio")
     private Domicilio domicilio;
 

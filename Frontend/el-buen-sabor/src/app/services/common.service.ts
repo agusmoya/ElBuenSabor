@@ -23,6 +23,18 @@ export abstract class CommonService<E extends Generic> {
     return this.http.get<any>(`${this.baseEndpoint}/paged`, { params: params });
   }
 
+  public listarPaginadoPorFecha(
+    page: string,
+    size: string,
+    diaActualPedidos: Date
+  ): Observable<any> {
+    const params = new HttpParams()
+      .set('page', page)
+      .set('size', size)
+      .set('diaActualPedidos', diaActualPedidos.toDateString());
+    return this.http.get<any>(`${this.baseEndpoint}/paged`, { params: params });
+  }
+
   public ver(id: number): Observable<E> {
     return this.http.get<E>(`${this.baseEndpoint}/${id}`);
   }
@@ -40,8 +52,12 @@ export abstract class CommonService<E extends Generic> {
   }
 
   public eliminar(entity: E): Observable<E> {
-    return this.http.put<E>(`${this.baseEndpoint}/eliminar/${entity.id}`, entity, {
-      headers: this.cabeceras,
-    });
+    return this.http.put<E>(
+      `${this.baseEndpoint}/eliminar/${entity.id}`,
+      entity,
+      {
+        headers: this.cabeceras,
+      }
+    );
   }
 }

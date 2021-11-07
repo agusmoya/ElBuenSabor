@@ -4,5 +4,5 @@ import { Rol } from './rol';
 export class Usuario extends Generic {
   clave: string;
   rol: Rol;
-  imagenHashCode: number;
+  imagenHashCode: number = 0;
 }

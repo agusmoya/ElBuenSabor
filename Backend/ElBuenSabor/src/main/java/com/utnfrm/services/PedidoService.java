@@ -3,7 +3,6 @@ package com.utnfrm.services;
 import com.mercadopago.resources.Payment;
 import com.mercadopago.resources.Preference;
 import com.utnfrm.entities.Pedido;
-import org.springframework.ui.Model;
 
 public interface PedidoService extends BaseService<Pedido, Long> {
 

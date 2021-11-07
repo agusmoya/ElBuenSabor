@@ -34,7 +34,7 @@ export abstract class CommonListarComponent<
     this.calcularRangos();
   }
 
-  private calcularRangos() {
+  protected calcularRangos() {
     this.service
       .listarPaginado(
         this.paginaActual.toString(),

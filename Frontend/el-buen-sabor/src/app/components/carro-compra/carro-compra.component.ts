@@ -190,18 +190,21 @@ export class CarroCompraComponent implements OnInit {
     this.itemsCarroCompra.forEach((item) => {
       this.cargarDetallesDePedido(this.pedido, item);
     });
-    // haciendo pruebas
-    // this.controlDeStock();
+    
     this.pedido.cliente = this.cliente;
     this.pedido.domicilio = this.cliente.domicilio;
     this.pedido.fecha = new Date();
     this.pedido.horaEstimadaFin = new Date();
     // 0 --> local | 1 --> domicilio
     this.pedido.tipoEnvio = this.tipoRetiro == 'local' ? 0 : 1;
+
+    // Este cálculo lo realizamos cuando el cajero aprueba el pedido.
+    // Lo muevo al componente pedido
     this.pedido.horaEstimadaFin.setMinutes(
       this.pedido.fecha.getMinutes() +
         this.calcularHoraEstimadaPedido(this.pedido)
     );
+
     this.pedido.estadosPedido.push(
       new EstadoPedido(EstadoPedido.status.Pendiente)
     );

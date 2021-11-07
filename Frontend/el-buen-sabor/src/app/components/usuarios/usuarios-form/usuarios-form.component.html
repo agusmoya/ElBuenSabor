@@ -19,8 +19,7 @@
             #nombre="ngModel"
             required
             [ngClass]="{
-              'is-invalid':
-                (nombre.invalid && nombre.touched) || usuarioForm.submitted
+              'is-invalid': nombre.invalid && nombre.touched
             }"
           />
           <small
@@ -45,7 +44,7 @@
             ><i>{{ error.denominacionUnique }}</i>
           </small>
           <small
-            *ngIf="(nombre.invalid && nombre.touched) || usuarioForm.submitted"
+            *ngIf="nombre.invalid && nombre.touched"
             id="errorMessageUnique"
             class="form-text"
             style="color: red"
@@ -67,8 +66,7 @@
             #clave="ngModel"
             required
             [ngClass]="{
-              'is-invalid':
-                (clave.invalid && clave.touched) || usuarioForm.submitted
+              'is-invalid': clave.invalid && clave.touched
             }"
           />
           <small
@@ -80,7 +78,7 @@
             <i>{{ error.clave }}</i>
           </small>
           <small
-            *ngIf="(clave.invalid && clave.touched) || usuarioForm.submitted"
+            *ngIf="clave.invalid && clave.touched"
             id="errorMessageUnique"
             class="form-text"
             style="color: red"
@@ -138,9 +136,7 @@
             required
             #nombreCliente="ngModel"
             [ngClass]="{
-              'is-invalid':
-                (nombreCliente.invalid && nombreCliente.touched) ||
-                usuarioForm.submitted
+              'is-invalid': nombreCliente.invalid && nombreCliente.touched
             }"
           />
           <small
@@ -151,10 +147,7 @@
             ><i>{{ error.nombre }}</i>
           </small>
           <small
-            *ngIf="
-              (nombreCliente.invalid && nombreCliente.touched) ||
-              usuarioForm.submitted
-            "
+            *ngIf="nombreCliente.invalid && nombreCliente.touched"
             id="errorMessageUnique"
             class="form-text"
             style="color: red"
@@ -173,8 +166,7 @@
             #apellido="ngModel"
             required
             [ngClass]="{
-              'is-invalid':
-                (apellido.invalid && apellido.touched) || usuarioForm.submitted
+              'is-invalid': apellido.invalid && apellido.touched
             }"
           />
           <small
@@ -185,9 +177,7 @@
             ><i>{{ error.apellido }}</i>
           </small>
           <small
-            *ngIf="
-              (apellido.invalid && apellido.touched) || usuarioForm.submitted
-            "
+            *ngIf="apellido.invalid && apellido.touched"
             id="errorMessageUnique"
             class="form-text"
             style="color: red"
@@ -206,8 +196,7 @@
             #telefono="ngModel"
             required
             [ngClass]="{
-              'is-invalid':
-                (telefono.invalid && telefono.touched) || usuarioForm.submitted
+              'is-invalid': telefono.invalid && telefono.touched
             }"
           />
           <small
@@ -218,9 +207,7 @@
             ><i>{{ error.telefono }}</i>
           </small>
           <small
-            *ngIf="
-              (telefono.invalid && telefono.touched) || usuarioForm.submitted
-            "
+            *ngIf="telefono.invalid && telefono.touched"
             id="errorMessageUnique"
             class="form-text"
             style="color: red"
@@ -239,12 +226,11 @@
             #calle="ngModel"
             required
             [ngClass]="{
-              'is-invalid':
-                (calle.invalid && calle.touched) || usuarioForm.submitted
+              'is-invalid': calle.invalid && calle.touched
             }"
           />
           <small
-            *ngIf="(calle.invalid && calle.touched) || usuarioForm.submitted"
+            *ngIf="calle.invalid && calle.touched"
             id="errorMessageUnique"
             class="form-text"
             style="color: red"
@@ -264,12 +250,11 @@
             #numero="ngModel"
             required
             [ngClass]="{
-              'is-invalid':
-                (numero.invalid && numero.touched) || usuarioForm.submitted
+              'is-invalid': numero.invalid && numero.touched
             }"
           />
           <small
-            *ngIf="(numero.invalid && numero.touched) || usuarioForm.submitted"
+            *ngIf="numero.invalid && numero.touched"
             id="errorMessageUnique"
             class="form-text"
             style="color: red"
@@ -303,9 +288,7 @@
             [(ngModel)]="cliente.domicilio.localidad.departamento.nombre"
             #departamento="ngModel"
             [ngClass]="{
-              'is-invalid':
-                (departamento.invalid && departamento.touched) ||
-                usuarioForm.submitted
+              'is-invalid': departamento.invalid && departamento.touched
             }"
           >
             <option
@@ -329,10 +312,7 @@
             </option>
           </select>
           <small
-            *ngIf="
-              (departamento.invalid && departamento.touched) ||
-              usuarioForm.submitted
-            "
+            *ngIf="departamento.invalid && departamento.touched"
             id="errorMessageUnique"
             class="form-text"
             style="color: red"
@@ -351,9 +331,7 @@
             [(ngModel)]="cliente.domicilio.localidad.nombre"
             #localidad="ngModel"
             [ngClass]="{
-              'is-invalid':
-                (localidad.invalid && localidad.touched) ||
-                usuarioForm.submitted
+              'is-invalid': localidad.invalid && localidad.touched
             }"
           >
             <option
@@ -375,9 +353,7 @@
             </option>
           </select>
           <small
-            *ngIf="
-              (localidad.invalid && localidad.touched) || usuarioForm.submitted
-            "
+            *ngIf="localidad.invalid && localidad.touched"
             id="errorMessageUnique"
             class="form-text"
             style="color: red"
@@ -420,7 +396,7 @@
         <button
           [disabled]="usuarioForm.invalid"
           class="btn btn-danger mx-5"
-          (click)="model.id ? editar() : crear()"
+          (click)="model.id ? editar() : crearUsuario()"
         >
           {{ model.id ? "Editar" : "Crear" }}
         </button>

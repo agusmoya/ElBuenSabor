@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 @Entity
 @Table(name = "clientes")
@@ -34,15 +35,26 @@ public class Cliente extends Base {
     @NotEmpty
     private String email;
 
-    // optional = false, cascade = CascadeType.ALL
-    // SOLUCIONA **detached entity passed to persist: com.utnfrm.entities.Usuario; nested exception is org.hibernate.PersistentObjectException**
-    @OneToOne()
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "fk_usuario")
     @NotNull
     private Usuario usuario;
 
-    @OneToOne(optional = false, cascade = CascadeType.MERGE)
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "fk_domicilio")
     @NotNull
     private Domicilio domicilio;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cliente cliente = (Cliente) o;
+        return telefono.equals(cliente.telefono) && email.equals(cliente.email) && usuario.equals(cliente.usuario);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(telefono, email, usuario);
+    }
 }

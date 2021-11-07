@@ -4,7 +4,9 @@
   </div>
   <div class="card-body">
     <div class="alert alert-info my-3 text-center" *ngIf="lista?.length == 0">
-      ¡No hay Pedidos PENDIENTES cargados en el Sistema!
+      ¡No hay Pedidos
+      {{ userRol === "Cajero" ? "PENDIENTES/TERMINADOS" : "" }} cargados en el
+      Sistema!
     </div>
     <table
       class="table table-hover table-striped text-center align-middle"
@@ -16,12 +18,14 @@
           <th scope="col">Pedido nro.</th>
           <th scope="col">Estado Actual</th>
           <th scope="col">Fecha</th>
+          <th scope="col">Hora estimada entrega</th>
+          <th scope="col">Tipo de Envío</th>
           <th scope="col">Aprobación</th>
           <th scope="col">Rechazo</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let pedido of lista">
+        <tr *ngFor="let pedido of lista; let indicePedido = index">
           <td>{{ pedido.id }}</td>
           <td>{{ pedido.numero }}</td>
           <td>
@@ -33,9 +37,17 @@
             {{ pedido.fecha | date: "EEEE, M/d/yy, h:mm a" | uppercase }}
           </td>
           <td>
+            {{
+              pedido.horaEstimadaFin | date: "EEEE, M/d/yy, h:mm a" | uppercase
+            }}
+          </td>
+          <td>
+            {{ pedido.tipoEnvio === 0 ? "Retiro en local" : "Domicilio" }}
+          </td>
+          <td>
             <a
               class="btn btn-sm btn-outline-dark"
-              [routerLink]="['/roles/form', pedido.id]"
+              (click)="aprobarPedido(pedido.id)"
               >Aprobar</a
             >
           </td>

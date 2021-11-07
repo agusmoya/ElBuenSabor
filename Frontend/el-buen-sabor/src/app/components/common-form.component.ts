@@ -48,7 +48,7 @@ export abstract class CommonFormComponent<
         this.router.navigate([this.redirect]);
       },
       (err) => {
-        if (err.status === 400) {
+        if (err.status == 400) {
           if (
             typeof err.error == 'string' &&
             err.error.includes('ConstraintViolationException')
@@ -86,8 +86,17 @@ export abstract class CommonFormComponent<
       },
       (err) => {
         if (err.status === 400) {
-          this.error = err.error;
-          console.log(this.error);
+          if (
+            typeof err.error == 'string' &&
+            err.error.includes('ConstraintViolationException')
+          ) {
+            this.error = {
+              nombreUnique: 'El valor ingresado ya existe en nuestro sistema.',
+            };
+          } else {
+            this.error = err.error;
+            console.log(this.error);
+          }
         }
       }
     );

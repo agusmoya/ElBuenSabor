@@ -47,63 +47,15 @@ export class UsuariosFormComponent
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.rolService.listar().subscribe((roles) => (this.roles = roles));
-    this.listarDepartamentosMendoza();
-    this.verificarClienteDeUsuario();
+    this.listarRoles();
   }
 
-  verificarClienteDeUsuario(): void {
-    setTimeout(() => {
-      if (
-        this.model.id &&
-        (this.model.rol.denominacion == 'Cliente' ||
-          this.model.rol.denominacion == 'Administrador')
-      ) {
-        // console.log('** ID:', this.model.id);
-        // console.log('** ROL1:', this.model.rol.denominacion);
-        this.clienteService
-          .buscarPorEmail(this.model.nombre)
-          .subscribe((cliente) => {
-            this.cliente = cliente;
-            this.listarLocalidadesMendoza();
-            console.log('** CLIENTE: ', this.cliente);
-          });
-      } else if (
-        !this.model.id &&
-        this.model.rol &&
-        (this.model.rol.denominacion == 'Cliente' ||
-          this.model.rol.denominacion == 'Administrador')
-      ) {
-        // console.log('** ROL2:', this.model.rol.denominacion);
-        this.cliente = new Cliente();
-        this.cliente.email = this.model.nombre;
-        this.cliente.usuario = this.model;
-      }
-    }, 100); // 100 milisegundos de espera para asegurarme que he logrado poblar el this.model (usuario)
-  }
-
-  listarDepartamentosMendoza(): void {
-    this.mendozaService.getAllDepartamentos().subscribe((departamentosAPI) => {
-      this.departamentos = departamentosAPI.departamentos.filter(
-        (d) =>
-          d.nombre == 'Guaymallén' ||
-          d.nombre == 'Godoy Cruz' ||
-          d.nombre == 'Capital' ||
-          d.nombre == 'Maipú'
-      );
+  listarRoles(): void {
+    this.rolService.listar().subscribe((roles) => {
+      this.roles = roles;
+      this.verificarClienteDeUsuario();
+      this.listarDepartamentosMendoza();
     });
-  }
-
-  listarLocalidadesMendoza(): void {
-    if (this.cliente.domicilio.localidad.departamento != null) {
-      this.mendozaService
-        .getLocalidadesXdepartamento(
-          this.cliente.domicilio.localidad.departamento.nombre
-        )
-        .subscribe((localidadesAPI) => {
-          this.localidades = localidadesAPI.localidades;
-        });
-    }
   }
 
   asignarRol(event: any): void {
@@ -120,8 +72,57 @@ export class UsuariosFormComponent
     }
   }
 
+  verificarClienteDeUsuario(): void {
+    if (
+      this.model.id &&
+      (this.model.rol.denominacion == 'Cliente' ||
+        this.model.rol.denominacion == 'Administrador')
+    ) {
+      this.clienteService
+        .buscarPorEmail(this.model.nombre)
+        .subscribe((cliente) => {
+          this.cliente = cliente;
+          this.listarLocalidadesMendoza();
+          console.log('** CLIENTE ENCONTRADO: ', this.cliente);
+        });
+    } else if (
+      !this.model.id &&
+      this.model.rol &&
+      (this.model.rol.denominacion == 'Cliente' ||
+        this.model.rol.denominacion == 'Administrador')
+    ) {
+      this.cliente = new Cliente();
+      this.cliente.email = this.model.nombre;
+      this.cliente.usuario = this.model;
+      console.log('** CLIENTE NUEVO: ', this.cliente);
+    }
+  }
+
+  listarDepartamentosMendoza(): void {
+    this.mendozaService.getAllDepartamentos().subscribe((departamentosAPI) => {
+      this.departamentos = departamentosAPI.departamentos.filter(
+        (d) =>
+          d.nombre == 'Guaymallén' ||
+          d.nombre == 'Godoy Cruz' ||
+          d.nombre == 'Capital' ||
+          d.nombre == 'Maipú'
+      );
+    });
+  }
+
+  listarLocalidadesMendoza(): void {
+    if (this.cliente?.domicilio.localidad.departamento != null) {
+      this.mendozaService
+        .getLocalidadesXdepartamento(
+          this.cliente.domicilio.localidad.departamento.nombre
+        )
+        .subscribe((localidadesAPI) => {
+          this.localidades = localidadesAPI.localidades;
+        });
+    }
+  }
+
   asignarDpto(event: any): void {
-    console.log(event.target.value);
     this.cliente.domicilio.localidad.departamento.nombre = event.target.value;
     this.cliente.domicilio.localidad.departamento.provincia.nombre = 'Mendoza';
     this.mendozaService
@@ -161,50 +162,113 @@ export class UsuariosFormComponent
     }
   }
 
-  public crear(): void {
-    if (!this.fotoSeleccionada) {
-      super.crear();
-      if (
-        this.model.rol.denominacion == 'Cliente' ||
-        this.model.rol.denominacion == 'Administrador'
-      ) {
-        setTimeout(() => {
-          this.crearCliente();
-        }, 500);
-      }
+  // public crear(): void {
+  //   if (!this.fotoSeleccionada) {
+  //     super.crear();
+  //     if (
+  //       this.model.rol.denominacion == 'Cliente' ||
+  //       this.model.rol.denominacion == 'Administrador'
+  //     ) {
+  //       setTimeout(() => {
+  //         this.crearCliente();
+  //       }, 500);
+  //     }
+  //   } else {
+  //     this.service.crearConFoto(this.model, this.fotoSeleccionada).subscribe(
+  //       (usuario) => {
+  //         // metodo para nombrar la entidad a crear, dentro del modal de SweetAlert
+  //         this.nombrarEntidad(usuario);
+  //         Swal.fire(
+  //           'Nuevo:',
+  //           `${this.nombreModelo} * ${this.denominacionEntidad} * creado con éxito`,
+  //           'success'
+  //         );
+  //         if (
+  //           this.model.rol.denominacion == 'Cliente' ||
+  //           this.model.rol.denominacion == 'Administrador'
+  //         ) {
+  //           setTimeout(() => {
+  //             this.crearCliente();
+  //           }, 500);
+  //         }
+  //         this.router.navigate([this.redirect]);
+  //       },
+  //       (err) => {
+  //         if (err.status === 400) {
+  //           this.error = err.error;
+  //           console.log('Error XXX', this.error);
+  //         }
+  //       }
+  //     );
+  //   }
+  // }
+
+  // crear para sobreescribir al del padre
+
+  crearUsuario(): void {
+    if (
+      this.model.rol.denominacion == 'Cliente' ||
+      this.model.rol.denominacion == 'Administrador'
+    ) {
+      this.crearCliente();
     } else {
-      this.service.crearConFoto(this.model, this.fotoSeleccionada).subscribe(
-        (usuario) => {
-          // metodo para nombrar la entidad a crear, dentro del modal de SweetAlert
-          this.nombrarEntidad(usuario);
-          Swal.fire(
-            'Nuevo:',
-            `${this.nombreModelo} * ${this.denominacionEntidad} * creado con éxito`,
-            'success'
-          );
-          if (
-            this.model.rol.denominacion == 'Cliente' ||
-            this.model.rol.denominacion == 'Administrador'
-          ) {
-            setTimeout(() => {
-              this.crearCliente();
-            }, 500);
+      if (!this.fotoSeleccionada) {
+        super.crear();
+      } else {
+        this.service.crearConFoto(this.model, this.fotoSeleccionada).subscribe(
+          (usuarioCreado) => {
+            this.nombrarEntidad(usuarioCreado);
+            Swal.fire(
+              'Nuevo:',
+              `${this.nombreModelo} * ${this.denominacionEntidad} * creado con éxito`,
+              'success'
+            );
+
+            this.router.navigate([this.redirect]);
+          },
+          (err) => {
+            if (err.status == 400) {
+              if (
+                typeof err.error == 'string' &&
+                err.error.includes('ConstraintViolationException')
+              ) {
+                this.error = {
+                  nombreUnique:
+                    'El valor ingresado ya existe en nuestro sistema.',
+                };
+                this.error = err.error;
+                console.log('Error XXX', this.error);
+              }
+            }
           }
-          this.router.navigate([this.redirect]);
-        },
-        (err) => {
-          if (err.status === 400) {
-            this.error = err.error;
-            console.log('Error XXX', this.error);
-          }
-        }
-      );
+        );
+      }
     }
+  }
+
+  // editar
+  editarUsuario(): void {
+    this.service.editar(this.model).subscribe(
+      (entity) => {
+        this.nombrarEntidad(entity);
+        Swal.fire(
+          'Modificado',
+          `${this.nombreModelo} * ${this.denominacionEntidad} * actualizado con éxito`,
+          'success'
+        );
+        this.router.navigate([this.redirect]);
+      },
+      (err) => {
+        if (err.status === 400) {
+          this.error = err.error;
+          console.log(this.error);
+        }
+      }
+    );
   }
 
   public editar(): void {
     if (!this.fotoSeleccionada) {
-      super.editar();
       if (
         this.model.rol.denominacion == 'Cliente' ||
         this.model.rol.denominacion == 'Administrador'
@@ -213,6 +277,7 @@ export class UsuariosFormComponent
           this.editarCliente();
         }, 500);
       }
+      super.editar();
     } else {
       this.service.editarConFoto(this.model, this.fotoSeleccionada).subscribe(
         (usuario) => {
@@ -243,28 +308,42 @@ export class UsuariosFormComponent
     }
   }
 
+  // FUNCIONANDO
   public crearCliente(): void {
-    this.service.buscarPorEmail(this.model.nombre).subscribe(
-      (usuario) => {
-        this.cliente.email = this.model.nombre;
-        this.cliente.usuario = usuario;
-        this.clienteService.crear(this.cliente).subscribe(
-          (cliente) => console.log(cliente),
+    if (!this.fotoSeleccionada) {
+      this.clienteService.crear(this.cliente).subscribe(
+        (cliente) => {
+          console.log(cliente);
+          this.router.navigate([this.redirect]);
+        },
+        (err) => {
+          if (err.status === 400) {
+            this.error = err.error;
+            console.log(this.error);
+          }
+        }
+      );
+    } else {
+      this.clienteService
+        .crearConFoto(this.cliente, this.fotoSeleccionada)
+        .subscribe(
+          (clienteCreado) => {
+            this.nombrarEntidadCliente(clienteCreado);
+            Swal.fire(
+              'Nuevo:',
+              `${this.nombreModelo} * ${this.denominacionEntidad} * creado con éxito`,
+              'success'
+            );
+            this.router.navigate([this.redirect]);
+          },
           (err) => {
-            if (err.status === 400) {
+            if (err.status == 400) {
               this.error = err.error;
               console.log(this.error);
             }
           }
         );
-      },
-      (err) => {
-        if (err.status === 400) {
-          this.error = err.error;
-          console.log(this.error);
-        }
-      }
-    );
+    }
   }
 
   public editarCliente(): void {
@@ -295,5 +374,13 @@ export class UsuariosFormComponent
 
   goBack(): void {
     this.location.back();
+  }
+
+  private nombrarEntidadCliente(cliente: Cliente): void {
+    if (cliente.denominacion) {
+      this.denominacionEntidad = cliente.denominacion;
+    } else if (cliente.nombre) {
+      this.denominacionEntidad = cliente.nombre;
+    }
   }
 }

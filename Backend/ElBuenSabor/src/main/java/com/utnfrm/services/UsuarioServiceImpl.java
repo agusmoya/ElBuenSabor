@@ -1,7 +1,9 @@
 package com.utnfrm.services;
 
+import com.utnfrm.entities.Rol;
 import com.utnfrm.entities.Usuario;
 import com.utnfrm.repositories.BaseRepository;
+import com.utnfrm.repositories.RolRepository;
 import com.utnfrm.repositories.UsuarioRepository;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,9 @@ public class UsuarioServiceImpl extends BaseServiceImpl<Usuario, Long> implement
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private RolRepository rolRepository;
 
     public UsuarioServiceImpl(BaseRepository<Usuario, Long> baseRepository) {
         super(baseRepository);
@@ -38,6 +43,13 @@ public class UsuarioServiceImpl extends BaseServiceImpl<Usuario, Long> implement
     public Usuario save(Usuario usuario) throws Exception {
         String encriptMD5 = DigestUtils.md5Hex(usuario.getClave());
         usuario.setClave(encriptMD5);
+
+        Rol rol = rolRepository.findByDenominacion(usuario.getRol().getDenominacion());
+        if (rol == null) {
+            System.out.println(rol.getDenominacion());
+            rolRepository.save(rol);
+        }
+
         return super.save(usuario);
     }
 
@@ -45,6 +57,13 @@ public class UsuarioServiceImpl extends BaseServiceImpl<Usuario, Long> implement
     public Usuario update(Long id, Usuario usuario) throws Exception {
         String encriptMD5 = DigestUtils.md5Hex(usuario.getClave());
         usuario.setClave(encriptMD5);
+
+        Rol rol = rolRepository.findByDenominacion(usuario.getRol().getDenominacion());
+        if (rol == null) {
+            System.out.println(rol.getDenominacion());
+            rolRepository.save(rol);
+        }
+
         return super.update(id, usuario);
     }
 
