@@ -85,7 +85,7 @@ export abstract class CommonFormComponent<
         this.router.navigate([this.redirect]);
       },
       (err) => {
-        if (err.status === 400) {
+        if (err.status == 400) {
           if (
             typeof err.error == 'string' &&
             err.error.includes('ConstraintViolationException')

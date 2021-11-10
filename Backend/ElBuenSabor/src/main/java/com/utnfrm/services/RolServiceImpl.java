@@ -36,13 +36,4 @@ public class RolServiceImpl extends BaseServiceImpl<Rol, Long> implements RolSer
             throw new Exception(e.getMessage());
         }
     }
-
-//    public boolean validarCampoUnico(Rol rol) {
-//        List<Rol> rolesBD = rolRepository.findAll();
-//        for (Rol r : rolesBD) {
-//            if (r.getDenominacion() == rol.getDenominacion()) return false;
-//        }
-//        return true;
-//    }
-
 }

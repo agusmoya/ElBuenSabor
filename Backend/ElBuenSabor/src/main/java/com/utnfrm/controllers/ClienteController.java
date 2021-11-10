@@ -38,4 +38,19 @@ public class ClienteController extends BaseControllerImpl<Cliente, ClienteServic
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+    @PutMapping("/editar-con-foto/{id}")
+    public ResponseEntity<?> editarConFoto(
+            @PathVariable Long id, @Valid Cliente cliente, BindingResult result,
+            @RequestParam MultipartFile archivo) {
+        try {
+            if (!archivo.isEmpty()) {
+                System.out.println("Imagen: " + archivo.getBytes());
+                cliente.getUsuario().setImagen(archivo.getBytes());
+            }
+            return super.update(id, cliente, result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 }

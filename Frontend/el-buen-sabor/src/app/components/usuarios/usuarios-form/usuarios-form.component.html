@@ -2,9 +2,10 @@
   <div class="card-header">
     <h2>{{ titulo }}</h2>
   </div>
-  <!-- {{ usuarioForm.value | json }} -->
+  {{ usuarioForm.value | json }}
   <div class="card-body">
     <form #usuarioForm="ngForm">
+      <!-- EMAIL -->
       <div class="row g-3 align-items-center">
         <div class="col-3">
           <label for="nombre" class="col-form-label"> Email Usuario: </label>
@@ -44,6 +45,13 @@
             ><i>{{ error.denominacionUnique }}</i>
           </small>
           <small
+            *ngIf="error && error.formatoEmail"
+            id="errorMessageUnique"
+            class="form-text"
+            style="color: red"
+            ><i>{{ error.formatoEmail }}</i>
+          </small>
+          <small
             *ngIf="nombre.invalid && nombre.touched"
             id="errorMessageUnique"
             class="form-text"
@@ -52,6 +60,8 @@
           </small>
         </div>
       </div>
+
+      <!-- CLAVE -->
       <div class="row g-3 align-items-center mt-1">
         <div class="col-3">
           <label for="clave" class="col-form-label"> Clave: </label>
@@ -86,10 +96,13 @@
           </small>
         </div>
       </div>
+
+      <!-- ROL -->
       <div class="row g-3 align-items-center mt-1">
         <div class="col-3">
-          <label for="estado" class="col-form-label"> Rol: </label>
+          <label for="rol" class="col-form-label"> Rol: </label>
         </div>
+
         <div class="col-9">
           <select
             class="form-select"
@@ -97,6 +110,10 @@
             name="rol"
             (change)="asignarRol($event)"
             required
+            [disabled]="
+              model.rol?.denominacion == 'Cliente' ||
+              model.rol?.denominacion == 'Administrador'
+            "
           >
             <option value="null" disabled selected>Elija un rol</option>
             <option
@@ -107,6 +124,41 @@
               {{ rol.denominacion }}
             </option>
           </select>
+          <!-- <select
+            (change)="asignarRol($event)"
+            class="form-select"
+            name="rol"
+            required
+            [(ngModel)]="model.rol.denominacion"
+            #rol="ngModel"
+            [ngClass]="{
+              'is-invalid': rol.invalid && rol.touched
+            }"
+          >
+            <option
+              [value]="model.rol?.denominacion"
+              disabled
+              [selected]="
+                !model.rol?.denominacion || model.rol?.denominacion == undefined
+              "
+            >
+              --- Seleccione un rol ---
+            </option>
+            <option
+              *ngFor="let rol of roles; let indiceRol = index"
+              [ngValue]="model.rol"
+              [selected]="model.rol.denominacion == rol.denominacion"
+            >
+              {{ rol.denominacion }}
+            </option>
+          </select>
+          <small
+            *ngIf="rol.invalid && rol.touched"
+            id="errorMessageUnique"
+            class="form-text"
+            style="color: red"
+            ><i>Este campo es obligatorio</i>
+          </small> -->
           <small
             *ngIf="error && error.rol"
             id="errorMessageEmpty"
@@ -116,14 +168,9 @@
           </small>
         </div>
       </div>
-      <div
-        *ngIf="
-          cliente &&
-          (model.rol?.denominacion == 'Cliente' ||
-            model.rol?.denominacion == 'Administrador')
-        "
-        class="row g-3 align-items-center mt-1"
-      >
+
+      <!-- CLIENTE -->
+      <div class="row g-3 align-items-center mt-1">
         <div class="col-3">
           <label for="nombreCliente" class="col-form-label"> Nombre: </label>
         </div>
@@ -285,27 +332,24 @@
             class="form-select"
             name="departamento"
             required
-            [(ngModel)]="cliente.domicilio.localidad.departamento.nombre"
             #departamento="ngModel"
+            [(ngModel)]="cliente.domicilio.localidad.departamento.nombre"
             [ngClass]="{
               'is-invalid': departamento.invalid && departamento.touched
             }"
           >
             <option
-              *ngIf="!model.id"
-              [value]="cliente.domicilio.localidad.departamento.nombre"
+              value="null"
               disabled
-              [selected]="
-                cliente.domicilio.localidad.departamento.nombre === undefined
-              "
+              [selected]="!cliente.domicilio.localidad.departamento.nombre"
             >
               --- Seleccione un departamento ---
             </option>
             <option
-              *ngFor="let dpto of departamentos; let indiceDpto = index"
+              *ngFor="let dpto of departamentos"
               [value]="dpto.nombre"
               [selected]="
-                cliente.domicilio.localidad.departamento.nombre === dpto.nombre
+                cliente.domicilio.localidad.departamento.nombre == dpto.nombre
               "
             >
               {{ dpto.nombre }}
@@ -322,9 +366,13 @@
         <div class="col-3">
           <label for="localidad" class="col-form-label"> Localidad: </label>
         </div>
+        <!-- *ngIf="!departamento.invalid" -->
         <div class="col-9">
           <select
             (change)="asignarLocalidad($event)"
+            (focus)="asignarLocalidad($event)"
+            (blur)="asignarLocalidad($event)"
+            (mouseout)="asignarLocalidad($event)"
             class="form-select"
             name="localidad"
             required
@@ -335,12 +383,13 @@
             }"
           >
             <option
-              *ngIf="!model.id"
-              [value]="cliente.domicilio.localidad.nombre"
+              value="null"
               disabled
-              [selected]="cliente.domicilio.localidad.nombre === undefined"
+              [selected]="!cliente.domicilio.localidad.nombre"
             >
-              --- Seleccione un localidad ---
+              {{ localidad.invalid }} //
+              {{ cliente.domicilio.localidad.nombre }} --- Seleccione un
+              localidad ---
             </option>
             <option
               *ngFor="let localidad of localidades; let indiceLocalidad = index"
@@ -361,6 +410,8 @@
           </small>
         </div>
       </div>
+
+      <!-- ESTADO -->
       <div class="row g-3 align-items-center mt-1" *ngIf="model.id">
         <div class="col-3">
           <label for="estado" class="col-form-label"> Estado: </label>
@@ -377,6 +428,7 @@
         </div>
       </div>
 
+      <!-- IMAGEN -->
       <div class="row g-3 align-items-center mt-1">
         <div class="col-3">
           <label for="imgUsuario" class="col-form-label"> Imagen: </label>
@@ -396,7 +448,7 @@
         <button
           [disabled]="usuarioForm.invalid"
           class="btn btn-danger mx-5"
-          (click)="model.id ? editar() : crearUsuario()"
+          (click)="model.id ? editarUsuario() : crearUsuario()"
         >
           {{ model.id ? "Editar" : "Crear" }}
         </button>

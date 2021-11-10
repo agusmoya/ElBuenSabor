@@ -53,4 +53,20 @@ export class ClienteService extends CommonService<Cliente> {
       formData
     );
   }
+
+  public editarConFoto(cliente: Cliente, archivo: File): Observable<Cliente> {
+    const formData = new FormData();
+    formData.append('archivo', archivo);
+    formData.append('nombre', cliente.nombre);
+    formData.append('apellido', cliente.apellido);
+    formData.append('email', cliente.email);
+    formData.append('telefono', cliente.telefono.toString());
+    formData.append('usuario', cliente.usuario.id.toString());
+    formData.append('domicilio', cliente.domicilio.id.toString());
+
+    return this.http.put<Cliente>(
+      this.baseEndpoint + `/editar-con-foto/${cliente.id}`,
+      formData
+    );
+  }
 }

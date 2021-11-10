@@ -10,11 +10,8 @@ export class Cliente extends Generic {
   usuario: Usuario;
   domicilio: Domicilio;
 
-  constructor(nombre: string = '', apellido: string = '', email: string = '') {
+  constructor() {
     super();
     this.domicilio = new Domicilio();
-    this.nombre = nombre;
-    this.apellido = apellido;
-    this.email = email;
   }
 }

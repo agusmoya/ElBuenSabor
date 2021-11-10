@@ -54,6 +54,7 @@ public class UsuarioServiceImpl extends BaseServiceImpl<Usuario, Long> implement
     }
 
     @Override
+    @Transactional
     public Usuario update(Long id, Usuario usuario) throws Exception {
         String encriptMD5 = DigestUtils.md5Hex(usuario.getClave());
         usuario.setClave(encriptMD5);
@@ -95,7 +96,7 @@ public class UsuarioServiceImpl extends BaseServiceImpl<Usuario, Long> implement
                 if (usuarioEncontrado.getClave().equals(usuario.getClave())) {
                     return usuarioEncontrado;
                 } else {
-                    throw new Exception("Clave erronea");
+                    throw new Exception("Clave errónea");
                 }
             } else {
                 String encriptMD5 = DigestUtils.md5Hex(usuario.getClave());
@@ -103,7 +104,7 @@ public class UsuarioServiceImpl extends BaseServiceImpl<Usuario, Long> implement
                 if (usuarioEncontrado.getClave().equals(usuario.getClave())) {
                     return usuarioEncontrado;
                 }
-                throw new Exception("Clave erronea");
+                throw new Exception("Clave errónea");
             }
         } catch (Exception e) {
             throw new Exception(e.getMessage());

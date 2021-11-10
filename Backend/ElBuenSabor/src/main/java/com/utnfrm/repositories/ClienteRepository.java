@@ -10,4 +10,5 @@ public interface ClienteRepository extends BaseRepository<Cliente, Long> {
 
     @Query(value = "SELECT c FROM Cliente c WHERE c.email=:email")
     Cliente buscarPorEmail(@Param("email") String email);
+
 }
