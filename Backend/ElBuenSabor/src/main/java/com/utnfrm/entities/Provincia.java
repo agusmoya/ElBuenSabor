@@ -21,7 +21,7 @@ public class Provincia extends Base {
 
     @Column
     @NotEmpty
-    private String nombre;
+    private String nombre = "Mendoza";
 
     @Override
     public boolean equals(Object o) {

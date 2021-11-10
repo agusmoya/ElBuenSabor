@@ -2,7 +2,7 @@
   <div class="card-header">
     <h2>{{ titulo }}</h2>
   </div>
-  {{ usuarioForm.value | json }}
+  <!-- {{ usuarioForm.value | json }} -->
   <div class="card-body">
     <form #usuarioForm="ngForm">
       <!-- EMAIL -->
@@ -105,15 +105,16 @@
 
         <div class="col-9">
           <select
+            [disabled]="
+              this.model.id &&
+              (model.rol?.denominacion == 'Cliente' ||
+                model.rol?.denominacion == 'Administrador')
+            "
             class="form-select"
             id="rol"
             name="rol"
             (change)="asignarRol($event)"
             required
-            [disabled]="
-              model.rol?.denominacion == 'Cliente' ||
-              model.rol?.denominacion == 'Administrador'
-            "
           >
             <option value="null" disabled selected>Elija un rol</option>
             <option
@@ -170,7 +171,7 @@
       </div>
 
       <!-- CLIENTE -->
-      <div class="row g-3 align-items-center mt-1">
+      <div class="row g-3 align-items-center mt-1" *ngIf="cliente != null">
         <div class="col-3">
           <label for="nombreCliente" class="col-form-label"> Nombre: </label>
         </div>
@@ -339,7 +340,7 @@
             }"
           >
             <option
-              value="null"
+              value="undefined"
               disabled
               [selected]="!cliente.domicilio.localidad.departamento.nombre"
             >
@@ -383,13 +384,11 @@
             }"
           >
             <option
-              value="null"
+              value="undefined"
               disabled
               [selected]="!cliente.domicilio.localidad.nombre"
             >
-              {{ localidad.invalid }} //
-              {{ cliente.domicilio.localidad.nombre }} --- Seleccione un
-              localidad ---
+              --- Seleccione un localidad ---
             </option>
             <option
               *ngFor="let localidad of localidades; let indiceLocalidad = index"
@@ -418,12 +417,10 @@
         </div>
         <div class="col-9">
           <select class="form-select" name="estado" [(ngModel)]="model.estado">
-            <option value="0" [selected]="model.estado === 0">
-              Deshabilitado
+            <option value="0" [selected]="model.estado == 0">
+              Deshabilitar
             </option>
-            <option value="1" [selected]="model.estado === 1">
-              Habilitado
-            </option>
+            <option value="1" [selected]="model.estado == 1">Habilitar</option>
           </select>
         </div>
       </div>

@@ -56,13 +56,45 @@ export class ClienteService extends CommonService<Cliente> {
 
   public editarConFoto(cliente: Cliente, archivo: File): Observable<Cliente> {
     const formData = new FormData();
+
     formData.append('archivo', archivo);
     formData.append('nombre', cliente.nombre);
     formData.append('apellido', cliente.apellido);
-    formData.append('email', cliente.email);
     formData.append('telefono', cliente.telefono.toString());
+    formData.append('email', cliente.email);
+    formData.append('estado', cliente.estado.toString());
+
     formData.append('usuario', cliente.usuario.id.toString());
+    formData.append('usuario.nombre', cliente.usuario.nombre);
+    formData.append('usuario.clave', cliente.usuario.clave);
+    formData.append('usuario.rol', cliente.usuario.rol.id.toString());
+    formData.append('usuario.estado', cliente.usuario.estado.toString());
+
     formData.append('domicilio', cliente.domicilio.id.toString());
+    formData.append('domicilio.calle', cliente.domicilio.calle);
+    formData.append('domicilio.numero', cliente.domicilio.numero.toString());
+
+    // formData.append('localidad', cliente.domicilio.localidad.id.toString());
+    formData.append(
+      'domicilio.localidad.nombre',
+      cliente.domicilio.localidad.nombre
+    );
+    // formData.append(
+    //   'departamento',
+    //   cliente.domicilio.localidad.departamento.id.toString()
+    // );
+    formData.append(
+      'domicilio.localidad.departamento.nombre',
+      cliente.domicilio.localidad.departamento.nombre
+    );
+    // formData.append(
+    //   'provincia',
+    //   cliente.domicilio.localidad.departamento.provincia.id.toString()
+    // );
+    formData.append(
+      'domicilio.localidad.departamento.provincia.nombre',
+      cliente.domicilio.localidad.departamento.provincia.nombre
+    );
 
     return this.http.put<Cliente>(
       this.baseEndpoint + `/editar-con-foto/${cliente.id}`,

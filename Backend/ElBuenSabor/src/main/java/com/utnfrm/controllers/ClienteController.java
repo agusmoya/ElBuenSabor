@@ -30,7 +30,6 @@ public class ClienteController extends BaseControllerImpl<Cliente, ClienteServic
             @RequestParam MultipartFile archivo) {
         try {
             if (!archivo.isEmpty()) {
-                System.out.println("Imagen: " + archivo.getBytes());
                 cliente.getUsuario().setImagen(archivo.getBytes());
             }
             return super.save(cliente, result);
@@ -43,9 +42,10 @@ public class ClienteController extends BaseControllerImpl<Cliente, ClienteServic
     public ResponseEntity<?> editarConFoto(
             @PathVariable Long id, @Valid Cliente cliente, BindingResult result,
             @RequestParam MultipartFile archivo) {
+
+        System.out.println(cliente.getUsuario().getNombre());
         try {
             if (!archivo.isEmpty()) {
-                System.out.println("Imagen: " + archivo.getBytes());
                 cliente.getUsuario().setImagen(archivo.getBytes());
             }
             return super.update(id, cliente, result);

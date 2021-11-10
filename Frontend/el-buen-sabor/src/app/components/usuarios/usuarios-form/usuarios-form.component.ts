@@ -42,7 +42,6 @@ export class UsuariosFormComponent
     this.departamentos = [];
     this.localidades = [];
     this.model = new Usuario();
-    this.cliente = new Cliente();
     this.nombreModelo = Usuario.name;
   }
 
@@ -56,10 +55,12 @@ export class UsuariosFormComponent
           this.nombrarEntidad(entity);
           this.titulo = `Editar ${this.nombreModelo}: ${this.denominacionEntidad}`;
           this.model = entity;
-          this.model.rol.denominacion == 'Cliente' ||
-          this.model.rol.denominacion == 'Administrador'
-            ? this.verificarClienteDeUsuario()
-            : null;
+          if (
+            this.model.rol.denominacion == 'Cliente' ||
+            this.model.rol.denominacion == 'Administrador'
+          ) {
+            this.verificarClienteDeUsuario();
+          }
         });
       }
     });
@@ -72,14 +73,19 @@ export class UsuariosFormComponent
   }
 
   asignarRol(event: any, localidad: string = null): void {
-    // this.rolService.ver(event.target.value).subscribe((rol) => {
-    //   this.model.rol = rol;
-    // });
-    this.model.rol = event.target.value;
-    this.model.rol.denominacion != 'Cliente' &&
-    this.model.rol.denominacion != 'Administrador'
-      ? (this.cliente = null)
-      : (this.cliente = new Cliente());
+    const rolAbuscar = event ? event.target.value : localidad;
+    this.rolService.ver(rolAbuscar).subscribe((rol) => {
+      this.model.rol = rol;
+      if (
+        this.model.rol.denominacion != 'Cliente' &&
+        this.model.rol.denominacion != 'Administrador'
+      ) {
+        this.cliente = null;
+      } else {
+        this.cliente = new Cliente();
+        this.listarDepartamentosMendoza();
+      }
+    });
   }
 
   // CREAR:
@@ -107,24 +113,6 @@ export class UsuariosFormComponent
         this.asignarLocalidad(null, this.cliente.domicilio.localidad.nombre);
         console.log('** CLIENTE ENCONTRADO: ', this.cliente);
       });
-
-    // if (this.cliente) {
-    //   this.clienteService
-    //     .buscarPorEmail(this.model.nombre)
-    //     .subscribe((cliente) => {
-    //       this.cliente = cliente;
-    //       this.cliente.usuario.rol = this.model.rol;
-    //       this.listarLocalidadesMendoza();
-    //       console.log('** CLIENTE ENCONTRADO: ', this.cliente);
-    //     });
-    // } else if (!this.model.id && this.model.rol) {
-    //   this.cliente.domicilio.localidad.departamento.provincia.nombre =
-    //     'Mendoza';
-    //   this.cliente.email = this.model.nombre;
-    //   this.cliente.usuario = this.model;
-    //   this.listarLocalidadesMendoza();
-    //   console.log('** CLIENTE NUEVO: ', this.cliente);
-    // }
   }
 
   listarDepartamentosMendoza(): void {
@@ -159,12 +147,18 @@ export class UsuariosFormComponent
   }
 
   asignarLocalidad(event: any, localidad: string = null): void {
-    if (event) {
-      console.log(event.target.value);
+    if (
+      event &&
+      event.target.value &&
+      this.cliente.domicilio.localidad.nombre &&
+      !localidad
+    ) {
+      // console.log(event.target.value);
       this.cliente.domicilio.localidad.nombre = event.target.value;
-    } else {
-      console.log(localidad);
+    } else if (localidad) {
+      // console.log(localidad);
       this.cliente.domicilio.localidad.nombre = localidad;
+      // console.log(this.cliente.domicilio.localidad.nombre);
     }
   }
 
@@ -195,6 +189,7 @@ export class UsuariosFormComponent
 
   crearUsuario(): void {
     if (
+      this.cliente ||
       this.model.rol?.denominacion == 'Cliente' ||
       this.model.rol?.denominacion == 'Administrador'
     ) {
@@ -285,14 +280,9 @@ export class UsuariosFormComponent
   }
 
   editarUsuario(): void {
-    if (this.model.id && !this.cliente.id) {
-      this.crearCliente();
-      return;
-    }
     if (
-      this.model.id &&
-      (this.model.rol.denominacion == 'Cliente' ||
-        this.model.rol.denominacion == 'Administrador')
+      this.model.rol.denominacion == 'Cliente' ||
+      this.model.rol.denominacion == 'Administrador'
     ) {
       this.editarCliente();
     } else {
@@ -320,7 +310,7 @@ export class UsuariosFormComponent
                     'El valor ingresado ya existe en nuestro sistema.',
                 };
                 this.error = err.error;
-                console.log('Error XXX', this.error);
+                console.log('Error ***', this.error);
               }
             }
           }
@@ -330,6 +320,14 @@ export class UsuariosFormComponent
   }
 
   public editarCliente(): void {
+    this.cliente.email = this.model.nombre;
+    this.cliente.estado = Number(this.model.estado);
+    this.cliente.usuario = this.model;
+    console.log(this.cliente.estado);
+    console.log(this.cliente.nombre);
+    console.log(this.model.estado);
+    console.log(this.model.nombre);
+
     if (!this.fotoSeleccionada) {
       this.clienteService.editar(this.cliente).subscribe(
         (clienteEditado) => {
