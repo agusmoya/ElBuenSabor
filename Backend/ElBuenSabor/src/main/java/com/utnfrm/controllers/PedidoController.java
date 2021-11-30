@@ -16,6 +16,15 @@ import java.net.URI;
 @RequestMapping(path = "api/el-buen-sabor/pedidos")
 public class PedidoController extends BaseControllerImpl<Pedido, PedidoServiceImpl> {
 
+    @GetMapping("/nro-pedido")
+    public ResponseEntity<?> obtenerUltimoNroPedido() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.servicio.obtenerUltimoNroPedido());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
     @PostMapping("/createAndRedirect")
     public ResponseEntity<?> createPreferenceAndRedirect(@RequestBody Pedido pedido) {
         try {
@@ -51,7 +60,8 @@ public class PedidoController extends BaseControllerImpl<Pedido, PedidoServiceIm
 //                            .create()
 //                            .toJson(servicio.obtainPayment(collectionId)));
             return ResponseEntity.status(HttpStatus.FOUND)
-                    .location(URI.create("http://localhost:4200/carro-compra?status=" + status))
+                    .location(URI.create("http://localhost:4200/carro-compra?status=" + status + "&external_reference="
+                            + externalReference + "&payment_type=" + paymentType))
                     .build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("SUCCESS ERROR: " + e.getMessage());

@@ -75,17 +75,17 @@ export class UsuariosLoginComponent
     this.model.rol = new Rol(); // inicilizo un rol ficticio para que no me de error
     this.service.validarUsuario(this.model).subscribe(
       (usuario) => {
-        this.model.rol = null; // libero el espacio de la variable creada
+        this.model.rol = null; // libero el espacio de la variable ficticia creada
         if (usuario) {
           this.model = usuario;
-          console.log('Usuario logueado: ', this.model);
+          // console.log('Usuario logueado: ', this.model);
           // cargo la informacion en el localStorage
           this.setInfoInLocalStorage();
           this.router.navigate([this.redirect]);
         }
       },
       (err) => {
-        if (err.status === 400) {
+        if (err.status == 400) {
           if (
             err.error &&
             err.error.toString().includes('Usuario no encontrado')
@@ -105,6 +105,7 @@ export class UsuariosLoginComponent
             console.log('Error de clave: ', this.error.errorClave);
           } else {
             this.error = err.error;
+            console.log(this.error);
           }
         }
       }

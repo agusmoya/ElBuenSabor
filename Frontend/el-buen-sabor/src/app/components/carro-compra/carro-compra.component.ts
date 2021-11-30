@@ -9,12 +9,13 @@ import { DetallePedido } from 'src/app/models/detalle-pedido';
 import { Pedido } from 'src/app/models/pedido';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { PedidoService } from 'src/app/services/pedido.service';
-import Swal from 'sweetalert2';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ArticuloInsumoService } from 'src/app/services/articulo-insumo.service';
-import { ArticuloManufacturadoService } from 'src/app/services/articulo-manufacturado.service';
 import { ArticuloInsumo } from 'src/app/models/articulo-insumo';
 import { EstadoPedido } from 'src/app/models/estado-pedido';
+import { Factura } from 'src/app/models/factura';
+import { DetalleFactura } from 'src/app/models/detalle-factura';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-carro-compra',
@@ -27,6 +28,7 @@ export class CarroCompraComponent implements OnInit {
   baseEndpointArtManuf: string;
   baseEndpointBebida: string;
   userLoggedInfo$: any;
+  ultimoNroPedido: number;
   tipoRetiro: string;
   metodoPago: string;
   cliente: Cliente;
@@ -63,7 +65,19 @@ export class CarroCompraComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.comprobarEstadoPago();
+    this.obtenerUltimoNroPedido();
+    this.route.queryParams.subscribe((params) => {
+      const externalReference: string = params['external_reference'];
+      if (externalReference) {
+        this.pedidoService
+          .ver(Number(externalReference))
+          .subscribe((pedidoObtenido) => {
+            this.pedido = pedidoObtenido;
+            this.comprobarEstadoPago();
+          });
+      }
+    });
+
     this.obtenerItemsCarroCompra();
     this.verCliente();
     this.listarDepartamentosMendoza();
@@ -140,8 +154,8 @@ export class CarroCompraComponent implements OnInit {
     });
   }
 
-  eliminarItem(item: any): void {
-    this._localStorageService.removeItem(item.product.id);
+  eliminarItem(item: any, indice: any): void {
+    this._localStorageService.removeItem(item, indice);
     this.total -= item.product.precioVenta * item.quantity;
   }
 
@@ -185,12 +199,13 @@ export class CarroCompraComponent implements OnInit {
     // if (!this.validarPedidoHorariosAtencion()) {
     //   return;
     // }
-
     this.pedido = new Pedido();
+    this.obtenerUltimoNroPedido();
+    this.pedido.numero = this.ultimoNroPedido;
     this.itemsCarroCompra.forEach((item) => {
       this.cargarDetallesDePedido(this.pedido, item);
     });
-    
+
     this.pedido.cliente = this.cliente;
     this.pedido.domicilio = this.cliente.domicilio;
     this.pedido.fecha = new Date();
@@ -215,10 +230,57 @@ export class CarroCompraComponent implements OnInit {
           console.log('** PREFERENCE: ', preference);
           window.location.href = preference.initPoint;
         });
+      } else {
+        Swal.fire(
+          '¡Gracias por su Compra!',
+          `El pago ha sido cargado.`,
+          'success'
+        );
+        this.decrementarStock();
+        this.vaciarCarroCompras();
       }
     });
-    // pedido.factura = new Factura();
     console.log('** Pedido: ', this.pedido);
+  }
+
+  obtenerUltimoNroPedido(): void {
+    this.pedidoService.obtenerUltimoNroPedido().subscribe((nro) => {
+      this.ultimoNroPedido = nro + 1;
+    });
+  }
+
+  crearFacturaDePedido(pedidoAfacturar: Pedido): void {
+    pedidoAfacturar.factura = new Factura();
+    pedidoAfacturar.factura.fecha = new Date();
+    pedidoAfacturar.factura.numero = pedidoAfacturar.numero;
+    pedidoAfacturar.factura.montoDescuento =
+      pedidoAfacturar.tipoEnvio == 0 ? this.total * 0.1 : 0;
+
+    if (pedidoAfacturar.mercadoPagoDatos) {
+      pedidoAfacturar.factura.nroTarjeta =
+        pedidoAfacturar.mercadoPagoDatos.nroTarjeta;
+      pedidoAfacturar.factura.formaPago.denominacion =
+        pedidoAfacturar.mercadoPagoDatos.formaPago;
+    } else {
+      pedidoAfacturar.factura.nroTarjeta = null;
+      pedidoAfacturar.factura.formaPago.denominacion = 'efectivo';
+    }
+
+    pedidoAfacturar.detallesPedido.forEach((detallePedido) => {
+      let detalleFactura = new DetalleFactura();
+
+      detalleFactura.cantidad = detallePedido.cantidad;
+      detalleFactura.subtotal = detallePedido.subtotal;
+      detalleFactura.articuloManufacturado =
+        detallePedido.articuloManufacturado;
+      detalleFactura.articuloInsumo = detallePedido.articuloInsumo;
+
+      pedidoAfacturar.factura.detallesFactura.push(detalleFactura);
+    });
+
+    this.pedido.estadosPedido.push(
+      new EstadoPedido(EstadoPedido.status.Facturado)
+    );
   }
 
   obtenerItemsCarroCompra(): void {
@@ -309,7 +371,13 @@ export class CarroCompraComponent implements OnInit {
     if (this.pedidosEnCocina.length > 0) {
       this.pedidosEnCocina.forEach((pedido) => {
         pedido.detallesPedido.forEach((detalle) => {
-          tiempoEstimado += detalle.articuloManufacturado.tiempoEstimadoCocina;
+          if (
+            detalle.articuloManufacturado &&
+            detalle.articuloManufacturado.tiempoEstimadoCocina
+          ) {
+            tiempoEstimado +=
+              detalle.articuloManufacturado.tiempoEstimadoCocina;
+          }
         });
       });
     }
@@ -334,15 +402,17 @@ export class CarroCompraComponent implements OnInit {
   comprobarEstadoPago(): void {
     this.route.queryParams.subscribe((params) => {
       const status: string = params['status'];
-
       if (status && status == 'approved') {
         Swal.fire(
           'Pago Aprobado:',
           `El pago se ha realizado con éxito.`,
           'success'
         );
-        this.controlDeStock();
-        this.vaciarCarroCompras();
+        console.log('COMPROBAR ESTADO PAGO:', this.pedido);
+        this.pedido
+          ? this.decrementarStock()
+          : console.log('**PEDIDO ES NULO!**');
+        // this.vaciarCarroCompras();
       } else if (status && status == 'failure') {
         Swal.fire('Pago Falló:', `El pago no ha podido realizarse.`, 'error');
       } else if (status && status == 'pending') {
@@ -355,11 +425,13 @@ export class CarroCompraComponent implements OnInit {
     });
   }
 
-  controlDeStock(): void {
+  decrementarStock(): void {
+    console.log('DECREMENTAR STOCK:', this.pedido);
+
     this.pedido.detallesPedido.forEach((detallePedido) => {
       if (
-        detallePedido.articuloInsumo !== undefined &&
-        detallePedido.articuloInsumo.esInsumo === false
+        detallePedido.articuloInsumo != undefined &&
+        detallePedido.articuloInsumo.esInsumo == false
       ) {
         // bebidas con stock en unidades
         detallePedido.articuloInsumo.stockActual -= detallePedido.cantidad;
@@ -376,6 +448,8 @@ export class CarroCompraComponent implements OnInit {
         );
       }
     });
+    // this.crearFacturaDePedido(this.pedido);
+    this.vaciarCarroCompras();
   }
 
   actualizarDecrementoStockArtInsumo(artInsumo: ArticuloInsumo): void {

@@ -9,4 +9,9 @@ export class Factura extends Generic {
   nroTarjeta: string;
   formaPago: FormaPago;
   detallesFactura: DetalleFactura[] = [];
+
+  constructor(){
+    super();
+    this.formaPago = new FormaPago();
+  }
 }

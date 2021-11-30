@@ -13,7 +13,7 @@ export class RolesComponent
   extends CommonListarComponent<Rol, RolService>
   implements OnInit
 {
-  baseEndpoint = BASE_ENDPOINT + '/roles'
+  baseEndpoint = BASE_ENDPOINT + '/roles';
 
   constructor(service: RolService) {
     super(service);

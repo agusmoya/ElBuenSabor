@@ -34,9 +34,10 @@ export class ProductoDetalleComponent implements OnInit {
     this.route.paramMap.subscribe((params) => {
       const id: number = Number(params.get('id'));
       if (id) {
-        this.serviceArtManuf
-          .ver(id)
-          .subscribe((artManuf) => (this.artManufSeleccionado = artManuf));
+        this.serviceArtManuf.ver(id).subscribe((artManuf) => {
+          this.artManufSeleccionado = artManuf;
+          this.verificado = this.verificarStock(this.artManufSeleccionado);
+        });
       }
     });
   }
@@ -53,9 +54,10 @@ export class ProductoDetalleComponent implements OnInit {
           Swal.fire({
             icon: 'error',
             title: 'Ups...',
-            // text: '¡Lo sentimos, el stock de es insuficiente!',
-            text: `¡Lo sentimos, el stock de ${detalleArt.articuloInsumo.denominacion} es insuficiente!`,
+            text: `¡Lo sentimos, el stock de ${detalleArt.articuloInsumo.denominacion} 
+              es insuficiente!`,
           });
+          this.verificado = false;
           this.cantidadAVerificar = 1;
         } else if (cantidadAverificar <= 0) {
           Swal.fire({
@@ -65,11 +67,30 @@ export class ProductoDetalleComponent implements OnInit {
           });
           this.verificado = false;
           this.cantidadAVerificar = 1;
-        } else {
-          this.verificado = true;
         }
       }
     );
+    this.verificado = this.verificarStock(this.artManufSeleccionado);
+  }
+
+  verificarStock(artManuf: ArticuloManufacturado): boolean {
+    for (const detalleArt of artManuf.detallesArticuloManufacturado) {
+      if (detalleArt.articuloInsumo.stockActual < detalleArt.cantidad) {
+        return false;
+      }
+    }
+    return true;
+
+    // artManuf.detallesArticuloManufacturado.forEach((detalleArt) => {
+    //   if (detalleArt.articuloInsumo.stockActual < detalleArt.cantidad) {
+    //     console.log('Det. Art. A:', detalleArt.articuloInsumo.denominacion);
+    //     console.log('Stock A:', detalleArt.articuloInsumo.stockActual);
+    //     console.log('Det. Art. B:', detalleArt.articuloInsumo.denominacion);
+    //     console.log('Stock B:', detalleArt.cantidad);
+    //     return false;
+    //   }
+    // });
+    // return true;
   }
 
   addToShoppingCart(artManufacturado: ArticuloManufacturado): void {

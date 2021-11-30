@@ -1,6 +1,6 @@
 <div class="card text-dark bg-light">
   <div class="card-header text-center">
-    <h1 class="pt-3">Carrito de Compras</h1>
+    <h1 class="pt-3">Carro de Compras</h1>
   </div>
   <div class="card-body">
     <div
@@ -22,7 +22,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of itemsCarroCompra" class="align-middle">
+        <tr
+          *ngFor="let item of itemsCarroCompra; let indice = index"
+          class="align-middle"
+        >
           <td>
             <img
               class="img-thumbnail rounded"
@@ -66,7 +69,7 @@
           <td>$ {{ item?.product.precioVenta }} x {{ item?.quantity }}</td>
           <td>
             <button
-              (click)="eliminarItem(item)"
+              (click)="eliminarItem(item, indice)"
               class="btn btn-sm btn-outline-danger"
             >
               <i class="fas fa-trash fs-5 p-1"></i>
@@ -296,8 +299,8 @@
     <button
       type="button"
       class="btn btn-warning"
-      [disabled]="tipoRetiro.length == 0 || metodoPago.length == 0"
       (click)="crearPedido()"
+      [disabled]="tipoRetiro.length == 0 || metodoPago.length == 0"
     >
       Confirmar Pedido
     </button>

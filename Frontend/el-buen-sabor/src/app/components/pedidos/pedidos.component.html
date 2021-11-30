@@ -20,8 +20,8 @@
           <th scope="col">Fecha</th>
           <th scope="col">Hora estimada entrega</th>
           <th scope="col">Tipo de Envío</th>
-          <th scope="col">Aprobación</th>
-          <th scope="col">Rechazo</th>
+          <th scope="col">Aprobar</th>
+          <th scope="col">Rechazar</th>
         </tr>
       </thead>
       <tbody>
@@ -34,11 +34,11 @@
             }}
           </td>
           <td>
-            {{ pedido.fecha | date: "EEEE, M/d/yy, h:mm a" | uppercase }}
+            {{ pedido.fecha | date: "EEEE, d/M/yy, h:mm a" | uppercase }}
           </td>
           <td>
             {{
-              pedido.horaEstimadaFin | date: "EEEE, M/d/yy, h:mm a" | uppercase
+              pedido.horaEstimadaFin | date: "EEEE, d/M/yy, h:mm a" | uppercase
             }}
           </td>
           <td>
@@ -55,7 +55,7 @@
             <button
               type="button"
               class="btn btn-sm btn-outline-danger"
-              (click)="eliminar(pedido)"
+              (click)="rechazarPedido(pedido)"
               [disabled]="!pedido.estado"
             >
               {{ !pedido.estado ? "Rechazado" : "Rechazar" }}

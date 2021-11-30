@@ -10,4 +10,6 @@ public interface PedidoService extends BaseService<Pedido, Long> {
 
     Payment obtainPayment(String collectionId) throws Exception;
 
+    Long obtenerUltimoNroPedido() throws Exception;
+
 }

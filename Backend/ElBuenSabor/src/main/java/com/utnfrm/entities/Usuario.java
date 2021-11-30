@@ -43,16 +43,16 @@ public class Usuario extends Base {
         return (this.imagen != null) ? this.imagen.hashCode() : null;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Usuario usuario = (Usuario) o;
-        return nombre.equals(usuario.nombre) && rol.equals(usuario.rol);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(nombre, rol);
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        Usuario usuario = (Usuario) o;
+//        return nombre.equals(usuario.nombre) && rol.equals(usuario.rol);
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(nombre, rol);
+//    }
 }

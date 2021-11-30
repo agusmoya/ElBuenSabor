@@ -42,8 +42,6 @@ public class ClienteController extends BaseControllerImpl<Cliente, ClienteServic
     public ResponseEntity<?> editarConFoto(
             @PathVariable Long id, @Valid Cliente cliente, BindingResult result,
             @RequestParam MultipartFile archivo) {
-
-        System.out.println(cliente.getUsuario().getNombre());
         try {
             if (!archivo.isEmpty()) {
                 cliente.getUsuario().setImagen(archivo.getBytes());

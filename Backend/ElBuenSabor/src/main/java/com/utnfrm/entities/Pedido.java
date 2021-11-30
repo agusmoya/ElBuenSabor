@@ -23,9 +23,10 @@ public class Pedido extends Base {
     private Date fecha;
 
     @Column
-    private Long numero;
+    private Long numero = 1L;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+//    cascade = CascadeType.ALL
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(
             name = "estados_pedidos",
             joinColumns = @JoinColumn(name = "pedido_id"),
@@ -55,8 +56,8 @@ public class Pedido extends Base {
     private Cliente cliente;
 
     // detached entity passed to persist: com.utnfrm.entities.Domicilio;
-    // corregido quitando ALL por MERGE
-    @OneToOne(cascade = {CascadeType.MERGE})
+    // corregido quitando ALL por MERGE: cascade = CascadeType.MERGE
+    @OneToOne
     @JoinColumn(name = "fk_domicilio")
     private Domicilio domicilio;
 

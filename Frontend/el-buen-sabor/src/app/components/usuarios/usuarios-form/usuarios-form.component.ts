@@ -111,7 +111,7 @@ export class UsuariosFormComponent
           this.cliente.domicilio.localidad.departamento.nombre
         );
         this.asignarLocalidad(null, this.cliente.domicilio.localidad.nombre);
-        console.log('** CLIENTE ENCONTRADO: ', this.cliente);
+        // console.log('** CLIENTE ENCONTRADO: ', this.cliente);
       });
   }
 
@@ -153,12 +153,9 @@ export class UsuariosFormComponent
       this.cliente.domicilio.localidad.nombre &&
       !localidad
     ) {
-      // console.log(event.target.value);
       this.cliente.domicilio.localidad.nombre = event.target.value;
     } else if (localidad) {
-      // console.log(localidad);
       this.cliente.domicilio.localidad.nombre = localidad;
-      // console.log(this.cliente.domicilio.localidad.nombre);
     }
   }
 
@@ -323,15 +320,15 @@ export class UsuariosFormComponent
     this.cliente.email = this.model.nombre;
     this.cliente.estado = Number(this.model.estado);
     this.cliente.usuario = this.model;
-    console.log(this.cliente.estado);
-    console.log(this.cliente.nombre);
-    console.log(this.model.estado);
-    console.log(this.model.nombre);
+    // console.log(this.cliente.estado);
+    // console.log(this.cliente.nombre);
+    // console.log(this.model.estado);
+    // console.log(this.model.nombre);
 
     if (!this.fotoSeleccionada) {
       this.clienteService.editar(this.cliente).subscribe(
         (clienteEditado) => {
-          console.log(clienteEditado);
+          // console.log(clienteEditado);
           this.nombrarEntidadCliente(clienteEditado);
           Swal.fire(
             'Modificado:',

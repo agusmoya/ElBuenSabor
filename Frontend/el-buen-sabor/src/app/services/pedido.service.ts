@@ -24,4 +24,8 @@ export class PedidoService extends CommonService<Pedido> {
       }
     );
   }
+
+  public obtenerUltimoNroPedido(): Observable<number> {
+    return this.http.get<number>(`${this.baseEndpoint}/nro-pedido`);
+  }
 }

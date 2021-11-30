@@ -7,7 +7,6 @@ import { Generic } from './generic';
 import { MercadoPagoDatos } from './mercado-pago-datos';
 
 export class Pedido extends Generic {
-  static NUMERO: number = 0;
   fecha: Date;
   numero: number;
   estadosPedido: EstadoPedido[] = [];
@@ -19,8 +18,4 @@ export class Pedido extends Generic {
   cliente: Cliente;
   domicilio: Domicilio;
 
-  public constructor() {
-    super();
-    this.numero = ++Pedido.NUMERO;
-  }
 }

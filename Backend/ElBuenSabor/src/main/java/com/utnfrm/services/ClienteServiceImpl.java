@@ -5,6 +5,7 @@ import com.utnfrm.entities.Rol;
 import com.utnfrm.entities.Usuario;
 import com.utnfrm.repositories.BaseRepository;
 import com.utnfrm.repositories.ClienteRepository;
+import com.utnfrm.repositories.RolRepository;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,8 +17,21 @@ public class ClienteServiceImpl extends BaseServiceImpl<Cliente, Long> implement
     @Autowired
     private ClienteRepository clienteRepository;
 
+    @Autowired
+    private RolRepository rolRepository;
+
     public ClienteServiceImpl(BaseRepository<Cliente, Long> baseRepository) {
         super(baseRepository);
+    }
+
+    @Override
+    @Transactional
+    public Cliente buscarPorEmail(String email) throws Exception {
+        try {
+            return this.clienteRepository.buscarPorEmail(email);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
     @Override
@@ -31,18 +45,12 @@ public class ClienteServiceImpl extends BaseServiceImpl<Cliente, Long> implement
     @Override
     @Transactional
     public Cliente update(Long id, Cliente cliente) throws Exception {
-        String encriptMD5 = DigestUtils.md5Hex(cliente.getUsuario().getClave());
-        cliente.getUsuario().setClave(encriptMD5);
+        if (cliente.getUsuario().getClave().length() < 32) {
+            String encriptMD5 = DigestUtils.md5Hex(cliente.getUsuario().getClave());
+            cliente.getUsuario().setClave(encriptMD5);
+        }
         return super.update(id, cliente);
     }
 
-    @Override
-    @Transactional
-    public Cliente buscarPorEmail(String email) throws Exception {
-        try {
-            return this.clienteRepository.buscarPorEmail(email);
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
-    }
+
 }

@@ -5,16 +5,13 @@ import com.mercadopago.resources.Payment;
 import com.mercadopago.resources.Preference;
 import com.mercadopago.resources.datastructures.preference.BackUrls;
 import com.mercadopago.resources.datastructures.preference.Item;
-import com.utnfrm.entities.EstadoPedido;
-import com.utnfrm.entities.MercadoPagoDatos;
-import com.utnfrm.entities.Pedido;
+import com.utnfrm.entities.*;
 import com.utnfrm.repositories.BaseRepository;
+import com.utnfrm.repositories.EstadoPedidoRepository;
 import com.utnfrm.repositories.PedidoRepository;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -25,9 +22,32 @@ public class PedidoServiceImpl extends BaseServiceImpl<Pedido, Long> implements 
     @Autowired
     private PedidoRepository pedidoRepository;
 
+    @Autowired
+    private EstadoPedidoRepository estadoPedidoRepository;
+
     public PedidoServiceImpl(BaseRepository<Pedido, Long> baseRepository) {
         super(baseRepository);
     }
+
+//        @Override
+//    public Pedido save(Pedido pedido) throws Exception {
+//
+//        try {
+//            Optional<EstadoPedido> optionalEstadoPedido = estadoPedidoRepository.findById(pedido.getEs);
+//            EstadoPedido estadoPedido = optionalEstadoPedido.get();
+//
+//            if (cliente != null) {
+//                clienteRepository.save(cliente);
+//            }
+//
+//            if (domicilio != null) {
+//                domicilioRepository.save(domicilio);
+//            }
+//            return super.save(pedido);
+//        } catch (Exception e) {
+//            throw new Exception(e.getMessage());
+//        }
+//    }
 
     @Override
     @Transactional
@@ -101,4 +121,62 @@ public class PedidoServiceImpl extends BaseServiceImpl<Pedido, Long> implements 
             throw new Exception(e.getMessage());
         }
     }
+
+    @Override
+    public Long obtenerUltimoNroPedido() throws Exception {
+        return this.pedidoRepository.obtenerUltimoNroPedido();
+    }
 }
+
+
+//    @Autowired
+//    private ClienteRepository clienteRepository;
+
+//    @Autowired
+//    private DomicilioRepository domicilioRepository;
+
+//    @Override
+//    public Pedido save(Pedido pedido) throws Exception {
+//
+//        try {
+//            Optional<Domicilio> optionalDomicilio = domicilioRepository.findById(pedido.getDomicilio().getId());
+//            Domicilio domicilio = optionalDomicilio.get();
+//
+//            Optional<Cliente> optionalCliente = clienteRepository.findById(pedido.getCliente().getId());
+//            Cliente cliente = optionalCliente.get();
+//
+//            if (cliente != null) {
+//                clienteRepository.save(cliente);
+//            }
+//
+//            if (domicilio != null) {
+//                domicilioRepository.save(domicilio);
+//            }
+//            return super.save(pedido);
+//        } catch (Exception e) {
+//            throw new Exception(e.getMessage());
+//        }
+//    }
+//
+//    @Override
+//    public Pedido update(Long id, Pedido pedido) throws Exception {
+//
+//        try {
+//            Optional<Domicilio> optionalDomicilio = domicilioRepository.findById(pedido.getDomicilio().getId());
+//            Domicilio domicilio = optionalDomicilio.get();
+//
+//            Optional<Cliente> optionalCliente = clienteRepository.findById(pedido.getCliente().getId());
+//            Cliente cliente = optionalCliente.get();
+//
+//            if (cliente != null) {
+//                clienteRepository.save(cliente);
+//            }
+//
+//            if (domicilio != null) {
+//                domicilioRepository.save(domicilio);
+//            }
+//            return super.update(id, pedido);
+//        } catch (Exception e) {
+//            throw new Exception(e.getMessage());
+//        }
+//    }

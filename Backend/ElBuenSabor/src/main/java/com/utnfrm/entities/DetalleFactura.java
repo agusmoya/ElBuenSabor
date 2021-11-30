@@ -25,4 +25,8 @@ public class DetalleFactura extends Base {
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "fk_articulo_manufacturado")
     private ArticuloManufacturado articuloManufacturado;
+
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "fk_articulo_insumo")
+    private ArticuloInsumo articuloInsumo;
 }

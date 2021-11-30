@@ -37,31 +37,38 @@ export class BebidaDetalleComponent implements OnInit {
       if (id) {
         this.serviceArtInsumo.ver(id).subscribe((bebida) => {
           this.artInsumoBebida = bebida;
+          this.verificarCantidad(null, this.artInsumoBebida);
         });
       }
     });
   }
 
-  verificarCantidad(event: any): void {
-    const cantidadAverificar: number = event.target.value;
-    if (cantidadAverificar > this.artInsumoBebida.stockActual) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Ups...',
-        text: '¡Lo sentimos, el stock es insuficiente!',
-      });
-      this.verificado = false;
-      this.cantidadAVerificar = 1;
-    } else if (cantidadAverificar <= 0) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Ups...',
-        text: 'Debe ingresar una cantidad superior a cero.',
-      });
-      this.verificado = false;
-      this.cantidadAVerificar = 1;
+  verificarCantidad(event: any = null, bebida: ArticuloInsumo = null): void {
+    if (event !== null) {
+      const cantidadAverificar: number = event.target.value;
+      if (cantidadAverificar > this.artInsumoBebida.stockActual) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Ups...',
+          text: '¡Lo sentimos, el stock es insuficiente!',
+        });
+        this.verificado = false;
+        this.cantidadAVerificar = 1;
+      } else if (cantidadAverificar <= 0) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Ups...',
+          text: 'Debe ingresar una cantidad superior a cero.',
+        });
+        this.verificado = false;
+        this.cantidadAVerificar = 1;
+      } else {
+        this.verificado = true;
+      }
     } else {
-      this.verificado = true;
+      if (bebida.stockActual == 0) {
+        this.verificado = false;
+      }
     }
   }
 

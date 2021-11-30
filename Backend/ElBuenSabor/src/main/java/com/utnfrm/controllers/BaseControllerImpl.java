@@ -68,7 +68,6 @@ public abstract class BaseControllerImpl<E extends Base, S extends BaseServiceIm
             }
             return ResponseEntity.status(HttpStatus.OK).body(servicio.update(id, entity));
         } catch (Exception e) {
-            // System.out.println("Mensaje de error:" + e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -89,13 +88,4 @@ public abstract class BaseControllerImpl<E extends Base, S extends BaseServiceIm
         });
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores);
     }
-
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<?> delete(@PathVariable Long id) {
-//        try {
-//            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(servicio.delete(id));
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-//        }
-//    }
 }

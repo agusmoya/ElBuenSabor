@@ -64,10 +64,13 @@ public class UsuarioController extends BaseControllerImpl<Usuario, UsuarioServic
             @PathVariable Long id, @Valid Usuario usuario,
             BindingResult result, @RequestParam MultipartFile archivo) {
         try {
+            if (result.hasErrors()) {
+                return super.validar(result);
+            }
             if (!archivo.isEmpty()) {
                 usuario.setImagen(archivo.getBytes());
             }
-            return super.update(id, usuario, result);
+            return ResponseEntity.status(HttpStatus.OK).body(servicio.update(id, usuario));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

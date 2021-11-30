@@ -45,8 +45,7 @@ public class UsuarioServiceImpl extends BaseServiceImpl<Usuario, Long> implement
         usuario.setClave(encriptMD5);
 
         Rol rol = rolRepository.findByDenominacion(usuario.getRol().getDenominacion());
-        if (rol == null) {
-            System.out.println(rol.getDenominacion());
+        if (rol != null) {
             rolRepository.save(rol);
         }
 
@@ -56,15 +55,15 @@ public class UsuarioServiceImpl extends BaseServiceImpl<Usuario, Long> implement
     @Override
     @Transactional
     public Usuario update(Long id, Usuario usuario) throws Exception {
-        String encriptMD5 = DigestUtils.md5Hex(usuario.getClave());
-        usuario.setClave(encriptMD5);
-
-        Rol rol = rolRepository.findByDenominacion(usuario.getRol().getDenominacion());
-        if (rol == null) {
-            System.out.println(rol.getDenominacion());
-            rolRepository.save(rol);
+        if (usuario.getClave().length() < 32) {
+            String encriptMD5 = DigestUtils.md5Hex(usuario.getClave());
+            usuario.setClave(encriptMD5);
         }
 
+        Rol rol = rolRepository.findByDenominacion(usuario.getRol().getDenominacion());
+        if (rol != null) {
+            rolRepository.save(rol);
+        }
         return super.update(id, usuario);
     }
 
@@ -88,15 +87,15 @@ public class UsuarioServiceImpl extends BaseServiceImpl<Usuario, Long> implement
     @Transactional(readOnly = true)
     public Usuario verificacionLogin(Usuario usuario) throws Exception {
         try {
-            Usuario usuarioEncontrado = this.usuarioRepository.buscarPorEmail(usuario.getNombre());
+            Usuario usuarioEncontrado = usuarioRepository.buscarPorEmail(usuario.getNombre());
 
             if (usuarioEncontrado == null) {
                 throw new Exception("Usuario no encontrado");
-            } else if (usuario.getClave().length() == 32) { // La clave viene ya hasheada cuando nos logueamos desde google, por eso este if ** !!
+            } else if (usuario.getClave().length() >= 32) {
                 if (usuarioEncontrado.getClave().equals(usuario.getClave())) {
                     return usuarioEncontrado;
                 } else {
-                    throw new Exception("Clave errónea");
+                    throw new Exception("Clave erronea");
                 }
             } else {
                 String encriptMD5 = DigestUtils.md5Hex(usuario.getClave());
@@ -104,7 +103,7 @@ public class UsuarioServiceImpl extends BaseServiceImpl<Usuario, Long> implement
                 if (usuarioEncontrado.getClave().equals(usuario.getClave())) {
                     return usuarioEncontrado;
                 }
-                throw new Exception("Clave errónea");
+                throw new Exception("Clave erronea");
             }
         } catch (Exception e) {
             throw new Exception(e.getMessage());
