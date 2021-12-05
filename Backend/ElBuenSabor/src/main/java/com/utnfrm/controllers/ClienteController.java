@@ -1,7 +1,6 @@
 package com.utnfrm.controllers;
 
 import com.utnfrm.entities.Cliente;
-import com.utnfrm.entities.Usuario;
 import com.utnfrm.services.ClienteServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

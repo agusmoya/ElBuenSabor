@@ -48,7 +48,6 @@ public class UsuarioServiceImpl extends BaseServiceImpl<Usuario, Long> implement
         if (rol != null) {
             rolRepository.save(rol);
         }
-
         return super.save(usuario);
     }
 

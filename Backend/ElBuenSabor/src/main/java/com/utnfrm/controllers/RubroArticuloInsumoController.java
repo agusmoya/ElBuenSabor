@@ -2,7 +2,6 @@ package com.utnfrm.controllers;
 
 import com.utnfrm.entities.RubroArticuloInsumo;
 import com.utnfrm.services.RubroArticuloInsumoServiceImpl;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

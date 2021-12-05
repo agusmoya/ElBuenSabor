@@ -1,8 +1,6 @@
 package com.utnfrm.services;
 
 import com.utnfrm.entities.Cliente;
-import com.utnfrm.entities.Rol;
-import com.utnfrm.entities.Usuario;
 import com.utnfrm.repositories.BaseRepository;
 import com.utnfrm.repositories.ClienteRepository;
 import com.utnfrm.repositories.RolRepository;

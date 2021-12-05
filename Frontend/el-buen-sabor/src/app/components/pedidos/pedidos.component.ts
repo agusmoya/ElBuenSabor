@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BASE_ENDPOINT } from 'src/app/config/app';
 import { EstadoPedido } from 'src/app/models/estado-pedido';
 import { Pedido } from 'src/app/models/pedido';
+import { EstadoPedidoService } from 'src/app/services/estado-pedido.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { PedidoService } from 'src/app/services/pedido.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
@@ -20,9 +21,12 @@ export class PedidosComponent
   baseEndpoint = BASE_ENDPOINT + '/pedidos';
   userLoggedInfo$: any;
   userRol: string;
+  userId: number;
+  estadosPedidos: EstadoPedido[];
 
   constructor(
     service: PedidoService,
+    private estadoPedidoService: EstadoPedidoService,
     private usuarioService: UsuarioService,
     private pedidoService: PedidoService,
     private _localStorageService: LocalStorageService
@@ -31,6 +35,7 @@ export class PedidosComponent
     this.titulo = 'Listado de Pedidos';
     this.nombreModelo = Pedido.name;
     this.userLoggedInfo$ = this._localStorageService.userLogged$;
+    this.estadosPedidos = [];
   }
 
   protected calcularRangos() {
@@ -40,6 +45,7 @@ export class PedidosComponent
         this.totalPorPagina.toString()
       )
       .subscribe((paginador) => {
+        this.listarEstadosPedidos();
         this.lista = paginador.content as Pedido[];
         this.verificarRolUsuario();
         this.totalRegistros = paginador.totalElements as number;
@@ -49,11 +55,31 @@ export class PedidosComponent
       });
   }
 
+  listarEstadosPedidos(): void {
+    this.estadoPedidoService.listar().subscribe((estadosPedidos) => {
+      this.estadosPedidos = estadosPedidos;
+    });
+  }
+
+  verificarExistenciaEstadoPedido(pedido: Pedido, estadoAbuscar: string): void {
+    console.log(this.estadosPedidos);
+    if (this.estadosPedidos) {
+      for (const estado of this.estadosPedidos) {
+        if (estado.denominacion == estadoAbuscar) {
+          pedido.estadoPedido = estado;
+          return;
+        }
+      }
+      pedido.estadoPedido = new EstadoPedido(estadoAbuscar);
+    }
+  }
+
   verificarRolUsuario(): void {
     this.userLoggedInfo$.subscribe((user) => {
       if (user != undefined) {
         this.usuarioService.ver(user.id).subscribe((usuarioEncontrado) => {
           this.userRol = usuarioEncontrado.rol.denominacion;
+          this.userId = usuarioEncontrado.id;
           this.filtrarPedidosSegunEstado_Rol();
         });
       }
@@ -62,15 +88,42 @@ export class PedidosComponent
 
   filtrarPedidosSegunEstado_Rol(): void {
     if (this.userRol == 'Cajero') {
-      this.lista = this.lista?.filter((pedido) =>
-        pedido.estadosPedido.forEach(
-          (estado) =>
-            estado.denominacion == 'PENDIENTE' ||
-            estado.denominacion == 'RECHAZADO' ||
-            estado.denominacion == 'EN PROCESO' ||
-            estado.denominacion == 'TERMINADO'
-        )
+      console.log('Soy Cajero');
+      console.log(this.lista);
+
+      this.lista = this.lista?.filter(
+        (pedido) =>
+          // pedido.estadosPedido.forEach(
+          //   (estado) =>
+          //     estado.estado == 1 &&
+          //     (estado.denominacion == 'RECHAZADO' ||
+          //       estado.denominacion == 'PENDIENTE' ||
+          //       estado.denominacion == 'TERMINADO')
+          // )
+          pedido.estadoPedido.estado == 1 &&
+          (pedido.estadoPedido.denominacion == 'RECHAZADO' ||
+            pedido.estadoPedido.denominacion == 'PENDIENTE' ||
+            pedido.estadoPedido.denominacion == 'EN PROCESO' ||
+            pedido.estadoPedido.denominacion == 'TERMINADO')
       );
+    }
+    if (this.userRol == 'Cocinero') {
+      console.log('Soy Cocinero');
+      this.lista = this.lista?.filter(
+        (pedido) =>
+          pedido.estadoPedido.estado == 1 &&
+          pedido.estadoPedido.denominacion == 'APROBADO'
+      );
+    }
+    if (this.userRol == 'Cliente') {
+      console.log('Soy Cliente');
+
+      this.lista = this.lista?.filter(
+        (pedido) => pedido.cliente.id == this.userId
+      );
+    }
+    if (this.userRol == 'Administrador') {
+      console.log('Soy Admin');
     }
   }
 
@@ -88,11 +141,16 @@ export class PedidosComponent
           cancelButtonText: 'Cancelar',
         }).then((result) => {
           if (result.isConfirmed) {
-            pedido.estadosPedido.push(
-              new EstadoPedido(EstadoPedido.status.Aprobado)
+            pedido.estado = 1;
+
+            this.verificarExistenciaEstadoPedido(
+              pedido,
+              EstadoPedido.status.Aprobado
             );
+
             this.pedidoService.editar(pedido).subscribe((pedidoEditado) => {
               console.log(pedidoEditado);
+              this.listarEstadosPedidos();
               this.filtrarPedidosSegunEstado_Rol();
             });
             Swal.fire(
@@ -103,15 +161,6 @@ export class PedidosComponent
             return;
           }
         });
-
-        // this.service.eliminar(entity).subscribe(() => {
-        //   this.calcularRangos();
-        //   Swal.fire(
-        //     'Eliminado',
-        //     `${this.nombreModelo} *${this.denominacionEntidad}* eliminado con éxito`,
-        //     'success'
-        //   );
-        // });
       }
     });
   }
@@ -119,14 +168,38 @@ export class PedidosComponent
   rechazarPedido(indicePedido: any): void {
     this.lista.forEach((pedido) => {
       if (pedido.id == indicePedido) {
-        pedido.estadosPedido.push(
-          new EstadoPedido(EstadoPedido.status.Rechazado)
-        );
-        this.pedidoService.editar(pedido).subscribe((pedidoEditado) => {
-          console.log(pedidoEditado);
-          this.filtrarPedidosSegunEstado_Rol();
+        console.log(pedido.numero);
+        console.log(pedido.horaEstimadaFin);
+        Swal.fire({
+          title: `Atención`,
+          text: `¿Seguro que desea RECHAZAR el PEDIDO nro *${pedido.numero}*?`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Confirmar',
+          cancelButtonText: 'Cancelar',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            pedido.estado = 0;
+            this.verificarExistenciaEstadoPedido(
+              pedido,
+              EstadoPedido.status.Rechazado
+            );
+            this.pedidoService.editar(pedido).subscribe((pedidoEditado) => {
+              console.log(pedidoEditado);
+              this.listarEstadosPedidos();
+              this.filtrarPedidosSegunEstado_Rol();
+            });
+
+            Swal.fire(
+              'Aprobado',
+              `El pedido nro. ${pedido.numero} ha sido rechazado`,
+              'success'
+            );
+            return;
+          }
         });
-        return;
       }
     });
   }

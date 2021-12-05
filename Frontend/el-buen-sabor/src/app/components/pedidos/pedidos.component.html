@@ -29,9 +29,7 @@
           <td>{{ pedido.id }}</td>
           <td>{{ pedido.numero }}</td>
           <td>
-            {{
-              pedido.estadosPedido[pedido.estadosPedido.length - 1].denominacion
-            }}
+            {{ pedido.estadoPedido.denominacion }}
           </td>
           <td>
             {{ pedido.fecha | date: "EEEE, d/M/yy, h:mm a" | uppercase }}
@@ -45,20 +43,31 @@
             {{ pedido.tipoEnvio === 0 ? "Retiro en local" : "Domicilio" }}
           </td>
           <td>
-            <a
+            <button
+              type="button"
               class="btn btn-sm btn-outline-dark"
               (click)="aprobarPedido(pedido.id)"
-              >Aprobar</a
+              [disabled]="pedido.estadoPedido.denominacion == 'APROBADO'"
             >
+              {{
+                pedido.estadoPedido.denominacion == "APROBADO"
+                  ? "Aprobado"
+                  : "Aprobar"
+              }}
+            </button>
           </td>
           <td>
             <button
               type="button"
               class="btn btn-sm btn-outline-danger"
-              (click)="rechazarPedido(pedido)"
-              [disabled]="!pedido.estado"
+              (click)="rechazarPedido(pedido.id)"
+              [disabled]="pedido.estadoPedido.denominacion == 'RECHAZADO'"
             >
-              {{ !pedido.estado ? "Rechazado" : "Rechazar" }}
+              {{
+                pedido.estadoPedido.denominacion == "RECHAZADO"
+                  ? "Rechazado"
+                  : "Rechazar"
+              }}
             </button>
           </td>
         </tr>

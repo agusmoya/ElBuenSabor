@@ -2,7 +2,6 @@ package com.utnfrm.services;
 
 import com.utnfrm.entities.Base;
 import com.utnfrm.repositories.BaseRepository;
-import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -16,6 +16,7 @@ import { EstadoPedido } from 'src/app/models/estado-pedido';
 import { Factura } from 'src/app/models/factura';
 import { DetalleFactura } from 'src/app/models/detalle-factura';
 import Swal from 'sweetalert2';
+import { EstadoPedidoService } from 'src/app/services/estado-pedido.service';
 
 @Component({
   selector: 'app-carro-compra',
@@ -38,6 +39,7 @@ export class CarroCompraComponent implements OnInit {
   pedidosEnCocina: Pedido[];
   pedido: Pedido;
   horarioAtencion: Date;
+  estadosPedidos: EstadoPedido[];
 
   constructor(
     private location: Location,
@@ -46,6 +48,7 @@ export class CarroCompraComponent implements OnInit {
     private clienteService: ClienteService,
     private usuarioService: UsuarioService,
     private pedidoService: PedidoService,
+    private estadoPedidoService: EstadoPedidoService,
     private artInsumoService: ArticuloInsumoService,
     private mendozaService: MendozaService,
     private _localStorageService: LocalStorageService
@@ -61,11 +64,13 @@ export class CarroCompraComponent implements OnInit {
     this.localidades = [];
     this.cocinerosDisponibles = [];
     this.pedidosEnCocina = [];
+    this.estadosPedidos = [];
     this.horarioAtencion = new Date();
   }
 
   ngOnInit(): void {
     this.obtenerUltimoNroPedido();
+    this.listarEstadosPedidos();
     this.route.queryParams.subscribe((params) => {
       const externalReference: string = params['external_reference'];
       if (externalReference) {
@@ -77,7 +82,7 @@ export class CarroCompraComponent implements OnInit {
           });
       }
     });
-
+    
     this.obtenerItemsCarroCompra();
     this.verCliente();
     this.listarDepartamentosMendoza();
@@ -220,9 +225,11 @@ export class CarroCompraComponent implements OnInit {
         this.calcularHoraEstimadaPedido(this.pedido)
     );
 
-    this.pedido.estadosPedido.push(
-      new EstadoPedido(EstadoPedido.status.Pendiente)
+    this.verificarExistenciaEstadoPedido(
+      this.pedido,
+      EstadoPedido.status.Pendiente
     );
+
     this.pedidoService.crear(this.pedido).subscribe((pedido) => {
       if (this.metodoPago === 'mercadoPago') {
         this.pedidoService.crearPreferencia(pedido).subscribe((preference) => {
@@ -241,6 +248,23 @@ export class CarroCompraComponent implements OnInit {
       }
     });
     console.log('** Pedido: ', this.pedido);
+  }
+
+  listarEstadosPedidos(): void {
+    this.estadoPedidoService.listar().subscribe((estadosPedidos) => {
+      this.estadosPedidos = estadosPedidos;
+    });
+  }
+
+  verificarExistenciaEstadoPedido(pedido: Pedido, estadoAbuscar: string): void {
+    console.log(this.estadosPedidos);
+    for (const estado of this.estadosPedidos) {
+      if (estado.denominacion == estadoAbuscar) {
+        pedido.estadoPedido = estado;
+        return;
+      }
+    }
+    pedido.estadoPedido = new EstadoPedido(estadoAbuscar);
   }
 
   obtenerUltimoNroPedido(): void {
@@ -278,9 +302,10 @@ export class CarroCompraComponent implements OnInit {
       pedidoAfacturar.factura.detallesFactura.push(detalleFactura);
     });
 
-    this.pedido.estadosPedido.push(
-      new EstadoPedido(EstadoPedido.status.Facturado)
-    );
+    // this.pedido.estadosPedido.push(
+    //   new EstadoPedido(EstadoPedido.status.Facturado)
+    // );
+    this.pedido.estadoPedido = new EstadoPedido(EstadoPedido.status.Facturado);
   }
 
   obtenerItemsCarroCompra(): void {
@@ -355,12 +380,21 @@ export class CarroCompraComponent implements OnInit {
     return tiempoEstimado;
   }
 
+  // obtenerPedidosEnCocina(): void {
+  //   this.pedidoService.listar().subscribe((pedidos) => {
+  //     this.pedidosEnCocina = pedidos.filter(
+  //       (pedido) =>
+  //         pedido.estadosPedido.length == 2 &&
+  //         pedido.estadosPedido[1].denominacion == 'APROBADO'
+  //     );
+  //   });
+  // }
+
   obtenerPedidosEnCocina(): void {
     this.pedidoService.listar().subscribe((pedidos) => {
       this.pedidosEnCocina = pedidos.filter(
         (pedido) =>
-          pedido.estadosPedido.length == 2 &&
-          pedido.estadosPedido[1].denominacion == 'APROBADO'
+          pedido.estado == 1 && pedido.estadoPedido.denominacion == 'APROBADO'
       );
     });
   }

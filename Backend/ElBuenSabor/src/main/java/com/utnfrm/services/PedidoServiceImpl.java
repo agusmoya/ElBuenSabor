@@ -29,25 +29,71 @@ public class PedidoServiceImpl extends BaseServiceImpl<Pedido, Long> implements 
         super(baseRepository);
     }
 
-//        @Override
-//    public Pedido save(Pedido pedido) throws Exception {
-//
-//        try {
-//            Optional<EstadoPedido> optionalEstadoPedido = estadoPedidoRepository.findById(pedido.getEs);
-//            EstadoPedido estadoPedido = optionalEstadoPedido.get();
-//
-//            if (cliente != null) {
-//                clienteRepository.save(cliente);
+    @Override
+    @Transactional
+    public Pedido save(Pedido pedido) throws Exception {
+        try {
+            System.out.println("SAVE ID:" + pedido.getEstadoPedido().getId());
+            System.out.println("SAVE DENOM:" + pedido.getEstadoPedido().getDenominacion());
+
+            EstadoPedido estadoPedidoEncontrado = estadoPedidoRepository.findByDenominacion(
+                    pedido.getEstadoPedido().getDenominacion());
+
+            if (estadoPedidoEncontrado != null) {
+                estadoPedidoRepository.save(estadoPedidoEncontrado);
+            } else {
+                estadoPedidoRepository.save(pedido.getEstadoPedido());
+            }
+
+            return super.save(pedido);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional
+    public Pedido update(Long id, Pedido pedido) throws Exception {
+        try {
+            System.out.println("UPDATE ID:" + pedido.getEstadoPedido().getId());
+            System.out.println("UPDATE DENOM:" + pedido.getEstadoPedido().getDenominacion());
+
+            EstadoPedido estadoPedidoEncontrado = estadoPedidoRepository.findByDenominacion(
+                    pedido.getEstadoPedido().getDenominacion());
+
+            if (estadoPedidoEncontrado != null) {
+                estadoPedidoRepository.save(estadoPedidoEncontrado);
+            } else {
+                estadoPedidoRepository.save(pedido.getEstadoPedido());
+            }
+
+            return super.update(id, pedido);
+
+//            boolean flag = false;
+//            List<EstadoPedido> estadosPedidos = estadoPedidoRepository.findAll();
+//            if (estadosPedidos.size() > 0) {
+//                for (EstadoPedido estadoPedido :
+//                        pedido.getEstadosPedido()) {
+//                    if (!estadoPedido.getDenominacion().equals(pedido.getEstadosPedido().get(pedido.getEstadosPedido().size() - 1).getDenominacion())) {
+//                        System.out.println(estadoPedido.getDenominacion());
+//                        flag = true;
+//                        break;
+//                    } else {
+//                        System.out.println(pedido.getEstadosPedido().get(pedido.getEstadosPedido().size() - 1).getDenominacion());
+//                        System.out.println(estadoPedido.getDenominacion());
+//                    }
+//                }
+//            } else {
+//                flag = true;
 //            }
 //
-//            if (domicilio != null) {
-//                domicilioRepository.save(domicilio);
+//            if (flag) {
+//                estadoPedidoRepository.save(pedido.getEstadosPedido().get(pedido.getEstadosPedido().size() - 1));
 //            }
-//            return super.save(pedido);
-//        } catch (Exception e) {
-//            throw new Exception(e.getMessage());
-//        }
-//    }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
 
     @Override
     @Transactional

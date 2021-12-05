@@ -1,8 +1,6 @@
 package com.utnfrm.controllers;
 
-import com.google.gson.Gson;
 import com.utnfrm.entities.ArticuloManufacturado;
-import com.utnfrm.entities.Rol;
 import com.utnfrm.services.ArticuloManufacturadoServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

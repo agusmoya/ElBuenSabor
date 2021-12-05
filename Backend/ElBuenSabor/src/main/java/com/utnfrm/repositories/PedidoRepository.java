@@ -1,5 +1,6 @@
 package com.utnfrm.repositories;
 
+import com.utnfrm.entities.EstadoPedido;
 import com.utnfrm.entities.Pedido;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

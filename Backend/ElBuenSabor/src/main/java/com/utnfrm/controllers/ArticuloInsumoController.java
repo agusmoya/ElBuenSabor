@@ -1,7 +1,6 @@
 package com.utnfrm.controllers;
 
 import com.utnfrm.entities.ArticuloInsumo;
-import com.utnfrm.entities.Rol;
 import com.utnfrm.services.ArticuloInsumoServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

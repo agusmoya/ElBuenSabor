@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,14 +27,19 @@ public class Pedido extends Base {
     @Column
     private Long numero = 1L;
 
-//    cascade = CascadeType.ALL
-    @ManyToMany(cascade = CascadeType.MERGE)
-    @JoinTable(
-            name = "estados_pedidos",
-            joinColumns = @JoinColumn(name = "pedido_id"),
-            inverseJoinColumns = @JoinColumn(name = "estado_id")
-    )
-    private List<EstadoPedido> estadosPedido = new ArrayList<>();
+    // cascade = CascadeType.ALL
+    //    @ManyToMany(cascade = CascadeType.ALL)
+    //    @JoinTable(
+    //            name = "estados_pedidos",
+    //            joinColumns = @JoinColumn(name = "pedido_id"),
+    //            inverseJoinColumns = @JoinColumn(name = "estado_id")
+    //    )
+    //    private List<EstadoPedido> estadosPedido = new ArrayList<>();
+
+    @ManyToOne(optional = false, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "fk_estado_pedido")
+    @NotNull
+    private EstadoPedido estadoPedido;
 
     @Column
     private Date horaEstimadaFin;

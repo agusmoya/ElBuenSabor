@@ -5,4 +5,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EstadoPedidoRepository extends BaseRepository<EstadoPedido, Long> {
+
+    EstadoPedido findByDenominacion(String denominacion);
 }

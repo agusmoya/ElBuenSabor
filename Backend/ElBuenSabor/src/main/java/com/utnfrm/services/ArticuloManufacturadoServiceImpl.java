@@ -1,7 +1,6 @@
 package com.utnfrm.services;
 
 import com.utnfrm.entities.ArticuloManufacturado;
-import com.utnfrm.entities.Rol;
 import com.utnfrm.repositories.ArticuloManufacturadoRepository;
 import com.utnfrm.repositories.BaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;

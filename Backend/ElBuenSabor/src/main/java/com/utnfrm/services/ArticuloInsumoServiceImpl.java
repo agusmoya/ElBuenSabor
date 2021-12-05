@@ -1,7 +1,6 @@
 package com.utnfrm.services;
 
 import com.utnfrm.entities.ArticuloInsumo;
-import com.utnfrm.entities.Rol;
 import com.utnfrm.entities.RubroArticuloInsumo;
 import com.utnfrm.repositories.ArticuloInsumoRepository;
 import com.utnfrm.repositories.BaseRepository;
