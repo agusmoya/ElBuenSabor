@@ -4,7 +4,6 @@ enum Status {
   Pendiente = 'PENDIENTE',
   Aprobado = 'APROBADO',
   Rechazado = 'RECHAZADO',
-  EnProceso = 'EN PROCESO',
   Terminado = 'TERMINADO',
   EnDelivery = 'EN DELIVERY',
   Facturado = 'FACTURADO',

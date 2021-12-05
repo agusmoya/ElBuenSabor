@@ -16,6 +16,6 @@ import javax.persistence.*;
 //@Audited
 public class FormaPago extends Base {
 
-    @Column(unique = true)
+    @Column
     private String denominacion;
 }

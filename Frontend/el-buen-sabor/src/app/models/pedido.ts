@@ -9,7 +9,6 @@ import { MercadoPagoDatos } from './mercado-pago-datos';
 export class Pedido extends Generic {
   fecha: Date;
   numero: number;
-  // estadosPedido: EstadoPedido[] = [];
   estadoPedido: EstadoPedido;
   horaEstimadaFin: Date;
   tipoEnvio: number;

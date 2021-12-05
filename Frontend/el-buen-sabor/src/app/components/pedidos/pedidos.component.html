@@ -4,9 +4,7 @@
   </div>
   <div class="card-body">
     <div class="alert alert-info my-3 text-center" *ngIf="lista?.length == 0">
-      ¡No hay Pedidos
-      {{ userRol === "Cajero" ? "PENDIENTES/TERMINADOS" : "" }} cargados en el
-      Sistema!
+      ¡No hay Pedidos cargados en el Sistema!
     </div>
     <table
       class="table table-hover table-striped text-center align-middle"
@@ -20,8 +18,11 @@
           <th scope="col">Fecha</th>
           <th scope="col">Hora estimada entrega</th>
           <th scope="col">Tipo de Envío</th>
-          <th scope="col">Aprobar</th>
-          <th scope="col">Rechazar</th>
+          <th scope="col" *ngIf="userRol === 'Cajero'">Aprobar</th>
+          <th scope="col" *ngIf="userRol === 'Cajero'">Rechazar</th>
+          <th scope="col" *ngIf="userRol === 'Cocinero'">Terminar</th>
+          <th scope="col" *ngIf="userRol === 'Cajero'">Facturar</th>
+          <th scope="col" *ngIf="userRol === 'Cajero'">Delivery</th>
         </tr>
       </thead>
       <tbody>
@@ -42,12 +43,16 @@
           <td>
             {{ pedido.tipoEnvio === 0 ? "Retiro en local" : "Domicilio" }}
           </td>
-          <td>
+          <td *ngIf="userRol === 'Cajero'">
             <button
               type="button"
-              class="btn btn-sm btn-outline-dark"
+              class="btn btn-sm btn-outline-primary"
               (click)="aprobarPedido(pedido.id)"
-              [disabled]="pedido.estadoPedido.denominacion == 'APROBADO'"
+              [disabled]="
+                pedido.estadoPedido.denominacion == 'APROBADO' ||
+                pedido.estadoPedido.denominacion == 'TERMINADO' ||
+                pedido.estadoPedido.denominacion == 'FACTURADO'
+              "
             >
               {{
                 pedido.estadoPedido.denominacion == "APROBADO"
@@ -56,17 +61,75 @@
               }}
             </button>
           </td>
-          <td>
+          <td *ngIf="userRol === 'Cajero'">
             <button
               type="button"
               class="btn btn-sm btn-outline-danger"
               (click)="rechazarPedido(pedido.id)"
-              [disabled]="pedido.estadoPedido.denominacion == 'RECHAZADO'"
+              [disabled]="
+                pedido.estadoPedido.denominacion == 'RECHAZADO' ||
+                pedido.estadoPedido.denominacion == 'TERMINADO' ||
+                pedido.estadoPedido.denominacion == 'FACTURADO'
+              "
             >
               {{
                 pedido.estadoPedido.denominacion == "RECHAZADO"
                   ? "Rechazado"
                   : "Rechazar"
+              }}
+            </button>
+          </td>
+          <td *ngIf="userRol === 'Cocinero'">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-dark"
+              (click)="terminarPedido(pedido.id)"
+              [disabled]="
+                pedido.estadoPedido.denominacion == 'TERMINADO' ||
+                pedido.estadoPedido.denominacion == 'FACTURADO'
+              "
+            >
+              {{
+                pedido.estadoPedido.denominacion == "TERMINADO"
+                  ? "Terminado"
+                  : "Terminar"
+              }}
+            </button>
+          </td>
+          <td *ngIf="userRol === 'Cajero'">
+            <button
+              type="button"
+              class="btn btn-sm btn-danger"
+              (click)="facturarPedido(pedido)"
+              [disabled]="
+                pedido.estadoPedido.denominacion == 'FACTURADO' ||
+                pedido.estadoPedido.denominacion == 'RECHAZADO' ||
+                pedido.estadoPedido.denominacion != 'TERMINADO'
+              "
+            >
+              {{
+                pedido.estadoPedido.denominacion == "FACTURADO"
+                  ? "Facturado"
+                  : "Facturar"
+              }}
+            </button>
+          </td>
+          <td *ngIf="userRol === 'Cajero'">
+            <button
+              type="button"
+              class="btn btn-sm btn-dark"
+              (click)="facturarPedido(pedido)"
+              [disabled]="
+                pedido.estadoPedido.denominacion == 'EN DELIVERY' ||
+                pedido.estadoPedido.denominacion == 'RECHAZADO' ||
+                pedido.estadoPedido.denominacion != 'TERMINADO' ||
+                pedido.tipoEnvio == 0
+              "
+            >
+              {{
+                pedido.estadoPedido.denominacion == "EN DELIVERY"
+                  ? "En viaje"
+                  : "Enviar Delivery"
               }}
             </button>
           </td>

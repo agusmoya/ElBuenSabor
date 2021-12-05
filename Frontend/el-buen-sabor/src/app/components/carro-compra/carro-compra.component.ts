@@ -82,7 +82,7 @@ export class CarroCompraComponent implements OnInit {
           });
       }
     });
-    
+
     this.obtenerItemsCarroCompra();
     this.verCliente();
     this.listarDepartamentosMendoza();
@@ -218,8 +218,6 @@ export class CarroCompraComponent implements OnInit {
     // 0 --> local | 1 --> domicilio
     this.pedido.tipoEnvio = this.tipoRetiro == 'local' ? 0 : 1;
 
-    // Este cálculo lo realizamos cuando el cajero aprueba el pedido.
-    // Lo muevo al componente pedido
     this.pedido.horaEstimadaFin.setMinutes(
       this.pedido.fecha.getMinutes() +
         this.calcularHoraEstimadaPedido(this.pedido)
@@ -240,14 +238,14 @@ export class CarroCompraComponent implements OnInit {
       } else {
         Swal.fire(
           '¡Gracias por su Compra!',
-          `El pago ha sido cargado.`,
+          `El pago ha sido cargado para el PEDIDO NRO. ${this.pedido.numero}`,
           'success'
         );
         this.decrementarStock();
         this.vaciarCarroCompras();
       }
     });
-    console.log('** Pedido: ', this.pedido);
+    // console.log('** Pedido: ', this.pedido);
   }
 
   listarEstadosPedidos(): void {
@@ -257,7 +255,7 @@ export class CarroCompraComponent implements OnInit {
   }
 
   verificarExistenciaEstadoPedido(pedido: Pedido, estadoAbuscar: string): void {
-    console.log(this.estadosPedidos);
+    // console.log(this.estadosPedidos);
     for (const estado of this.estadosPedidos) {
       if (estado.denominacion == estadoAbuscar) {
         pedido.estadoPedido = estado;
@@ -271,41 +269,6 @@ export class CarroCompraComponent implements OnInit {
     this.pedidoService.obtenerUltimoNroPedido().subscribe((nro) => {
       this.ultimoNroPedido = nro + 1;
     });
-  }
-
-  crearFacturaDePedido(pedidoAfacturar: Pedido): void {
-    pedidoAfacturar.factura = new Factura();
-    pedidoAfacturar.factura.fecha = new Date();
-    pedidoAfacturar.factura.numero = pedidoAfacturar.numero;
-    pedidoAfacturar.factura.montoDescuento =
-      pedidoAfacturar.tipoEnvio == 0 ? this.total * 0.1 : 0;
-
-    if (pedidoAfacturar.mercadoPagoDatos) {
-      pedidoAfacturar.factura.nroTarjeta =
-        pedidoAfacturar.mercadoPagoDatos.nroTarjeta;
-      pedidoAfacturar.factura.formaPago.denominacion =
-        pedidoAfacturar.mercadoPagoDatos.formaPago;
-    } else {
-      pedidoAfacturar.factura.nroTarjeta = null;
-      pedidoAfacturar.factura.formaPago.denominacion = 'efectivo';
-    }
-
-    pedidoAfacturar.detallesPedido.forEach((detallePedido) => {
-      let detalleFactura = new DetalleFactura();
-
-      detalleFactura.cantidad = detallePedido.cantidad;
-      detalleFactura.subtotal = detallePedido.subtotal;
-      detalleFactura.articuloManufacturado =
-        detallePedido.articuloManufacturado;
-      detalleFactura.articuloInsumo = detallePedido.articuloInsumo;
-
-      pedidoAfacturar.factura.detallesFactura.push(detalleFactura);
-    });
-
-    // this.pedido.estadosPedido.push(
-    //   new EstadoPedido(EstadoPedido.status.Facturado)
-    // );
-    this.pedido.estadoPedido = new EstadoPedido(EstadoPedido.status.Facturado);
   }
 
   obtenerItemsCarroCompra(): void {
@@ -379,16 +342,6 @@ export class CarroCompraComponent implements OnInit {
 
     return tiempoEstimado;
   }
-
-  // obtenerPedidosEnCocina(): void {
-  //   this.pedidoService.listar().subscribe((pedidos) => {
-  //     this.pedidosEnCocina = pedidos.filter(
-  //       (pedido) =>
-  //         pedido.estadosPedido.length == 2 &&
-  //         pedido.estadosPedido[1].denominacion == 'APROBADO'
-  //     );
-  //   });
-  // }
 
   obtenerPedidosEnCocina(): void {
     this.pedidoService.listar().subscribe((pedidos) => {
@@ -487,9 +440,9 @@ export class CarroCompraComponent implements OnInit {
   }
 
   actualizarDecrementoStockArtInsumo(artInsumo: ArticuloInsumo): void {
-    this.artInsumoService
-      .editar(artInsumo)
-      .subscribe((artInsumo) => console.log(artInsumo));
+    this.artInsumoService.editar(artInsumo).subscribe((artInsumo) => {
+      // console.log(artInsumo)
+    });
   }
 
   vaciarCarroCompras(): void {

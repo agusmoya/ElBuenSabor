@@ -32,7 +32,7 @@ public class Factura extends Base {
     @Column
     private String nroTarjeta;
 
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(optional = false, cascade = CascadeType.MERGE)
     @JoinColumn(name = "fk_forma_pago")
     private FormaPago formaPago;
 
