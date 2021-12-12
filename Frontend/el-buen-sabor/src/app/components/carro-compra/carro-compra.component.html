@@ -32,7 +32,7 @@
               style="width: 100px; cursor: pointer"
               alt="img-item"
               *ngIf="
-                item?.product.imagenHashCode && item?.product.esInsumo == false
+                item?.product?.imagenHashCode && item?.product.esInsumo == false
               "
               [src]="
                 baseEndpointBebida +
@@ -47,7 +47,7 @@
               style="width: 100px; cursor: pointer"
               alt="img-item"
               *ngIf="
-                item?.product.imagenHashCode && item?.product.esInsumo == null
+                item?.product?.imagenHashCode && item?.product.esInsumo == null
               "
               [src]="
                 baseEndpointArtManuf +

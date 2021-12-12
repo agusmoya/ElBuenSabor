@@ -80,17 +80,6 @@ export class ProductoDetalleComponent implements OnInit {
       }
     }
     return true;
-
-    // artManuf.detallesArticuloManufacturado.forEach((detalleArt) => {
-    //   if (detalleArt.articuloInsumo.stockActual < detalleArt.cantidad) {
-    //     console.log('Det. Art. A:', detalleArt.articuloInsumo.denominacion);
-    //     console.log('Stock A:', detalleArt.articuloInsumo.stockActual);
-    //     console.log('Det. Art. B:', detalleArt.articuloInsumo.denominacion);
-    //     console.log('Stock B:', detalleArt.cantidad);
-    //     return false;
-    //   }
-    // });
-    // return true;
   }
 
   addToShoppingCart(artManufacturado: ArticuloManufacturado): void {

@@ -1,0 +1,72 @@
+<div class="card mt-5 mx-auto" style="max-width: 100%">
+  <div class="row g-0">
+    <h1 class="m-2 p-2">Detalle pedido nro. {{ pedidoEncontrado?.numero }}</h1>
+
+    <div class="col-12 col-lg-6">
+      <div class="card-body">
+        <p class="card-text">
+          <b>Fecha: </b>
+          {{
+            pedidoEncontrado?.fecha | date: "EEEE, d/M/yy, h:mm a" | uppercase
+          }}
+        </p>
+        <p class="card-text">
+          <b> Estado: </b>
+          {{ pedidoEncontrado?.estadoPedido.denominacion }}
+        </p>
+        <p class="card-text">
+          <b> Hora de entrega: </b>
+          {{
+            pedidoEncontrado?.horaEstimadaFin
+              | date: "EEEE, d/M/yy, h:mm a"
+              | uppercase
+          }}
+        </p>
+        <p class="card-text">
+          <b> Tipo de Envío: </b>
+          {{ pedidoEncontrado?.tipoEnvio == 0 ? "Local" : "Domicilio" }}
+        </p>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6">
+      <div class="card-body text-center">
+        <b> Detalle del Pedido: </b>
+        <ul class="list-group" *ngIf="arrayDetallePedidoArtManuf">
+          <li
+            class="
+              list-group-item list-group-item-action list-group-item-light
+              d-flex
+              justify-content-between
+              align-items-center
+            "
+            *ngFor="let detallePedidoArtManuf of arrayDetallePedidoArtManuf"
+          >
+            {{ detallePedidoArtManuf.articuloManufacturado.denominacion }}
+            <span class="badge bg-primary rounded-pill">
+              Cantidad: {{ detallePedidoArtManuf.cantidad }}
+            </span>
+          </li>
+        </ul>
+        <ul class="list-group" *ngIf="arrayDetallePedidoBebidas">
+          <li
+            class="
+              list-group-item list-group-item-action list-group-item-light
+              d-flex
+              justify-content-between
+              align-items-center
+            "
+            *ngFor="let detallePedidoBebida of arrayDetallePedidoBebidas"
+          >
+            {{ detallePedidoBebida.articuloInsumo.denominacion }}
+            <span class="badge bg-primary rounded-pill">
+              Cantidad: {{ detallePedidoBebida.cantidad }}
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="mt-3">
+  <a (click)="goBack()" class="btn btn-dark">Volver</a>
+</div>

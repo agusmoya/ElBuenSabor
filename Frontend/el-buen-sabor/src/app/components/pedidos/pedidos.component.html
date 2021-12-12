@@ -13,7 +13,9 @@
       <thead>
         <tr>
           <th scope="col">ID</th>
+          <th scope="col">Cliente</th>
           <th scope="col">Pedido nro.</th>
+          <th scope="col">Detalle de Pedido</th>
           <th scope="col">Estado Actual</th>
           <th scope="col">Fecha</th>
           <th scope="col">Hora estimada entrega</th>
@@ -28,7 +30,13 @@
       <tbody>
         <tr *ngFor="let pedido of lista; let indicePedido = index">
           <td>{{ pedido.id }}</td>
+          <td>{{ pedido.cliente.nombre }}, {{ pedido.cliente.apellido }}</td>
           <td>{{ pedido.numero }}</td>
+          <td>
+            <a class="link-prod" [routerLink]="['/pedido-detalle', pedido.id]"
+              >Ver</a
+            >
+          </td>
           <td>
             {{ pedido.estadoPedido.denominacion }}
           </td>
@@ -51,7 +59,8 @@
               [disabled]="
                 pedido.estadoPedido.denominacion == 'APROBADO' ||
                 pedido.estadoPedido.denominacion == 'TERMINADO' ||
-                pedido.estadoPedido.denominacion == 'FACTURADO'
+                pedido.estadoPedido.denominacion == 'FACTURADO' ||
+                pedido.estadoPedido.denominacion == 'EN DELIVERY'
               "
             >
               {{
@@ -69,7 +78,8 @@
               [disabled]="
                 pedido.estadoPedido.denominacion == 'RECHAZADO' ||
                 pedido.estadoPedido.denominacion == 'TERMINADO' ||
-                pedido.estadoPedido.denominacion == 'FACTURADO'
+                pedido.estadoPedido.denominacion == 'FACTURADO' ||
+                pedido.estadoPedido.denominacion == 'EN DELIVERY'
               "
             >
               {{
@@ -102,9 +112,12 @@
               class="btn btn-sm btn-danger"
               (click)="facturarPedido(pedido)"
               [disabled]="
-                pedido.estadoPedido.denominacion == 'FACTURADO' ||
+                pedido.estadoPedido.denominacion == 'PENDIENTE' ||
+                pedido.estadoPedido.denominacion == 'APROBADO' ||
                 pedido.estadoPedido.denominacion == 'RECHAZADO' ||
-                pedido.estadoPedido.denominacion != 'TERMINADO'
+                pedido.estadoPedido.denominacion == 'FACTURADO' ||
+                (pedido.estadoPedido.denominacion == 'TERMINADO' &&
+                  pedido.tipoEnvio == 1)
               "
             >
               {{
@@ -118,25 +131,27 @@
             <button
               type="button"
               class="btn btn-sm btn-dark"
-              (click)="facturarPedido(pedido)"
+              (click)="enviarDelivery(pedido.id)"
               [disabled]="
-                pedido.estadoPedido.denominacion == 'EN DELIVERY' ||
+                pedido.tipoEnvio == 0 ||
+                pedido.estadoPedido.denominacion == 'PENDIENTE' ||
+                pedido.estadoPedido.denominacion == 'APROBADO' ||
                 pedido.estadoPedido.denominacion == 'RECHAZADO' ||
-                pedido.estadoPedido.denominacion != 'TERMINADO' ||
-                pedido.tipoEnvio == 0
+                pedido.estadoPedido.denominacion == 'FACTURADO' ||
+                pedido.estadoPedido.denominacion == 'EN DELIVERY'
               "
             >
               {{
                 pedido.estadoPedido.denominacion == "EN DELIVERY"
                   ? "En viaje"
-                  : "Enviar Delivery"
+                  : "Despachar"
               }}
             </button>
           </td>
         </tr>
       </tbody>
     </table>
-    <mat-paginator
+    <!-- <mat-paginator
       *ngIf="lista?.length > 0"
       [length]="totalRegistros"
       [pageSize]="totalPorPagina"
@@ -145,6 +160,6 @@
       showFirstLastButtons
       (page)="paginar($event)"
     >
-    </mat-paginator>
+    </mat-paginator> -->
   </div>
 </div>

@@ -335,7 +335,8 @@ export class CarroCompraComponent implements OnInit {
         detalle.articuloManufacturado &&
         detalle.articuloManufacturado.tiempoEstimadoCocina
       ) {
-        tiempoEstimado += detalle.articuloManufacturado.tiempoEstimadoCocina;
+        tiempoEstimado +=
+          detalle.articuloManufacturado.tiempoEstimadoCocina * detalle.cantidad;
       }
     });
     console.log('Tiempo estimado Art. Solicitados: ', tiempoEstimado);
@@ -363,7 +364,8 @@ export class CarroCompraComponent implements OnInit {
             detalle.articuloManufacturado.tiempoEstimadoCocina
           ) {
             tiempoEstimado +=
-              detalle.articuloManufacturado.tiempoEstimadoCocina;
+              detalle.articuloManufacturado.tiempoEstimadoCocina *
+              detalle.cantidad;
           }
         });
       });
@@ -392,7 +394,7 @@ export class CarroCompraComponent implements OnInit {
       if (status && status == 'approved') {
         Swal.fire(
           'Pago Aprobado:',
-          `El pago se ha realizado con éxito.`,
+          `El pago ha sido aprobado para el Pedido nro. ${this.pedido.numero}.`,
           'success'
         );
         console.log('COMPROBAR ESTADO PAGO:', this.pedido);

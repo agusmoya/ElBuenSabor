@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BASE_ENDPOINT } from '../config/app';
 import { Factura } from '../models/factura';
 import { CommonService } from './common.service';
 
@@ -6,5 +7,5 @@ import { CommonService } from './common.service';
   providedIn: 'root',
 })
 export class FacturaService extends CommonService<Factura> {
-  protected baseEndpoint = 'http://localhost:9000/api/el-buen-sabor/facturas/';
+  protected baseEndpoint = BASE_ENDPOINT + '/facturas';
 }

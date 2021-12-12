@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CommonService } from './common.service';
 import { Cliente } from '../models/cliente';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BASE_ENDPOINT } from '../config/app';
 import { Observable } from 'rxjs';
 
@@ -13,6 +13,36 @@ export class ClienteService extends CommonService<Cliente> {
 
   constructor(http: HttpClient) {
     super(http);
+  }
+
+  public enviarEmail(idCliente: number, fileURL: string): Observable<any> {
+    return this.http.post<any>(
+      `${this.baseEndpoint}/send-mail/${idCliente}`,
+      fileURL,
+      { headers: this.cabeceras }
+    );
+  }
+
+  public enviarEmailPDF(file: File, idCliente: number): Observable<void> {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    return this.http.post<void>(
+      `${this.baseEndpoint}/send-mail-pdf/${idCliente}`,
+      formData,
+      { responseType: 'blob' as 'json' }
+    );
+  }
+
+  public facturaPDF(idCliente: number, idFactura: number): Observable<Blob> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      responseType: 'blob',
+    });
+
+    return this.http.get<Blob>(
+      `${this.baseEndpoint}/${idCliente}/${idFactura}/factura/export/pdf`,
+      { headers: headers, responseType: 'blob' as 'json' }
+    );
   }
 
   public buscarPorEmail(email: String): Observable<any> {

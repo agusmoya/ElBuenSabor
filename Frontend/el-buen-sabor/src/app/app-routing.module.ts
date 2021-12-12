@@ -20,12 +20,14 @@ import { ProductoDetalleComponent } from './components/producto-detalle/producto
 import { BebidaDetalleComponent } from './components/bebida-detalle/bebida-detalle.component';
 import { CarroCompraComponent } from './components/carro-compra/carro-compra.component';
 import { PedidosComponent } from './components/pedidos/pedidos.component';
+import { PedidoDetalleComponent } from './components/pedidos/pedido-detalle/pedido-detalle.component';
 
 const routes: Routes = [
   // HOME
   { path: '', pathMatch: 'full', redirectTo: '/home' },
   { path: 'home', component: HomeComponent },
-
+  //  PRODUCTO-DETALLE
+  { path: 'pedido-detalle/:id', component: PedidoDetalleComponent },
   //  PRODUCTO-DETALLE
   { path: 'producto-detalle/:id', component: ProductoDetalleComponent },
   //  BEBIDA-DETALLE

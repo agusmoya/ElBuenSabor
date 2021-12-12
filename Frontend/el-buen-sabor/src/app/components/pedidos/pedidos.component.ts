@@ -1,3 +1,4 @@
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import {
   AfterViewChecked,
   AfterViewInit,
@@ -9,6 +10,8 @@ import { DetalleFactura } from 'src/app/models/detalle-factura';
 import { EstadoPedido } from 'src/app/models/estado-pedido';
 import { Factura } from 'src/app/models/factura';
 import { Pedido } from 'src/app/models/pedido';
+import { Usuario } from 'src/app/models/usuario';
+import { ClienteService } from 'src/app/services/cliente.service';
 import { EstadoPedidoService } from 'src/app/services/estado-pedido.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { PedidoService } from 'src/app/services/pedido.service';
@@ -29,13 +32,16 @@ export class PedidosComponent
   userLoggedInfo$: any;
   userRol: string;
   userId: number;
+  user: Usuario;
   estadosPedidos: EstadoPedido[];
   total: number;
+  facturaId: number;
 
   constructor(
     service: PedidoService,
     private estadoPedidoService: EstadoPedidoService,
     private usuarioService: UsuarioService,
+    private clienteService: ClienteService,
     private pedidoService: PedidoService,
     private _localStorageService: LocalStorageService
   ) {
@@ -44,24 +50,37 @@ export class PedidosComponent
     this.nombreModelo = Pedido.name;
     this.userLoggedInfo$ = this._localStorageService.userLogged$;
     this.estadosPedidos = [];
+    this.lista = [];
+  }
+
+  ngOnInit(): void {
+    this.calcularRangos();
+    this.verificarRolUsuario();
   }
 
   protected calcularRangos() {
-    this.service
-      .listarPaginado(
-        this.paginaActual.toString(),
-        this.totalPorPagina.toString()
-      )
-      .subscribe((paginador) => {
-        this.listarEstadosPedidos();
-        this.lista = paginador.content as Pedido[];
+    this.service.listar().subscribe((pedidos) => {
+      this.lista = pedidos;
+      this.listarEstadosPedidos();
+      this.verificarRolUsuario();
+      this.totalRegistros = this.lista.length;
+    });
 
-        this.verificarRolUsuario();
-        this.totalRegistros = paginador.totalElements as number;
-        if (this.paginator) {
-          this.paginator._intl.itemsPerPageLabel = 'Elementos por página:';
-        }
-      });
+    // this.service
+    //   .listarPaginado(
+    //     this.paginaActual.toString(),
+    //     this.totalPorPagina.toString()
+    //   )
+    //   .subscribe((paginador) => {
+    //     this.listarEstadosPedidos();
+    //     this.lista = paginador.content as Pedido[];
+
+    //     this.verificarRolUsuario();
+    //     this.totalRegistros = paginador.totalElements as number;
+    //     if (this.paginator) {
+    //       this.paginator._intl.itemsPerPageLabel = 'Elementos por página:';
+    //     }
+    //   });
   }
 
   listarEstadosPedidos(): void {
@@ -71,10 +90,12 @@ export class PedidosComponent
   }
 
   verificarExistenciaEstadoPedido(pedido: Pedido, estadoAbuscar: string): void {
+    this.listarEstadosPedidos();
     // console.log(this.estadosPedidos);
     if (this.estadosPedidos) {
       for (const estado of this.estadosPedidos) {
         if (estado.denominacion == estadoAbuscar) {
+          // console.log(estado);
           pedido.estadoPedido = estado;
           return;
         }
@@ -87,6 +108,7 @@ export class PedidosComponent
     this.userLoggedInfo$.subscribe((user) => {
       if (user != undefined) {
         this.usuarioService.ver(user.id).subscribe((usuarioEncontrado) => {
+          this.user = usuarioEncontrado;
           this.userRol = usuarioEncontrado.rol.denominacion;
           this.userId = usuarioEncontrado.id;
           this.filtrarPedidosSegunEstado_Rol();
@@ -96,39 +118,15 @@ export class PedidosComponent
   }
 
   filtrarPedidosSegunEstado_Rol(): void {
-    if (this.userRol == 'Cajero') {
-      console.log('Soy Cajero');
-      // console.log(this.lista);
+    if (this.user.rol?.denominacion == 'Cocinero') {
       this.lista = this.lista?.filter(
-        (pedido) =>
-          pedido.estadoPedido.estado == 1 &&
-          (pedido.estadoPedido.denominacion == 'RECHAZADO' ||
-            pedido.estadoPedido.denominacion == 'PENDIENTE' ||
-            pedido.estadoPedido.denominacion == 'TERMINADO' ||
-            pedido.estadoPedido.denominacion == 'FACTURADO')
-      );
-    }
-    if (this.userRol == 'Cocinero') {
-      console.log('Soy Cocinero');
-      this.lista = this.lista?.filter(
-        (pedido) =>
-          pedido.estadoPedido.estado == 1 &&
-          pedido.estadoPedido.denominacion == 'APROBADO'
+        (pedido) => pedido.estadoPedido.denominacion == 'APROBADO'
       );
     }
     if (this.userRol == 'Cliente') {
-      console.log('Soy Cliente');
       this.lista = this.lista?.filter(
-        (pedido) =>
-          pedido.cliente.id == this.userId &&
-          (pedido.estadoPedido.denominacion == 'RECHAZADO' ||
-            pedido.estadoPedido.denominacion == 'PENDIENTE' ||
-            pedido.estadoPedido.denominacion == 'TERMINADO' ||
-            pedido.estadoPedido.denominacion == 'FACTURADO')
+        (pedido) => pedido.cliente.usuario.id == this.userId
       );
-    }
-    if (this.userRol == 'Administrador') {
-      console.log('Soy Admin');
     }
   }
 
@@ -152,7 +150,6 @@ export class PedidosComponent
             );
 
             this.pedidoService.editar(pedido).subscribe((pedidoEditado) => {
-              this.listarEstadosPedidos();
               this.filtrarPedidosSegunEstado_Rol();
             });
             Swal.fire(
@@ -171,8 +168,6 @@ export class PedidosComponent
   rechazarPedido(indicePedido: any): void {
     this.lista.forEach((pedido) => {
       if (pedido.id == indicePedido) {
-        // console.log(pedido.numero);
-        // console.log(pedido.horaEstimadaFin);
         Swal.fire({
           title: `Atención`,
           text: `¿Seguro que desea RECHAZAR el PEDIDO nro *${pedido.numero}*?`,
@@ -189,7 +184,6 @@ export class PedidosComponent
               EstadoPedido.status.Rechazado
             );
             this.pedidoService.editar(pedido).subscribe((pedidoEditado) => {
-              this.listarEstadosPedidos();
               this.filtrarPedidosSegunEstado_Rol();
             });
 
@@ -224,13 +218,47 @@ export class PedidosComponent
               EstadoPedido.status.Terminado
             );
             this.pedidoService.editar(pedido).subscribe((pedidoEditado) => {
-              this.listarEstadosPedidos();
+              console.log(pedidoEditado);
               this.filtrarPedidosSegunEstado_Rol();
             });
 
             Swal.fire(
               'Finalizado',
               `El pedido nro. ${pedido.numero} ha sido marcado como Terminado`,
+              'success'
+            );
+            return;
+          }
+        });
+      }
+    });
+  }
+
+  enviarDelivery(indicePedido: any): void {
+    this.lista.forEach((pedido) => {
+      if (pedido.id == indicePedido) {
+        Swal.fire({
+          title: `Atención`,
+          text: `¿Seguro que desea ENVIAR DELIVERY para el PEDIDO nro *${pedido.numero}*?`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Confirmar',
+          cancelButtonText: 'Cancelar',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.verificarExistenciaEstadoPedido(
+              pedido,
+              EstadoPedido.status.EnDelivery
+            );
+            this.pedidoService.editar(pedido).subscribe((pedidoEditado) => {
+              this.filtrarPedidosSegunEstado_Rol();
+            });
+
+            Swal.fire(
+              'Finalizado',
+              `El pedido nro. ${pedido.numero} aguarda despacho de Delivery`,
               'success'
             );
             return;
@@ -259,9 +287,41 @@ export class PedidosComponent
               EstadoPedido.status.Facturado
             );
             this.crearFacturaPedido(pedidoAfacturar);
+
             this.pedidoService.editar(pedido).subscribe((pedidoEditado) => {
               this.listarEstadosPedidos();
               this.filtrarPedidosSegunEstado_Rol();
+              this.enviarMailPdf(pedidoEditado);
+              // //FACTURA
+              // this.clienteService
+              //   .facturaPDF(
+              //     pedidoAfacturar.cliente.id,
+              //     pedidoEditado.factura.id
+              //   )
+              //   .subscribe(
+              //     (data: Blob) => {
+              //       console.log(data);
+              //       let file = new Blob([data], { type: 'application/pdf' });
+              //       let fileURL = URL.createObjectURL(file);
+              //       // if you want to open PDF in new tab
+              //       window.open(fileURL);
+              //       var a = document.createElement('a');
+              //       a.href = fileURL;
+              //       a.target = '_blank';
+              //       a.download = 'factura.pdf';
+              //       document.body.appendChild(a);
+              //       a.click();
+
+              //       this.clienteService
+              //       .enviarEmail(pedidoAfacturar.cliente.id, fileURL)
+              //       .subscribe((cliente) => {
+              //         console.log(cliente);
+              //       });
+              //     },
+              //     (err) => {
+              //       console.log(err.error);
+              //     }
+              //   );
             });
 
             Swal.fire(
@@ -277,8 +337,6 @@ export class PedidosComponent
   }
 
   crearFacturaPedido(pedidoAfacturar: Pedido) {
-    console.log('Pedido a facturar:', pedidoAfacturar);
-
     pedidoAfacturar.factura = new Factura();
     pedidoAfacturar.factura.fecha = new Date();
     pedidoAfacturar.factura.numero = pedidoAfacturar.numero;
@@ -313,10 +371,45 @@ export class PedidosComponent
     if (pedidoAfacturar.tipoEnvio == 0) {
       pedidoAfacturar.factura.montoDescuento = this.total * 0.1;
     }
-
+    // this.listarEstadosPedidos();
     this.verificarExistenciaEstadoPedido(
       pedidoAfacturar,
       EstadoPedido.status.Facturado
     );
+  }
+
+  enviarMailPdf(pedido: Pedido): void {
+    let file: any;
+    let fileURL: string;
+
+    this.clienteService
+      .facturaPDF(pedido.cliente.id, pedido.factura.id)
+      .subscribe(
+        (data: Blob) => {
+          console.log('Data: ', data);
+          file = new Blob([data], { type: 'application/pdf' });
+          fileURL = URL.createObjectURL(file);
+          // if you want to open PDF in new tab
+          // window.open(fileURL);
+          // var a = document.createElement('a');
+          // a.href = fileURL;
+          // a.target = '_blank';
+          // a.download = 'factura.pdf';
+          // document.body.appendChild(a);
+          // a.click();
+        },
+        (err) => {
+          console.log(err.error);
+        }
+      );
+    setTimeout(() => {
+      console.log('File:', file);
+      this.clienteService
+        .enviarEmailPDF(file, pedido.cliente.id)
+        .subscribe((file) => console.log(file)),
+        (err) => {
+          console.log(err.error);
+        };
+    }, 500);
   }
 }
